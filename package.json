@@ -1,5 +1,5 @@
 {
-  "name": "compose-art-website",
+  "name": "death-finance-website",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -32,7 +32,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "firebase deploy --project composeart-f9a7a"
   },
   "eslintConfig": {
     "extends": "react-app"

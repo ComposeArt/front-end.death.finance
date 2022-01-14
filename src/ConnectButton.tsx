@@ -9,16 +9,11 @@ export const ConnectButton = () => {
   const blockNumber = useBlockNumber();
   const chain = chainId && ChainId[chainId];
 
-  console.log(blockNumber, chain)
-
   return account ? (
-    <HStack spacing={8}>
+    <HStack spacing={4}>
       <Text fontSize="sm" fontWeight="bold">
         {chain}
       </Text>
-      <Code padding={2} variant="outline" fontSize="sm">
-        {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} Ξ
-      </Code>
       <Box
         display="flex"
         alignItems="center"

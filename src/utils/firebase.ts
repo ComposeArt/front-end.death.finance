@@ -74,12 +74,18 @@ export const getRandomPlayers = async (collections: any) => {
 
   const snapshot1 = await getDocs(query1);
   snapshot1.forEach((d) => {
-    player1 = d.data();
+    player1 = {
+      collection: collection1.id,
+      ...d.data(),
+    };
   });
 
   const snapshot2 = await getDocs(query2);
   snapshot2.forEach((d) => {
-    player2 = d.data();
+    player2 = {
+      collection: collection2.id,
+      ...d.data(),
+    };
   });
 
   return {
