@@ -1,14 +1,10 @@
 import * as React from "react"
 import { IconButton } from "@chakra-ui/react";
-import { useBlockNumber, useEthers, useEtherBalance, ChainId } from "@usedapp/core";
-import { formatEther } from "@ethersproject/units";
+import { useEthers } from "@usedapp/core";
 import { FaWallet } from "react-icons/fa"
 
 export const MobileConnectButton = () => {
-  const { activateBrowserWallet, deactivate, account, chainId } = useEthers();
-  const etherBalance = useEtherBalance(account);
-  const blockNumber = useBlockNumber();
-  const chain = chainId && ChainId[chainId];
+  const { activateBrowserWallet, deactivate, account } = useEthers();
 
   return (
     <IconButton

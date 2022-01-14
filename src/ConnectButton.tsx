@@ -1,12 +1,12 @@
 import * as React from "react"
-import { Button, Box, Text, HStack, Code } from "@chakra-ui/react";
-import { useBlockNumber, useEthers, useEtherBalance, ChainId } from "@usedapp/core";
-import { formatEther } from "@ethersproject/units";
+import { Button, Box, Text, HStack } from "@chakra-ui/react";
+import { useEthers, ChainId } from "@usedapp/core";
+// import { formatEther } from "@ethersproject/units";
 
 export const ConnectButton = () => {
   const { activateBrowserWallet, deactivate, account, chainId } = useEthers();
-  const etherBalance = useEtherBalance(account);
-  const blockNumber = useBlockNumber();
+  // const etherBalance = useEtherBalance(account);
+  // const blockNumber = useBlockNumber();
   const chain = chainId && ChainId[chainId];
 
   return account ? (
