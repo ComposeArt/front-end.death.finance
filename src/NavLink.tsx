@@ -8,8 +8,6 @@ export const NavLink = (props: any) => {
   return (
     <Text
       fontSize="sm"
-      marginLeft="4"
-      marginRight="4"
       _hover={{
         textDecoration: "underline"
       }}

@@ -1,5 +1,6 @@
+import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit, where } from 'firebase/firestore/lite';
 import _ from 'lodash';
 
 const app = initializeApp({
@@ -10,6 +11,20 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
+
+interface PayloadTypes {
+  collections: [];
+  fighters: [];
+  account: string | null | undefined;
+}
+
+const defaultPayload: PayloadTypes = {
+  collections: [],
+  fighters: [],
+  account: '',
+};
+
+export const PayloadContext = createContext(defaultPayload);
 
 export const getCollections = async () => {
   const collections: any = [];
@@ -57,38 +72,92 @@ export const getPlayers = async (fighters: any) => {
   return players;
 };
 
+export const getCollectionPlayers = async (collectionId: any) => {
+  const ref1 = collection(db, `nft-death-games/season_0/collections/${collectionId}/players`);
+
+  const players: any = [];
+
+  const snapshot1 = await getDocs(ref1);
+  snapshot1.forEach((d) => {
+    players.push({
+      collection: collectionId,
+      ...d.data(),
+    });
+  });
+
+  return players;
+};
+
+
 export const getRandomPlayers = async (collections: any) => {
   let player1: any = {};
   let player2: any = {};
 
-  const collection1 = _.sample(collections);
-  const collection2 = _.sample(_.filter(collections, (c: any) => c.id !== collection1.id));
+  if (collections.length) {
+    const collection1 = _.sample(collections);
+    const collection2 = _.sample(_.filter(collections, (c: any) => c.id !== collection1.id));
 
-  const ref1 = collection(db, `nft-death-games/season_0/collections/${collection1.id}/players`);
-  const query1 = query(ref1, orderBy("power", "desc"), limit(1));
+    const ref1 = collection(db, `nft-death-games/season_0/collections/${collection1.id}/players`);
+    const query1 = query(ref1, orderBy("power", "desc"), limit(1));
 
-  const ref2 = collection(db, `nft-death-games/season_0/collections/${collection2.id}/players`);
-  const query2 = query(ref2, orderBy("power", "desc"), limit(1));
+    const ref2 = collection(db, `nft-death-games/season_0/collections/${collection2.id}/players`);
+    const query2 = query(ref2, orderBy("power", "desc"), limit(1));
 
-  const snapshot1 = await getDocs(query1);
-  snapshot1.forEach((d) => {
-    player1 = {
-      collection: collection1.id,
-      ...d.data(),
-    };
-  });
+    const snapshot1 = await getDocs(query1);
+    snapshot1.forEach((d) => {
+      player1 = {
+        collection: collection1.id,
+        ...d.data(),
+      };
+    });
 
-  const snapshot2 = await getDocs(query2);
-  snapshot2.forEach((d) => {
-    player2 = {
-      collection: collection2.id,
-      ...d.data(),
-    };
-  });
+    const snapshot2 = await getDocs(query2);
+    snapshot2.forEach((d) => {
+      player2 = {
+        collection: collection2.id,
+        ...d.data(),
+      };
+    });
+  }
 
   return {
     player1,
     player2,
   };
+};
+
+export const getRandomPlayer = async (collections: any) => {
+  let player: any = {};
+
+  if (collections.length) {
+    const collection1 = _.sample(collections);
+    const random = _.random(4, 86);
+
+    const ref1 = collection(db, `nft-death-games/season_0/collections/${collection1.id}/players`);
+    const query1 = query(ref1, where("power", "==", random), limit(1));
+
+    const snapshot1 = await getDocs(query1);
+    snapshot1.forEach((d) => {
+      player = {
+        collection: collection1.id,
+        ...d.data(),
+      };
+    });
+
+    if (_.isEmpty(player)) {
+      const ref2 = collection(db, `nft-death-games/season_0/collections/${collection1.id}/players`);
+      const query2 = query(ref2, orderBy("power", "desc"), limit(1));
+
+      const snapshot2 = await getDocs(query2);
+      snapshot2.forEach((d) => {
+        player = {
+          collection: collection1.id,
+          ...d.data(),
+        };
+      });
+    }
+  }
+
+  return player;
 };
 

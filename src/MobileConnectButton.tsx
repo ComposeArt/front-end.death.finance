@@ -3,7 +3,7 @@ import { IconButton } from "@chakra-ui/react";
 import { useEthers } from "@usedapp/core";
 import { FaWallet } from "react-icons/fa"
 
-export const MobileConnectButton = () => {
+export const MobileConnectButton = (props: any) => {
   const { activateBrowserWallet, deactivate, account } = useEthers();
 
   return (

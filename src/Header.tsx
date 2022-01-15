@@ -73,10 +73,15 @@ export const Header = () => {
         h="10vh"
         w="100%"
         align="center"
-        justify="space-between"
+        justify="center"
         display={{ base: "flex", lg: "none" }}
-        padding={8}
       >
+        <HStack
+          h="10vh"
+          w="100%"
+          padding={4}
+          justify="flex-start"
+        >
           <Image
             boxSize="40px"
             borderRadius="40px"
@@ -87,7 +92,8 @@ export const Header = () => {
               backgroundColor: opacityColor,
             }}
           />
-        <HStack paddingLeft={8}>
+        </HStack>
+        <HStack padding={4}>
           <MobileConnectButton />
           <ColorModeSwitcher />
           <TwitterButton />

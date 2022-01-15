@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
 import {
   Heading,
@@ -12,18 +12,19 @@ import {
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, navigate } from "@reach/router";
+import { RiSwordFill } from "react-icons/ri"
 
 import { LinkButton } from "./LinkButton";
 import grim from './images/mgrim-flip.png';
-import { getCollections, getFighters, getPlayers, getRandomPlayers } from "./utils/firebase";
+import { PayloadContext, getPlayers, getRandomPlayers } from "./utils/firebase";
 
 export const Home = (props: RouteComponentProps) => {
   const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.800', 'white');
 
-  const [collections, setCollections]: any = useState([]);
+  const { collections, fighters } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
   const [randomPlayers, setRandomPlayers]: any = useState({
     player1: {},
@@ -33,12 +34,9 @@ export const Home = (props: RouteComponentProps) => {
   useEffect(() => {
     (async function getInitialData() {
       try {
-        const collectionsData = await getCollections();
-        const fightersData = await getFighters();
-        const playersData = await getPlayers(fightersData);
-        const randomPlayersData = await getRandomPlayers(collectionsData);
+        const playersData = await getPlayers(fighters);
+        const randomPlayersData = await getRandomPlayers(collections);
 
-        setCollections(collectionsData);
         setPlayers(playersData);
         setRandomPlayers(randomPlayersData);
       } catch (error) {
@@ -51,7 +49,7 @@ export const Home = (props: RouteComponentProps) => {
         });
       }
     })();
-  }, [toast]);
+  }, [collections, fighters, toast]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -177,9 +175,7 @@ export const Home = (props: RouteComponentProps) => {
             src={randomPlayers.player1.image_preview_url}
           />
         </Box>
-        <Text fontWeight={800}>
-          VS
-        </Text>
+        <RiSwordFill />
         <Box
           borderRadius="80px"
           borderColor={LineColor}
@@ -199,7 +195,7 @@ export const Home = (props: RouteComponentProps) => {
         />
       </Box>
       <Heading as='h2' size='sm' marginTop={16} textAlign="center">
-        100 Collections
+        {collections.length} Collections
       </Heading>
       <Wrap marginTop={4} justify='center'>
         {collections.map((c: any) => {

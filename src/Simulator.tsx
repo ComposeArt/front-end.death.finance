@@ -1,0 +1,383 @@
+import React, { useEffect, useState, useContext } from "react";
+import _ from "lodash";
+import {
+  Heading,
+  Container,
+  HStack,
+  Image,
+  Box,
+  Text,
+  useColorModeValue,
+  useToast,
+  VStack,
+  IconButton,
+  Select,
+  InputGroup,
+  InputLeftAddon,
+  Input,
+  InputRightElement,
+} from "@chakra-ui/react";
+import { RouteComponentProps } from "@reach/router";
+import { RiSwordFill } from "react-icons/ri"
+import { FaRandom } from "react-icons/fa"
+
+import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers } from "./utils/firebase";
+
+let prevCollection1 = '';
+let prevCollection2 = '';
+
+export const Simulator = (props: RouteComponentProps) => {
+  const toast = useToast();
+  const LineColor = useColorModeValue('gray.500', 'white.500');
+
+  const { collections, fighters, account } = useContext(PayloadContext);
+
+  const [fighter1, setFighter1]: any = useState({});
+  const [fighter2, setFighter2]: any = useState({});
+
+  const [loading1, setLoading1]: any = useState(false);
+  const [loading2, setLoading2]: any = useState(false);
+
+  const [collection1, setCollection1]: any = useState('');
+  const [collection2, setCollection2]: any = useState('');
+
+  const [players1, setPlayers1]: any = useState([]);
+  const [players2, setPlayers2]: any = useState([]);
+
+  const [player1, setPlayer1]: any = useState('');
+  const [player2, setPlayer2]: any = useState('');
+
+  const randomFighter1 = async () => {
+    setLoading1(true);
+
+    if (collection1) {
+      const foundP1 = _.find(players1, (p: any) => p.token_id === player1);
+      if (player1 && foundP1) {
+        setFighter1(foundP1);
+      } else {
+        setFighter1(_.sample(players1));
+        setPlayer1('');
+      }
+    } else {
+      const result = await getRandomPlayer(collections);
+      setFighter1(result);
+    }
+
+    setLoading1(false);
+  };
+
+  const randomFighter2 = async () => {
+    setLoading2(true);
+
+    if (collection2) {
+      const foundP2 = _.find(players2, (p: any) => p.token_id === player2);
+      if (player2 && foundP2) {
+        setFighter2(foundP2);
+      } else {
+        setFighter2(_.sample(players2));
+        setPlayer2('');
+      }
+    } else {
+      const result = await getRandomPlayer(collections);
+      setFighter2(result);
+    }
+
+    setLoading2(false);
+  };
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (_.isEmpty(fighter1) || _.isEmpty(fighter2)) {
+        try {
+          setLoading1(true);
+          setLoading2(true);
+          const randomPlayersData = await getRandomPlayers(collections);
+
+          setFighter1(randomPlayersData.player1);
+          setFighter2(randomPlayersData.player2);
+          setLoading1(false);
+          setLoading2(false);
+        } catch (error) {
+          console.log(error);
+          toast({
+            title: `${error}`,
+            status: 'error',
+            isClosable: true,
+            duration: 3000,
+          });
+        }
+      }
+    })();
+  }, [collections, fighters, toast, fighter1, fighter2]);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (collection1 && collection1 !== prevCollection1) {
+        try {
+          setLoading1(true);
+          setPlayer1('');
+          const players = await getCollectionPlayers(collection1);
+
+          prevCollection1 = collection1;
+
+          setPlayers1(players);
+          setFighter1({
+            collection: collection1,
+            ..._.sample(players),
+          });
+          setLoading1(false);
+        } catch (error) {
+          console.log(error);
+          toast({
+            title: `${error}`,
+            status: 'error',
+            isClosable: true,
+            duration: 3000,
+          });
+        }
+      }
+    })();
+  }, [collection1, toast]);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (collection2 && collection2 !== prevCollection2) {
+        try {
+          setLoading2(true);
+          setPlayer2('');
+          const players = await getCollectionPlayers(collection2);
+
+          prevCollection2 = collection2;
+
+          setPlayers2(players);
+          setFighter2({
+            collection: collection2,
+            ..._.sample(players),
+          });
+          setLoading2(false);
+        } catch (error) {
+          console.log(error);
+          toast({
+            title: `${error}`,
+            status: 'error',
+            isClosable: true,
+            duration: 3000,
+          });
+        }
+      }
+    })();
+  }, [collection2, toast]);
+
+  console.log(fighter1, fighter2)
+
+  return (
+    <Container maxW='container.md' centerContent>
+      <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
+        Let's Dance
+      </Heading>
+      <Text textAlign="center" fontSize={12} margin={4}>
+        simulate fights on ethereum exactly how
+        <br/>
+        they will happen during preseason and the main tournament
+      </Text>
+      {!account && (
+        <Text textAlign="center" color="red.500" fontSize={12}>
+          connect to metamask to use client side or we can simulate using our oracle
+        </Text>
+      )}
+      <HStack marginTop={8} justify="center" spacing={4}>
+        <VStack spacing={4}>
+          <Select
+            fontSize={12}
+            width={{ base: "160px", md: 200 }}
+            size="sm"
+            placeholder='All Collections'
+            value={collection1}
+            onChange={(event) => setCollection1(event.target.value)}
+            borderRadius={100}
+            _hover={{
+              cursor: 'pointer'
+            }}
+          >
+            {collections.map((c: any) => {
+              return (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              );
+            })}
+          </Select>
+          <InputGroup
+            size="sm"
+            width={{ base: "160px", md: 200 }}
+          >
+            <InputLeftAddon
+              children='#'
+              borderRadius={100}
+            />
+            <Input
+              borderRadius={100}
+              fontSize={12}
+              type='number'
+              placeholder='token id'
+              isInvalid={player1 && !_.find(players1, (p: any) => p.token_id === player1)}
+              errorBorderColor='red.500'
+              value={player1}
+              onChange={(event) => {
+                setPlayer1(event.target.value);
+              }}
+              isDisabled={!collection1}
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  randomFighter1();
+                }
+              }}
+            />
+            <InputRightElement>
+              <IconButton
+                size="sm"
+                fontSize="md"
+                variant="ghost"
+                color="current"
+                borderRadius={100}
+                onClick={() => {randomFighter1()}}
+                icon={<FaRandom />}
+                aria-label={`Random Fighter 1`}
+                isLoading={loading1}
+              />
+            </InputRightElement>
+          </InputGroup>
+        </VStack>
+        <VStack spacing={4}>
+          <Select
+            fontSize={12}
+            width={{ base: "160px", md: 200 }}
+            size="sm"
+            placeholder='All Collections'
+            value={collection2}
+            onChange={(event) => setCollection2(event.target.value)}
+            borderRadius={100}
+            _hover={{
+              cursor: 'pointer'
+            }}
+          >
+            {collections.map((c: any) => {
+              return (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              );
+            })}
+          </Select>
+          <InputGroup
+            size="sm"
+            width={{ base: "160px", md: 200 }}
+          >
+            <InputLeftAddon
+              children='#'
+              borderRadius={100}
+            />
+            <Input
+              borderRadius={100}
+              fontSize={12}
+              type='number'
+              placeholder='token id'
+              isInvalid={player2 && !_.find(players2, (p: any) => p.token_id === player2)}
+              errorBorderColor='red.500'
+              value={player2}
+              onChange={(event) => {
+                setPlayer2(event.target.value);
+              }}
+              isDisabled={!collection2}
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  randomFighter2();
+                }
+              }}
+            />
+            <InputRightElement>
+              <IconButton
+                size="sm"
+                fontSize="md"
+                variant="ghost"
+                color="current"
+                borderRadius={100}
+                onClick={() => {randomFighter2()}}
+                icon={<FaRandom />}
+                aria-label={`Random Fighter 2`}
+                isLoading={loading2}
+              />
+            </InputRightElement>
+          </InputGroup>
+        </VStack>
+      </HStack>
+      <HStack marginTop={8} justify="flex-start" spacing={8}>
+        <VStack spacing={4}>
+          <Box
+            borderRadius={{ base: "100px", md: 150 }}
+            borderColor={LineColor}
+            borderWidth={2}
+          >
+            <Image
+              boxSize={{ base: "100px", md: 150 }}
+              borderRadius={{ base: "100px", md: 150 }}
+              src={fighter1.image_preview_url}
+            />
+          </Box>
+          <Box
+            width={{ base: "100px", md: 150 }}
+            textAlign="center"
+          >
+            <Text
+              fontSize={10}
+              textDecoration="underline"
+              opacity={0.5}
+              onClick={()=> window.open(fighter1.permalink, "_blank")}
+              _hover={{
+                cursor: 'pointer',
+                opacity: 1,
+              }}
+            >
+              {fighter1.name || `${fighter1.collection} #${fighter1.token_id}`}
+            </Text>
+          </Box>
+        </VStack>
+        <Box
+          display='flex'
+          height="100px"
+          justifyContent="center"
+          alignItems="center"
+          opacity={0.5}
+        >
+          <RiSwordFill size={24} />
+        </Box>
+        <VStack spacing={4}>
+          <Box
+            borderRadius={{ base: "100px", md: 150 }}
+            borderColor={LineColor}
+            borderWidth={2}
+          >
+            <Image
+              boxSize={{ base: "100px", md: 150 }}
+              borderRadius={{ base: "100px", md: 150 }}
+              src={fighter2.image_preview_url}
+            />
+          </Box>
+          <Box
+            width={{ base: "100px", md: 150 }}
+            textAlign="center"
+          >
+            <Text
+              fontSize={10}
+              textDecoration="underline"
+              opacity={0.5}
+              onClick={()=> window.open(fighter2.permalink, "_blank")}
+              _hover={{
+                cursor: 'pointer',
+                opacity: 1,
+              }}
+            >
+              {fighter2.name || `${fighter2.collection} #${fighter2.token_id}`}
+            </Text>
+          </Box>
+        </VStack>
+      </HStack>
+    </Container>
+  );
+};
