@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
-import { FaRandom } from "react-icons/fa"
+import { FaRandom } from "react-icons/fa";
 import {
   GiPerson,
   GiMountaintop,
@@ -41,6 +41,8 @@ import {
   GiShield,
   GiHealthNormal,
 } from "react-icons/gi"
+
+import logo from './images/logo.png';
 
 import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers } from "./utils/firebase";
 
@@ -106,13 +108,15 @@ export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
 
-  const { collections, fighters, account } = useContext(PayloadContext);
+  const [mounted, setMounted]: any = useState(false);
+
+  const { collections, account } = useContext(PayloadContext);
 
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
 
-  const [loading1, setLoading1]: any = useState(false);
-  const [loading2, setLoading2]: any = useState(false);
+  const [loading1, setLoading1]: any = useState(true);
+  const [loading2, setLoading2]: any = useState(true);
 
   const [collection1, setCollection1]: any = useState('');
   const [collection2, setCollection2]: any = useState('');
@@ -124,127 +128,116 @@ export const Simulator = (props: RouteComponentProps) => {
   const [player2, setPlayer2]: any = useState('');
 
   const randomFighter1 = async () => {
-    setLoading1(true);
+    try {
+      setLoading1(true);
 
-    if (collection1) {
-      const foundP1 = _.find(players1, (p: any) => p.token_id === player1);
-      if (player1 && foundP1) {
-        setFighter1(foundP1);
+      if (collection1) {
+        const foundP1 = _.find(players1, (p: any) => p.token_id === player1);
+        if (player1 && foundP1) {
+          setFighter1(foundP1);
+        } else {
+          setFighter1(_.sample(players1));
+          setPlayer1('');
+        }
       } else {
-        setFighter1(_.sample(players1));
-        setPlayer1('');
+        const result = await getRandomPlayer(collections);
+        setFighter1(result);
       }
-    } else {
-      const result = await getRandomPlayer(collections);
-      setFighter1(result);
-    }
 
-    setLoading1(false);
+      setLoading1(false);
+    } catch (error) {
+      toast({
+        title: 'failed to load nft',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
   };
 
   const randomFighter2 = async () => {
-    setLoading2(true);
+    try {
+      setLoading2(true);
 
-    if (collection2) {
-      const foundP2 = _.find(players2, (p: any) => p.token_id === player2);
-      if (player2 && foundP2) {
-        setFighter2(foundP2);
+      if (collection2) {
+        const foundP2 = _.find(players2, (p: any) => p.token_id === player2);
+        if (player2 && foundP2) {
+          setFighter2(foundP2);
+        } else {
+          setFighter2(_.sample(players2));
+          setPlayer2('');
+        }
       } else {
-        setFighter2(_.sample(players2));
-        setPlayer2('');
+        const result = await getRandomPlayer(collections);
+        setFighter2(result);
       }
-    } else {
-      const result = await getRandomPlayer(collections);
-      setFighter2(result);
-    }
 
-    setLoading2(false);
+      setLoading2(false);
+    } catch (error) {
+      toast({
+        title: 'failed to load nft',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
   };
 
   useEffect(() => {
-    (async function getInitialData() {
-      if (_.isEmpty(fighter1) || _.isEmpty(fighter2)) {
-        try {
-          setLoading1(true);
-          setLoading2(true);
-          const randomPlayersData = await getRandomPlayers(collections);
+    setMounted(true);
+  }, []);
 
-          setFighter1(randomPlayersData.player1);
-          setFighter2(randomPlayersData.player2);
+  useEffect(() => {
+    (async function getInitialData() {
+      if (mounted && collections.length) {
+        if (_.isEmpty(fighter1) && _.isEmpty(fighter2)) {
+          const result = await getRandomPlayers(collections);
+          setFighter1(result.player1);
+          setFighter2(result.player2);
           setLoading1(false);
           setLoading2(false);
-        } catch (error) {
-          console.log(error);
-          toast({
-            title: `${error}`,
-            status: 'error',
-            isClosable: true,
-            duration: 3000,
-          });
         }
       }
     })();
-  }, [collections, fighters, toast, fighter1, fighter2]);
+  }, [mounted, collections, fighter1, fighter2]);
 
   useEffect(() => {
     (async function getInitialData() {
       if (collection1 && collection1 !== prevCollection1) {
-        try {
-          setLoading1(true);
-          setPlayer1('');
-          const players = await getCollectionPlayers(collection1);
+        setLoading1(true);
+        setPlayer1('');
+        const players = await getCollectionPlayers(collection1);
 
-          prevCollection1 = collection1;
+        prevCollection1 = collection1;
 
-          setPlayers1(players);
-          setFighter1({
-            collection: collection1,
-            ..._.sample(players),
-          });
-          setLoading1(false);
-        } catch (error) {
-          console.log(error);
-          toast({
-            title: `${error}`,
-            status: 'error',
-            isClosable: true,
-            duration: 3000,
-          });
-        }
+        setPlayers1(players);
+        setFighter1({
+          collection: collection1,
+          ..._.sample(players),
+        });
+        setLoading1(false);
       }
     })();
-  }, [collection1, toast]);
+  }, [collection1]);
 
   useEffect(() => {
     (async function getInitialData() {
       if (collection2 && collection2 !== prevCollection2) {
-        try {
-          setLoading2(true);
-          setPlayer2('');
-          const players = await getCollectionPlayers(collection2);
+        setLoading2(true);
+        setPlayer2('');
+        const players = await getCollectionPlayers(collection2);
 
-          prevCollection2 = collection2;
+        prevCollection2 = collection2;
 
-          setPlayers2(players);
-          setFighter2({
-            collection: collection2,
-            ..._.sample(players),
-          });
-          setLoading2(false);
-        } catch (error) {
-          console.log(error);
-          toast({
-            title: `${error}`,
-            status: 'error',
-            isClosable: true,
-            duration: 3000,
-          });
-        }
+        setPlayers2(players);
+        setFighter2({
+          collection: collection2,
+          ..._.sample(players),
+        });
+        setLoading2(false);
       }
     })();
-  }, [collection2, toast]);
-
-  console.log(fighter1, fighter2)
+  }, [collection2]);
 
   return (
     <Container maxW='container.md' centerContent>
@@ -390,11 +383,19 @@ export const Simulator = (props: RouteComponentProps) => {
             borderColor={LineColor}
             borderWidth={2}
           >
-            <Image
-              boxSize={{ base: "100px", md: 150 }}
-              borderRadius={{ base: "100px", md: 150 }}
-              src={fighter1.image_preview_url}
-            />
+            {fighter1.image_preview_url ? (
+              <Image
+                boxSize={{ base: "100px", md: 150 }}
+                borderRadius={{ base: "100px", md: 150 }}
+                src={fighter1.image_preview_url}
+              />
+            ) : (
+              <Image
+                boxSize={{ base: "100px", md: 150 }}
+                borderRadius={{ base: "100px", md: 150 }}
+                src={logo}
+              />
+            )}
           </Box>
           <Box
             width={{ base: "100px", md: 150 }}
@@ -418,8 +419,8 @@ export const Simulator = (props: RouteComponentProps) => {
             <HStack marginTop={8} align="center" spacing={4}>
               <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter1.special_element].name}`}>
                 <IconButton
-                  size="lg"
-                  fontSize={24}
+                  size="md"
+                  fontSize={20}
                   color="current"
                   borderRadius={100}
                   icon={elements[fighter1.special_element].icon}
@@ -431,8 +432,8 @@ export const Simulator = (props: RouteComponentProps) => {
               </Tooltip>
               <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter1.element].name}`}>
                 <IconButton
-                  size="lg"
-                  fontSize={24}
+                  size="md"
+                  fontSize={20}
                   color="current"
                   borderRadius={100}
                   icon={elements[fighter1.element].icon}
@@ -544,11 +545,19 @@ export const Simulator = (props: RouteComponentProps) => {
             borderColor={LineColor}
             borderWidth={2}
           >
-            <Image
-              boxSize={{ base: "100px", md: 150 }}
-              borderRadius={{ base: "100px", md: 150 }}
-              src={fighter2.image_preview_url}
-            />
+            {fighter2.image_preview_url ? (
+              <Image
+                boxSize={{ base: "100px", md: 150 }}
+                borderRadius={{ base: "100px", md: 150 }}
+                src={fighter2.image_preview_url}
+              />
+            ) : (
+              <Image
+                boxSize={{ base: "100px", md: 150 }}
+                borderRadius={{ base: "100px", md: 150 }}
+                src={logo}
+              />
+            )}
           </Box>
           <Box
             width={{ base: "100px", md: 150 }}
@@ -572,8 +581,8 @@ export const Simulator = (props: RouteComponentProps) => {
             <HStack marginTop={8} align="center" spacing={4}>
               <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter2.special_element].name}`}>
                 <IconButton
-                  size="lg"
-                  fontSize={24}
+                  size="md"
+                  fontSize={20}
                   color="current"
                   borderRadius={100}
                   icon={elements[fighter2.special_element].icon}
@@ -585,8 +594,8 @@ export const Simulator = (props: RouteComponentProps) => {
               </Tooltip>
               <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter2.element].name}`}>
                 <IconButton
-                  size="lg"
-                  fontSize={24}
+                  size="md"
+                  fontSize={20}
                   color="current"
                   borderRadius={100}
                   icon={elements[fighter2.element].icon}

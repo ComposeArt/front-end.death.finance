@@ -19,7 +19,7 @@ import { PayloadContext, getCollections, getFighters } from "./utils/firebase";
 
 const theme = extendTheme({
   initialColorMode: 'dark',
-  useSystemColorMode: true,
+  // useSystemColorMode: true,
   fonts: {
     heading: 'Fira Mono',
     body: 'Fira Mono',
