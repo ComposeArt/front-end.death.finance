@@ -16,15 +16,91 @@ import {
   InputLeftAddon,
   Input,
   InputRightElement,
+  Tooltip,
+  Progress,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
 import { FaRandom } from "react-icons/fa"
+import {
+  GiPerson,
+  GiMountaintop,
+  GiMoon,
+  GiSun,
+  GiTwirlyFlower,
+  GiFire,
+  GiShadowFollower,
+  GiSandsOfTime,
+  GiSnowflake1,
+  GiWaterDrop,
+  GiHeavyLightning,
+  GiMightyForce,
+  GiWhirlwind,
+  GiPunchBlast,
+  GiPunch,
+  GiShield,
+  GiHealthNormal,
+} from "react-icons/gi"
 
 import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers } from "./utils/firebase";
 
 let prevCollection1 = '';
 let prevCollection2 = '';
+
+const elements: any = {
+  0: {
+    name: 'non-elemental',
+    icon: <GiPerson />,
+  },
+  1: {
+    name: 'earth',
+    icon: <GiMountaintop />,
+  },
+  2: {
+    name: 'fire',
+    icon: <GiFire />,
+  },
+  3: {
+    name: 'water',
+    icon: <GiWaterDrop />,
+  },
+  4: {
+    name: 'light',
+    icon: <GiSun />,
+  },
+  5: {
+    name: 'time',
+    icon: <GiSandsOfTime />,
+  },
+  6: {
+    name: 'force',
+    icon: <GiMightyForce />,
+  },
+  7: {
+    name: 'moon',
+    icon: <GiMoon />,
+  },
+  8: {
+    name: 'flower',
+    icon: <GiTwirlyFlower />,
+  },
+  9: {
+    name: 'shadow',
+    icon: <GiShadowFollower />,
+  },
+  10: {
+    name: 'ice',
+    icon: <GiSnowflake1 />,
+  },
+  11: {
+    name: 'thunder',
+    icon: <GiHeavyLightning />,
+  },
+  12: {
+    name: 'wind',
+    icon: <GiWhirlwind />,
+  },
+};
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
@@ -185,7 +261,7 @@ export const Simulator = (props: RouteComponentProps) => {
           connect to metamask to use client side or we can simulate using our oracle
         </Text>
       )}
-      <HStack marginTop={8} justify="center" spacing={4}>
+      <HStack marginTop={8} justify="center" spacing={16}>
         <VStack spacing={4}>
           <Select
             fontSize={12}
@@ -307,7 +383,7 @@ export const Simulator = (props: RouteComponentProps) => {
           </InputGroup>
         </VStack>
       </HStack>
-      <HStack marginTop={8} justify="flex-start" spacing={8}>
+      <HStack marginTop={12} align="flex-start" spacing={8}>
         <VStack spacing={4}>
           <Box
             borderRadius={{ base: "100px", md: 150 }}
@@ -322,10 +398,11 @@ export const Simulator = (props: RouteComponentProps) => {
           </Box>
           <Box
             width={{ base: "100px", md: 150 }}
+            height="60px"
             textAlign="center"
           >
             <Text
-              fontSize={10}
+              fontSize={{ base: 10, md: 12 }}
               textDecoration="underline"
               opacity={0.5}
               onClick={()=> window.open(fighter1.permalink, "_blank")}
@@ -337,10 +414,124 @@ export const Simulator = (props: RouteComponentProps) => {
               {fighter1.name || `${fighter1.collection} #${fighter1.token_id}`}
             </Text>
           </Box>
+          {!_.isEmpty(fighter1) && (
+            <HStack marginTop={8} align="center" spacing={4}>
+              <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter1.special_element].name}`}>
+                <IconButton
+                  size="lg"
+                  fontSize={24}
+                  color="current"
+                  borderRadius={100}
+                  icon={elements[fighter1.special_element].icon}
+                  aria-label={elements[fighter1.special_element].name}
+                  _hover={{
+                    cursor: 'default'
+                  }}
+                />
+              </Tooltip>
+              <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter1.element].name}`}>
+                <IconButton
+                  size="lg"
+                  fontSize={24}
+                  color="current"
+                  borderRadius={100}
+                  icon={elements[fighter1.element].icon}
+                  aria-label={elements[fighter1.element].name}
+                  _hover={{
+                    cursor: 'default'
+                  }}
+                />
+              </Tooltip>
+            </HStack>
+          )}
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter1.special_attack}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiPunchBlast />}
+                aria-label={'Special Attack'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter1.special_attack / 15) * 100}
+              colorScheme="blue"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`attack | ${fighter1.attack}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiPunch />}
+                aria-label={'Attack'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter1.attack / 15) * 100}
+              colorScheme="blue"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`defense | ${fighter1.defense}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiShield />}
+                aria-label={'Defense'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter1.defense / 15) * 100}
+              colorScheme="blue"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`health | ${fighter1.health}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiHealthNormal />}
+                aria-label={'Health'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter1.health / 15) * 100}
+              colorScheme="blue"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
         </VStack>
         <Box
           display='flex'
-          height="100px"
+          height={{ base: "100px", md: 150 }}
           justifyContent="center"
           alignItems="center"
           opacity={0.5}
@@ -361,10 +552,11 @@ export const Simulator = (props: RouteComponentProps) => {
           </Box>
           <Box
             width={{ base: "100px", md: 150 }}
+            height="60px"
             textAlign="center"
           >
             <Text
-              fontSize={10}
+              fontSize={{ base: 10, md: 12 }}
               textDecoration="underline"
               opacity={0.5}
               onClick={()=> window.open(fighter2.permalink, "_blank")}
@@ -376,6 +568,120 @@ export const Simulator = (props: RouteComponentProps) => {
               {fighter2.name || `${fighter2.collection} #${fighter2.token_id}`}
             </Text>
           </Box>
+          {!_.isEmpty(fighter2) && (
+            <HStack marginTop={8} align="center" spacing={4}>
+              <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter2.special_element].name}`}>
+                <IconButton
+                  size="lg"
+                  fontSize={24}
+                  color="current"
+                  borderRadius={100}
+                  icon={elements[fighter2.special_element].icon}
+                  aria-label={elements[fighter2.special_element].name}
+                  _hover={{
+                    cursor: 'default'
+                  }}
+                />
+              </Tooltip>
+              <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter2.element].name}`}>
+                <IconButton
+                  size="lg"
+                  fontSize={24}
+                  color="current"
+                  borderRadius={100}
+                  icon={elements[fighter2.element].icon}
+                  aria-label={elements[fighter2.element].name}
+                  _hover={{
+                    cursor: 'default'
+                  }}
+                />
+              </Tooltip>
+            </HStack>
+          )}
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter2.special_attack}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiPunchBlast />}
+                aria-label={'Special Attack'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter2.special_attack / 15) * 100}
+              colorScheme="red"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`attack | ${fighter2.attack}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiPunch />}
+                aria-label={'Attack'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter2.attack / 15) * 100}
+              colorScheme="red"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`defense | ${fighter2.defense}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiShield />}
+                aria-label={'Defense'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter2.defense / 15) * 100}
+              colorScheme="red"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`health | ${fighter2.health}`}>
+              <IconButton
+                size="sm"
+                fontSize={18}
+                color="current"
+                borderRadius={100}
+                icon={<GiHealthNormal />}
+                aria-label={'Health'}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Progress
+              value={(fighter2.health / 15) * 100}
+              colorScheme="red"
+              width={{ base: "80px", md: 130 }}
+              borderRadius={100}
+            />
+          </HStack>
         </VStack>
       </HStack>
     </Container>

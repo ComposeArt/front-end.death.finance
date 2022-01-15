@@ -17,12 +17,15 @@ import { RiSwordFill } from "react-icons/ri"
 
 import { LinkButton } from "./LinkButton";
 import grim from './images/mgrim-flip.png';
+import fcDark from './images/fight-club-logo-dark.png';
+import fcLight from './images/fight-club-logo-light.png';
 import { PayloadContext, getPlayers, getRandomPlayers } from "./utils/firebase";
 
 export const Home = (props: RouteComponentProps) => {
   const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.800', 'white');
+  const logoType = useColorModeValue(fcDark, fcLight);
 
   const { collections, fighters } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
@@ -62,27 +65,35 @@ export const Home = (props: RouteComponentProps) => {
 
   return (
     <Container maxW='container.md' centerContent>
-      <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
+      <Image
+        marginTop={12}
+        width="50%"
+        opacity={0.8}
+        src={logoType}
+      />
+      {/* <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
         Welcome to the NFT
         <br/>
         Fight Club
-      </Heading>
+      </Heading> */}
       <Box
-        borderWidth={1}
+        borderBottomWidth={1}
         borderColor={LineColor}
         paddingTop={8}
         paddingLeft={8}
         paddingRight={8}
-        marginTop={12}
+        marginTop={8}
       >
         <Text>
+          Welcome to the NFT Fight Club!
+          <br/><br/>
           My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
           <br/><br/>
           You bring your hard earned NFTs and I let them fight each other for pride and reputation.
           <br/><br/>
           Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
           <br/><br/>
-          I welcome you to the inaugural season of death.finance!
+          Enjoy the inaugural season of death.finance!
           <br/><br/>
         </Text>
         <Text fontSize={12} color={"green.500"}>
@@ -98,13 +109,13 @@ export const Home = (props: RouteComponentProps) => {
           </Text>
           <Image
             padding={-8}
-            boxSize="120px"
-            borderRadius="120px"
+            boxSize="160px"
+            borderRadius="160px"
             src={grim}
           />
         </HStack>
       </Box>
-      <Heading as='h2' size='lg' marginTop={12} textAlign="center">
+      <Heading size='lg' marginTop={12} textAlign="center">
         Season 0
       </Heading>
       <Text marginTop={4}>
