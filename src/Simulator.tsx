@@ -23,19 +23,6 @@ import { RouteComponentProps } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
 import { FaRandom } from "react-icons/fa";
 import {
-  GiPerson,
-  GiMountaintop,
-  GiMoon,
-  GiSun,
-  GiTwirlyFlower,
-  GiFire,
-  GiShadowFollower,
-  GiSandsOfTime,
-  GiSnowflake1,
-  GiWaterDrop,
-  GiHeavyLightning,
-  GiMightyForce,
-  GiWhirlwind,
   GiPunchBlast,
   GiPunch,
   GiShield,
@@ -45,64 +32,10 @@ import {
 import logo from './images/logo.png';
 
 import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers } from "./utils/firebase";
+import { elements, specialAttacks, attacks } from "./utils/fighting";
 
 let prevCollection1 = '';
 let prevCollection2 = '';
-
-const elements: any = {
-  0: {
-    name: 'non-elemental',
-    icon: <GiPerson />,
-  },
-  1: {
-    name: 'earth',
-    icon: <GiMountaintop />,
-  },
-  2: {
-    name: 'fire',
-    icon: <GiFire />,
-  },
-  3: {
-    name: 'water',
-    icon: <GiWaterDrop />,
-  },
-  4: {
-    name: 'light',
-    icon: <GiSun />,
-  },
-  5: {
-    name: 'time',
-    icon: <GiSandsOfTime />,
-  },
-  6: {
-    name: 'force',
-    icon: <GiMightyForce />,
-  },
-  7: {
-    name: 'moon',
-    icon: <GiMoon />,
-  },
-  8: {
-    name: 'flower',
-    icon: <GiTwirlyFlower />,
-  },
-  9: {
-    name: 'shadow',
-    icon: <GiShadowFollower />,
-  },
-  10: {
-    name: 'ice',
-    icon: <GiSnowflake1 />,
-  },
-  11: {
-    name: 'thunder',
-    icon: <GiHeavyLightning />,
-  },
-  12: {
-    name: 'wind',
-    icon: <GiWhirlwind />,
-  },
-};
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
@@ -238,6 +171,11 @@ export const Simulator = (props: RouteComponentProps) => {
       }
     })();
   }, [collection2]);
+
+  const fighter1SpecialElement: any = fighter1.special_element || 0;
+  const fighter2SpecialElement: any = fighter2.special_element || 0;
+  const fighter1Element: any = fighter1.element || 0;
+  const fighter2Element: any = fighter2.element || 0;
 
   return (
     <Container maxW='container.md' centerContent>
@@ -415,36 +353,34 @@ export const Simulator = (props: RouteComponentProps) => {
               {fighter1.name || `${fighter1.collection} #${fighter1.token_id}`}
             </Text>
           </Box>
-          {!_.isEmpty(fighter1) && (
-            <HStack marginTop={8} align="center" spacing={4}>
-              <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter1.special_element].name}`}>
-                <IconButton
-                  size="md"
-                  fontSize={20}
-                  color="current"
-                  borderRadius={100}
-                  icon={elements[fighter1.special_element].icon}
-                  aria-label={elements[fighter1.special_element].name}
-                  _hover={{
-                    cursor: 'default'
-                  }}
-                />
-              </Tooltip>
-              <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter1.element].name}`}>
-                <IconButton
-                  size="md"
-                  fontSize={20}
-                  color="current"
-                  borderRadius={100}
-                  icon={elements[fighter1.element].icon}
-                  aria-label={elements[fighter1.element].name}
-                  _hover={{
-                    cursor: 'default'
-                  }}
-                />
-              </Tooltip>
-            </HStack>
-          )}
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter1SpecialElement].name}`}>
+              <IconButton
+                size="md"
+                fontSize={20}
+                color="current"
+                borderRadius={100}
+                icon={elements[fighter1SpecialElement].icon}
+                aria-label={elements[fighter1SpecialElement].name}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter1Element].name}`}>
+              <IconButton
+                size="md"
+                fontSize={20}
+                color="current"
+                borderRadius={100}
+                icon={elements[fighter1Element].icon}
+                aria-label={elements[fighter1Element].name}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+          </HStack>
           <HStack marginTop={8} align="center" spacing={4}>
             <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter1.special_attack}`}>
               <IconButton
@@ -577,36 +513,34 @@ export const Simulator = (props: RouteComponentProps) => {
               {fighter2.name || `${fighter2.collection} #${fighter2.token_id}`}
             </Text>
           </Box>
-          {!_.isEmpty(fighter2) && (
-            <HStack marginTop={8} align="center" spacing={4}>
-              <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter2.special_element].name}`}>
-                <IconButton
-                  size="md"
-                  fontSize={20}
-                  color="current"
-                  borderRadius={100}
-                  icon={elements[fighter2.special_element].icon}
-                  aria-label={elements[fighter2.special_element].name}
-                  _hover={{
-                    cursor: 'default'
-                  }}
-                />
-              </Tooltip>
-              <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter2.element].name}`}>
-                <IconButton
-                  size="md"
-                  fontSize={20}
-                  color="current"
-                  borderRadius={100}
-                  icon={elements[fighter2.element].icon}
-                  aria-label={elements[fighter2.element].name}
-                  _hover={{
-                    cursor: 'default'
-                  }}
-                />
-              </Tooltip>
-            </HStack>
-          )}
+          <HStack marginTop={8} align="center" spacing={4}>
+            <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter2SpecialElement].name}`}>
+              <IconButton
+                size="md"
+                fontSize={20}
+                color="current"
+                borderRadius={100}
+                icon={elements[fighter2SpecialElement].icon}
+                aria-label={elements[fighter2SpecialElement].name}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+            <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter2Element].name}`}>
+              <IconButton
+                size="md"
+                fontSize={20}
+                color="current"
+                borderRadius={100}
+                icon={elements[fighter2Element].icon}
+                aria-label={elements[fighter2Element].name}
+                _hover={{
+                  cursor: 'default'
+                }}
+              />
+            </Tooltip>
+          </HStack>
           <HStack marginTop={8} align="center" spacing={4}>
             <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter2.special_attack}`}>
               <IconButton
