@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { initializeApp } from 'firebase/app';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit, where } from 'firebase/firestore/lite';
 import _ from 'lodash';
 
@@ -11,6 +12,8 @@ const app = initializeApp({
 });
 
 const db = getFirestore(app);
+const functions = getFunctions(app);
+const simulateFight = httpsCallable(functions, 'simulateFight');
 
 interface PayloadTypes {
   collections: [];
@@ -25,6 +28,25 @@ const defaultPayload: PayloadTypes = {
 };
 
 export const PayloadContext = createContext(defaultPayload);
+
+export const remoteSimulateFight = async ({
+  fighterOneStats,
+  fighterTwoStats,
+  randomness,
+  blocknumber,
+}: any) => {
+  const options = {
+    isSimulated: randomness && blocknumber ? true : false,
+    fighterOneStats,
+    fighterTwoStats,
+    random: randomness || '0',
+    blockNumber: blocknumber || '1',
+  };
+
+  const result = await simulateFight(options);
+
+  return result.data;
+};
 
 export const getCollections = async () => {
   const collections: any = [];

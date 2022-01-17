@@ -84,9 +84,11 @@ export const Home = (props: RouteComponentProps) => {
         paddingRight={8}
         marginTop={8}
       >
-        <Text>
+        <Text fontWeight={900}>
           Welcome to the NFT Fight Club!
-          <br/><br/>
+        </Text>
+        <Text>
+          <br/>
           My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
           <br/><br/>
           You bring your hard earned NFTs and I let them fight each other for pride and reputation.
@@ -109,8 +111,8 @@ export const Home = (props: RouteComponentProps) => {
           </Text>
           <Image
             padding={-8}
-            boxSize="160px"
-            borderRadius="160px"
+            boxSize="200px"
+            borderRadius="200px"
             src={grim}
           />
         </HStack>
@@ -144,6 +146,37 @@ export const Home = (props: RouteComponentProps) => {
           />
         </Box>
       </HStack>
+      <HStack marginTop={12} justify="center" spacing={8}>
+        <Box
+          borderRadius={{ base: "100px", md: 150 }}
+          borderColor={LineColor}
+          borderWidth={2}
+        >
+          <Image
+            boxSize={{ base: "100px", md: 150 }}
+            borderRadius={{ base: "100px", md: 150 }}
+            src={randomPlayers.player1.image_preview_url}
+          />
+        </Box>
+        <RiSwordFill />
+        <Box
+          borderRadius={{ base: "100px", md: 150 }}
+          borderColor={LineColor}
+          borderWidth={2}
+        >
+          <Image
+            boxSize={{ base: "100px", md: 150 }}
+            borderRadius={{ base: "100px", md: 150 }}
+            src={randomPlayers.player2.image_preview_url}
+          />
+        </Box>
+      </HStack>
+      <Box marginTop={8}>
+        <LinkButton
+          text="simulate fights"
+          path="/simulator"
+        />
+      </Box>
       <Heading as='h2' size='sm' marginTop={16} textAlign="center">
         Recently Registered
       </Heading>
@@ -171,40 +204,6 @@ export const Home = (props: RouteComponentProps) => {
           );
         })}
       </Wrap>
-      <Heading as='h2' size='sm' marginTop={16} textAlign="center">
-        Simulate Matches
-      </Heading>
-      <HStack marginTop={8} justify="center" spacing={4}>
-        <Box
-          borderRadius="80px"
-          borderColor={LineColor}
-          borderWidth={2}
-        >
-          <Image
-            boxSize="80px"
-            borderRadius="80px"
-            src={randomPlayers.player1.image_preview_url}
-          />
-        </Box>
-        <RiSwordFill />
-        <Box
-          borderRadius="80px"
-          borderColor={LineColor}
-          borderWidth={2}
-        >
-          <Image
-            boxSize="80px"
-            borderRadius="80px"
-            src={randomPlayers.player2.image_preview_url}
-          />
-        </Box>
-      </HStack>
-      <Box marginTop={8}>
-        <LinkButton
-          text="simulate"
-          path="/simulator"
-        />
-      </Box>
       <Heading as='h2' size='sm' marginTop={16} textAlign="center">
         {collections.length} Collections
       </Heading>

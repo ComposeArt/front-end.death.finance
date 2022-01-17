@@ -18,6 +18,9 @@ import {
   InputRightElement,
   Tooltip,
   Progress,
+  Button,
+  useDisclosure,
+  Fade,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
@@ -31,11 +34,17 @@ import {
 
 import logo from './images/logo.png';
 
-import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers } from "./utils/firebase";
-import { elements, specialAttacks, attacks } from "./utils/fighting";
+import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers, remoteSimulateFight } from "./utils/firebase";
+import { elements, matchReporter } from "./utils/fighting";
 
 let prevCollection1 = '';
 let prevCollection2 = '';
+
+function delay(delay: any) {
+  return new Promise (function(fulfill) {
+    setTimeout(fulfill, delay);
+  });
+};
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
@@ -50,6 +59,7 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const [loading1, setLoading1]: any = useState(true);
   const [loading2, setLoading2]: any = useState(true);
+  const [simulating, setSimulating]: any = useState(false);
 
   const [collection1, setCollection1]: any = useState('');
   const [collection2, setCollection2]: any = useState('');
@@ -60,8 +70,18 @@ export const Simulator = (props: RouteComponentProps) => {
   const [player1, setPlayer1]: any = useState('');
   const [player2, setPlayer2]: any = useState('');
 
+  const [userRandomness, setUserRandomness]: any = useState('');
+  const [userBlocknumber, setUserBlocknumber]: any = useState('');
+
+  const [match, setMatch]: any = useState('');
+
+  const [matchBouts, setMatchBouts]: any = useState([]);
+
+  const { isOpen, onToggle } = useDisclosure();
+
   const randomFighter1 = async () => {
     try {
+      setMatch('');
       setLoading1(true);
 
       if (collection1) {
@@ -76,8 +96,6 @@ export const Simulator = (props: RouteComponentProps) => {
         const result = await getRandomPlayer(collections);
         setFighter1(result);
       }
-
-      setLoading1(false);
     } catch (error) {
       toast({
         title: 'failed to load nft',
@@ -86,10 +104,13 @@ export const Simulator = (props: RouteComponentProps) => {
         duration: 3000,
       });
     }
+
+    setLoading1(false);
   };
 
   const randomFighter2 = async () => {
     try {
+      setMatch('');
       setLoading2(true);
 
       if (collection2) {
@@ -104,8 +125,6 @@ export const Simulator = (props: RouteComponentProps) => {
         const result = await getRandomPlayer(collections);
         setFighter2(result);
       }
-
-      setLoading2(false);
     } catch (error) {
       toast({
         title: 'failed to load nft',
@@ -114,7 +133,35 @@ export const Simulator = (props: RouteComponentProps) => {
         duration: 3000,
       });
     }
+
+    setLoading2(false);
   };
+
+  const simulateFight = async () => {
+    setSimulating(true);
+    setMatch('');
+    setMatchBouts([]);
+
+    try {
+      const result = await remoteSimulateFight({
+        fighterOneStats: fighter1.binary_power,
+        fighterTwoStats: fighter2.binary_power,
+        randomness: userRandomness,
+        blocknumber: userBlocknumber,
+      });
+
+      setMatch(result);
+    } catch (error) {
+      toast({
+        title: 'failed to simulate fight',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+
+    setSimulating(false);
+  }
 
   useEffect(() => {
     setMounted(true);
@@ -125,6 +172,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (mounted && collections.length) {
         if (_.isEmpty(fighter1) && _.isEmpty(fighter2)) {
           const result = await getRandomPlayers(collections);
+          setMatch('');
           setFighter1(result.player1);
           setFighter2(result.player2);
           setLoading1(false);
@@ -139,6 +187,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection1 && collection1 !== prevCollection1) {
         setLoading1(true);
         setPlayer1('');
+        setMatch('');
         const players = await getCollectionPlayers(collection1);
 
         prevCollection1 = collection1;
@@ -158,6 +207,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection2 && collection2 !== prevCollection2) {
         setLoading2(true);
         setPlayer2('');
+        setMatch('');
         const players = await getCollectionPlayers(collection2);
 
         prevCollection2 = collection2;
@@ -171,6 +221,18 @@ export const Simulator = (props: RouteComponentProps) => {
       }
     })();
   }, [collection2]);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (match) {
+        matchReporter({
+          match,
+          fighter1,
+          fighter2,
+        });
+      }
+    })();
+  }, [match, fighter1, fighter2]);
 
   const fighter1SpecialElement: any = fighter1.special_element || 0;
   const fighter2SpecialElement: any = fighter2.special_element || 0;
@@ -205,6 +267,7 @@ export const Simulator = (props: RouteComponentProps) => {
             _hover={{
               cursor: 'pointer'
             }}
+            isDisabled={simulating}
           >
             {collections.map((c: any) => {
               return (
@@ -231,7 +294,7 @@ export const Simulator = (props: RouteComponentProps) => {
               onChange={(event) => {
                 setPlayer1(event.target.value);
               }}
-              isDisabled={!collection1}
+              isDisabled={!collection1 || simulating}
               onKeyPress={(event) => {
                 if (event.key === 'Enter') {
                   randomFighter1();
@@ -249,6 +312,7 @@ export const Simulator = (props: RouteComponentProps) => {
                 icon={<FaRandom />}
                 aria-label={`Random Fighter 1`}
                 isLoading={loading1}
+                isDisabled={simulating}
               />
             </InputRightElement>
           </InputGroup>
@@ -265,6 +329,7 @@ export const Simulator = (props: RouteComponentProps) => {
             _hover={{
               cursor: 'pointer'
             }}
+            isDisabled={simulating}
           >
             {collections.map((c: any) => {
               return (
@@ -291,7 +356,7 @@ export const Simulator = (props: RouteComponentProps) => {
               onChange={(event) => {
                 setPlayer2(event.target.value);
               }}
-              isDisabled={!collection2}
+              isDisabled={!collection2 || simulating}
               onKeyPress={(event) => {
                 if (event.key === 'Enter') {
                   randomFighter2();
@@ -309,6 +374,7 @@ export const Simulator = (props: RouteComponentProps) => {
                 icon={<FaRandom />}
                 aria-label={`Random Fighter 2`}
                 isLoading={loading2}
+                isDisabled={simulating}
               />
             </InputRightElement>
           </InputGroup>
@@ -350,7 +416,7 @@ export const Simulator = (props: RouteComponentProps) => {
                 opacity: 1,
               }}
             >
-              {fighter1.name || `${fighter1.collection} #${fighter1.token_id}`}
+              {`${fighter1.collection} #${fighter1.token_id}`}
             </Text>
           </Box>
           <HStack marginTop={8} align="center" spacing={4}>
@@ -510,7 +576,7 @@ export const Simulator = (props: RouteComponentProps) => {
                 opacity: 1,
               }}
             >
-              {fighter2.name || `${fighter2.collection} #${fighter2.token_id}`}
+              {`${fighter2.collection} #${fighter2.token_id}`}
             </Text>
           </Box>
           <HStack marginTop={8} align="center" spacing={4}>
@@ -627,6 +693,106 @@ export const Simulator = (props: RouteComponentProps) => {
           </HStack>
         </VStack>
       </HStack>
+      <Button
+        isLoading={simulating}
+        loadingText='Simulating'
+        leftIcon={<RiSwordFill />}
+        onClick={() => {simulateFight()}}
+        marginTop={12}
+        isDisabled={
+          (userRandomness && parseInt(userRandomness, 10) < 0) ||
+          (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
+          (userBlocknumber && parseInt(userBlocknumber, 10) < 0) ||
+          (userBlocknumber && parseInt(userBlocknumber, 10) % 5 === 0) ||
+          (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
+          (userRandomness && !userBlocknumber) ||
+          (!userRandomness && userBlocknumber)
+        }
+      >
+        FIGHT
+      </Button>
+      <Button
+        onClick={() => {
+          if (isOpen) {
+            setUserRandomness('');
+            setUserBlocknumber('');
+          }
+
+          onToggle();
+        }}
+        variant="link"
+        fontSize={12}
+        marginTop={8}
+        opacity={isOpen ? 1 : 0.5}
+        _hover={{
+          opacity: 1,
+          textDecoration: 'underline',
+        }}
+        isDisabled={simulating}
+      >
+          Advanced Inputs
+      </Button>
+      <Box display="flex" height="200px" align="center">
+        <Fade in={isOpen} unmountOnExit={true}>
+          <InputGroup
+            size="sm"
+            width={{ base: "160px", md: 200 }}
+            marginTop={4}
+          >
+            <InputLeftAddon
+              children='#'
+              borderRadius={100}
+            />
+            <Input
+              borderRadius={100}
+              fontSize={12}
+              type='number'
+              placeholder='randomness'
+              errorBorderColor='red.500'
+              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
+              value={userRandomness}
+              onChange={(event) => {
+                setUserRandomness(event.target.value);
+              }}
+              isDisabled={simulating}
+            />
+          </InputGroup>
+          <InputGroup
+            size="sm"
+            width={{ base: "160px", md: 200 }}
+            marginTop={4}
+          >
+            <InputLeftAddon
+              children='#'
+              borderRadius={100}
+            />
+            <Input
+              borderRadius={100}
+              fontSize={12}
+              type='number'
+              placeholder='blocknumber'
+              errorBorderColor='red.500'
+              value={userBlocknumber}
+              isInvalid={
+                parseInt(userBlocknumber, 10) < 0 ||
+                parseInt(userBlocknumber, 10) % 5 === 0 ||
+                _.indexOf(userBlocknumber, '.') > -1
+              }
+              onChange={(event) => {
+                setUserBlocknumber(event.target.value);
+              }}
+              isDisabled={simulating}
+            />
+          </InputGroup>
+          <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
+            Use the below inputs to replace the current block number and current randomness in the smart contract.
+            <br/><br/>
+            Can run on any blocks other than those divisible by 5 (0, 5, 10, 15, ...).
+            <br/><br/>
+            Only positive whole numbers for both fields.
+          </Text>
+        </Fade>
+      </Box>
     </Container>
   );
 };
