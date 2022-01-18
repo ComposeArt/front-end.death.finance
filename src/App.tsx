@@ -14,6 +14,7 @@ import { Subheader } from "./Subheader";
 import { Header } from "./Header";
 import { Home } from "./Home";
 import { Simulator } from "./Simulator";
+import { Simulation } from "./Simulation";
 
 import { PayloadContext, getCollections, getFighters } from "./utils/firebase";
 
@@ -65,6 +66,7 @@ export const App = () => (
       <NotFound default />
       <Home path="/" />
       <Simulator path="/simulator" />
+      <Simulation path="/simulation" />
     </Nav>
   </Router>
 );

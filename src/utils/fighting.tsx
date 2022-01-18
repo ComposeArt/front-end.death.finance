@@ -123,7 +123,7 @@ export const specialAttacks: any = {
   4: [
     'radiates with sunshine',
     'blinds with a blinding light',
-    'targets with a sunbeam',
+    'fires a sunbeam',
     'throws a guiding bolt',
     'initiates a solar eclipse',
     'initiates a final solar eclipse',
@@ -280,7 +280,6 @@ export const matchReporter = ({
   fighter1,
   fighter2,
 }: any) => {
-  console.log(match);
   const bouts = match.slice(1, -1).match(/.{1,9}/g);
   const winner = match.slice(-1);
 
@@ -309,11 +308,8 @@ export const matchReporter = ({
     p2Stats.attack = Math.min(p2Stats.attack * 2, 15);
   }
 
-  const p1Name = `${fighter1.collection} #${fighter1.token_id}`;
-  const p2Name = `${fighter2.collection} #${fighter2.token_id}`;
-
-  console.log(bouts);
-  console.log(winner);
+  const p1Name = `|${fighter1.collection}_#${_.truncate(fighter1.token_id, { length: 7 })}|`;
+  const p2Name = `|${fighter2.collection}_#${_.truncate(fighter2.token_id, { length: 7 })}|`;
 
   const logs = [];
 
@@ -323,6 +319,9 @@ export const matchReporter = ({
     const counter_attack = parseInt(bout.substring(5, 9), 2);
 
     let log = '';
+    let type;
+    let damage;
+    let didBreak = false;
 
     if (turn === '0') {
       log = `${p1Name} `;
@@ -336,34 +335,43 @@ export const matchReporter = ({
           if (p1Stats.defense > 0 && counter_attack > attack) {
             p1Stats.defense -= counter_attack - attack;
 
-            log += `knows this move and easily counters, dealing ${counter_attack - attack} damage instead, `;
+            log += `knows this move and easily counters, dealing |${counter_attack - attack} damage| instead, `;
+            damage = counter_attack - attack;
+            type = 'counter';
 
             if (p1Stats.defense <= 0) {
-              log += `enough to break ${p1Name} defense and leaving them exposed!`;
+              didBreak = true;
+              log += `enough to break ${p1Name}'s defense!`;
             } else {
-              log += `leaving ${p1Name} with ${p1Stats.defense} defense remaining.`;
+              log += `leaving ${p1Name} with |${p1Stats.defense} defense| remaining.`;
             }
           } else {
+            type = 'dodge';
             log += `sees it coming and dodges out of the way!`;
           }
         } else {
           p2Stats.defense -= attack;
 
           if (attack === 0) {
+            type = 'misses';
             log += `tries to launch a special attack, but completely misses!`
           } else {
             if (attack === p1Stats.special_attack) {
+              type = 'special-critical';
               log += `${p1SpecialAttackName}, dazing ${p2Name} `;
             } else {
+              type = 'special-attack';
               log += `${p1SpecialAttackName} `;
             }
 
-            log += `dealing ${attack} damage, `
+            log += `dealing |${attack} damage|, `
+            damage = attack;
 
             if (p2Stats.defense <= 0) {
-              log += `enough to break ${p2Name} defense and leaving them exposed!`;
+              didBreak = true;
+              log += `enough to break ${p2Name}'s defense!`;
             } else {
-              log += `leaving ${p2Name} with ${p2Stats.defense} defense remaining.`;
+              log += `leaving ${p2Name} with |${p2Stats.defense} defense| remaining.`;
             }
           }
         }
@@ -376,34 +384,43 @@ export const matchReporter = ({
           if (p2Stats.defense <= 0 && p1Stats.defense <= 0 && counter_attack > attack) {
             p1Stats.health -= counter_attack - attack;
 
-            log += `is prepared and counters, dealing ${counter_attack - attack} damage instead, `;
+            type = 'counter';
+            log += `is prepared and counters, dealing |${counter_attack - attack} damage| instead, `;
+            damage = counter_attack - attack;
 
             if (p1Stats.health <= 0) {
+              didBreak = true;
               log += `enough to KO ${p1Name}!`;
             } else {
-              log += `leaving ${p1Name} with ${p1Stats.health} health remaining.`;
+              log += `leaving ${p1Name} with |${p1Stats.health} health| remaining.`;
             }
           } else {
+            type = 'dodge';
             log += `barely dodges out of the way!`;
           }
         } else {
           p2Stats.health -= attack;
 
           if (attack === 0) {
+            type = 'misses';
             log += `tries to sneak in an attack, but completely misses!`
           } else {
             if (attack === p1Stats.attack) {
+              type = 'critical';
               log += `${p1AttackName}, dazing ${p2Name} `;
             } else {
+              type = 'attack';
               log += `${p1AttackName} `;
             }
 
-            log += `dealing ${attack} damage, `;
+            log += `dealing |${attack} damage|, `;
+            damage = attack;
 
             if (p2Stats.health <= 0) {
+              didBreak = true;
               log += `enough to KO ${p2Name}!`;
             } else {
-              log += `leaving ${p2Name} with ${p2Stats.health} health remaining.`;
+              log += `leaving ${p2Name} with |${p2Stats.health} health| remaining.`;
             }
           }
         }
@@ -414,43 +431,50 @@ export const matchReporter = ({
       if (p1Stats.defense > 0) {
         const p2SpecialAttackName = specialAttacks[p2Stats.special_element][_.floor(attack / 3)];
 
-        console.log(counter_attack, attack)
-
         if (counter_attack > 0 && counter_attack >= attack) {
           log += `${p2SpecialAttackName} but ${p1Name} `;
 
           if (p2Stats.defense > 0 && counter_attack > attack) {
             p2Stats.defense -= counter_attack - attack;
-            // p1 counter attacks p2
-            log += `expected this and easily counters, dealing ${counter_attack - attack} damage instead, `;
+
+            log += `expected this and easily counters, dealing |${counter_attack - attack} damage| instead, `;
+            damage = counter_attack - attack;
+            type = 'counter';
 
             if (p2Stats.defense <= 0) {
-              log += `enough to break ${p2Name} defense and leaving them exposed!`;
+              didBreak = true;
+              log += `enough to break ${p2Name} defense!`;
             } else {
-              log += `leaving ${p2Name} with ${p2Stats.defense} defense remaining.`;
+              log += `leaving ${p2Name} with |${p2Stats.defense} defense| remaining.`;
             }
 
           } else {
+            type = 'dodge';
             log += `sees it coming and dodges out of the way!`;
           }
         } else {
           p1Stats.defense -= attack;
 
           if (attack === 0) {
+            type = 'misses';
             log += `tries to launch a special attack, but completely misses!`
           } else {
             if (attack === p2Stats.special_attack) {
+              type = 'special-critical';
               log += `${p2SpecialAttackName}, dazing ${p1Name} `;
             } else {
+              type = 'special-attack';
               log += `${p2SpecialAttackName} `;
             }
 
-            log += `dealing ${attack} damage, `
+            log += `dealing |${attack} damage|, `;
+            damage = attack;
 
             if (p1Stats.defense <= 0) {
-              log += `enough to break ${p1Name} defense and leaving them exposed!`;
+              didBreak = true;
+              log += `enough to break ${p1Name} defense!`;
             } else {
-              log += `leaving ${p1Name} with ${p1Stats.defense} defense remaining.`;
+              log += `leaving ${p1Name} with |${p1Stats.defense} defense| remaining.`;
             }
           }
         }
@@ -463,55 +487,85 @@ export const matchReporter = ({
           if (p1Stats.defense <= 0 && p2Stats.defense <= 0 && counter_attack > attack) {
             p2Stats.health -= counter_attack - attack;
 
-            log += `is prepared and counters, dealing ${counter_attack - attack} damage instead, `;
+            log += `is prepared and counters, dealing |${counter_attack - attack} damage| instead, `;
+            damage = counter_attack - attack;
+            type = 'counter';
 
             if (p2Stats.health <= 0) {
+              didBreak = true;
               log += `enough to KO ${p2Name}!`;
             } else {
-              log += `leaving ${p2Name} with ${p2Stats.health} health remaining.`;
+              log += `leaving ${p2Name} with |${p2Stats.health} health| remaining.`;
             }
           } else {
+            type = 'dodge';
             log += `barely dodges out of the way!`;
           }
         } else {
           p1Stats.health -= attack;
 
           if (attack === 0) {
+            type = 'misses';
             log += `tries to sneak in an attack, but completely misses!`
           } else {
-            // p2 lands attack on p1
             if (attack === p2Stats.attack) {
+              type = 'critical';
               log += `${p2AttackName}, dazing ${p1Name} `;
             } else {
+              type = 'attack';
               log += `${p2AttackName} `;
             }
 
-            log += `dealing ${attack} damage, `;
+            log += `dealing |${attack} damage|, `;
+            damage = attack;
 
             if (p1Stats.health <= 0) {
+              didBreak = true;
               log += `enough to KO ${p1Name}!`;
             } else {
-              log += `leaving ${p1Name} with ${p1Stats.health} health remaining.`;
+              log += `leaving ${p1Name} with |${p1Stats.health} health| remaining.`;
             }
           }
         }
       }
     }
 
-    logs.push(log);
+    logs.push({
+      turn,
+      type,
+      didBreak,
+      damage,
+      log,
+    });
   }
 
-  if (logs.length === 10) {
+  let finalLog = '';
+
+  if (logs.length === 10 && p1Stats.health > 0 && p2Stats.health > 0) {
     if (p1Stats.health > p2Stats.health) {
-      logs.push(`After the official 10 bouts, ${p1Name} is declared the winner with ${p1Stats.health} health remaining versus ${p2Name}'s ${p2Stats.health} health.`);
+      finalLog = `After the official |10 bouts|, ${p1Name} is declared the winner with |${p1Stats.health} health| remaining versus ${p2Name}'s |${p2Stats.health} health|.`;
     } else if (p2Stats.health > p1Stats.health) {
-      logs.push(`After the official 10 bouts, ${p2Name} is declared the winner with ${p2Stats.health} health remaining versus ${p1Name}'s ${p1Stats.health} health.`);
-    } else if (winner === '0') {
-      logs.push(`After the official 10 bouts and with both fighters tied in their efforts, a final duel between them both resulted in ${p1Name} landing the final blow and declaring victory!`);
+      finalLog = `After the official |10 bouts|, ${p2Name} is declared the winner with |${p2Stats.health} health| remaining versus ${p1Name}'s |${p1Stats.health} health|.`;
+    } else if (p2Stats.health === p1Stats.health) {
+      if (winner === '0') {
+        finalLog = `After the official |10 bouts| and with both fighters tied in their efforts, a final duel between them both resulted in ${p1Name} landing the final blow and declaring victory!`;
+      } else {
+        finalLog = `After the official |10 bouts| and with both fighters tied in their efforts, a final duel between them both resulted in ${p2Name} landing the final blow and declaring victory!`;
+      }
+    }
+  } else {
+    if (winner === '0') {
+      finalLog = `After |${bouts.length} bouts|, the winner by KO is ${p1Name}!`;
     } else {
-      logs.push(`After the official 10 bouts and with both fighters tied in their efforts, a final duel between them both resulted in ${p2Name} landing the final blow and declaring victory!`);
+      finalLog = `After |${bouts.length} bouts|, the winner by KO is ${p2Name}!`;
     }
   }
 
-  console.log(logs);
-}
+  logs.push({
+    winner,
+    turn: winner,
+    log: finalLog,
+  });
+
+  return logs;
+};

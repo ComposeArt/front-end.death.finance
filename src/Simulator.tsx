@@ -4,7 +4,6 @@ import {
   Heading,
   Container,
   HStack,
-  Image,
   Box,
   Text,
   useColorModeValue,
@@ -16,39 +15,21 @@ import {
   InputLeftAddon,
   Input,
   InputRightElement,
-  Tooltip,
-  Progress,
   Button,
   useDisclosure,
   Fade,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
-import { RiSwordFill } from "react-icons/ri"
+import { RiSwordFill } from "react-icons/ri";
 import { FaRandom } from "react-icons/fa";
-import {
-  GiPunchBlast,
-  GiPunch,
-  GiShield,
-  GiHealthNormal,
-} from "react-icons/gi"
 
-import logo from './images/logo.png';
-
+import { Fighter } from './Fighter';
 import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers, remoteSimulateFight } from "./utils/firebase";
-import { elements, matchReporter } from "./utils/fighting";
-
 let prevCollection1 = '';
 let prevCollection2 = '';
 
-function delay(delay: any) {
-  return new Promise (function(fulfill) {
-    setTimeout(fulfill, delay);
-  });
-};
-
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
-  const LineColor = useColorModeValue('gray.500', 'white.500');
 
   const [mounted, setMounted]: any = useState(false);
 
@@ -73,15 +54,10 @@ export const Simulator = (props: RouteComponentProps) => {
   const [userRandomness, setUserRandomness]: any = useState('');
   const [userBlocknumber, setUserBlocknumber]: any = useState('');
 
-  const [match, setMatch]: any = useState('');
-
-  const [matchBouts, setMatchBouts]: any = useState([]);
-
   const { isOpen, onToggle } = useDisclosure();
 
   const randomFighter1 = async () => {
     try {
-      setMatch('');
       setLoading1(true);
 
       if (collection1) {
@@ -110,7 +86,6 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const randomFighter2 = async () => {
     try {
-      setMatch('');
       setLoading2(true);
 
       if (collection2) {
@@ -139,18 +114,28 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const simulateFight = async () => {
     setSimulating(true);
-    setMatch('');
-    setMatchBouts([]);
 
     try {
-      const result = await remoteSimulateFight({
+      const result: any = await remoteSimulateFight({
         fighterOneStats: fighter1.binary_power,
         fighterTwoStats: fighter2.binary_power,
         randomness: userRandomness,
         blocknumber: userBlocknumber,
       });
 
-      setMatch(result);
+      if (props.location) {
+
+        const simulationURL = `${props.location.origin}/simulation?` +
+          `c1=${fighter1.collection}&` +
+          `p1=${fighter1.id}&` +
+          `c2=${fighter2.collection}&` +
+          `p2=${fighter2.id}&` +
+          `m=${result.eventLog}&` +
+          `r=${result.randomness}&` +
+          `b=${result.blockNumber}`;
+
+        window.open(simulationURL, "_blank");
+      }
     } catch (error) {
       toast({
         title: 'failed to simulate fight',
@@ -172,7 +157,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (mounted && collections.length) {
         if (_.isEmpty(fighter1) && _.isEmpty(fighter2)) {
           const result = await getRandomPlayers(collections);
-          setMatch('');
+
           setFighter1(result.player1);
           setFighter2(result.player2);
           setLoading1(false);
@@ -187,7 +172,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection1 && collection1 !== prevCollection1) {
         setLoading1(true);
         setPlayer1('');
-        setMatch('');
+
         const players = await getCollectionPlayers(collection1);
 
         prevCollection1 = collection1;
@@ -207,7 +192,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection2 && collection2 !== prevCollection2) {
         setLoading2(true);
         setPlayer2('');
-        setMatch('');
+
         const players = await getCollectionPlayers(collection2);
 
         prevCollection2 = collection2;
@@ -221,23 +206,6 @@ export const Simulator = (props: RouteComponentProps) => {
       }
     })();
   }, [collection2]);
-
-  useEffect(() => {
-    (async function getInitialData() {
-      if (match) {
-        matchReporter({
-          match,
-          fighter1,
-          fighter2,
-        });
-      }
-    })();
-  }, [match, fighter1, fighter2]);
-
-  const fighter1SpecialElement: any = fighter1.special_element || 0;
-  const fighter2SpecialElement: any = fighter2.special_element || 0;
-  const fighter1Element: any = fighter1.element || 0;
-  const fighter2Element: any = fighter2.element || 0;
 
   return (
     <Container maxW='container.md' centerContent>
@@ -381,157 +349,7 @@ export const Simulator = (props: RouteComponentProps) => {
         </VStack>
       </HStack>
       <HStack marginTop={12} align="flex-start" spacing={8}>
-        <VStack spacing={4}>
-          <Box
-            borderRadius={{ base: "100px", md: 150 }}
-            borderColor={LineColor}
-            borderWidth={2}
-          >
-            {fighter1.image_preview_url ? (
-              <Image
-                boxSize={{ base: "100px", md: 150 }}
-                borderRadius={{ base: "100px", md: 150 }}
-                src={fighter1.image_preview_url}
-              />
-            ) : (
-              <Image
-                boxSize={{ base: "100px", md: 150 }}
-                borderRadius={{ base: "100px", md: 150 }}
-                src={logo}
-              />
-            )}
-          </Box>
-          <Box
-            width={{ base: "100px", md: 150 }}
-            height="60px"
-            textAlign="center"
-          >
-            <Text
-              fontSize={{ base: 10, md: 12 }}
-              textDecoration="underline"
-              opacity={0.5}
-              onClick={()=> window.open(fighter1.permalink, "_blank")}
-              _hover={{
-                cursor: 'pointer',
-                opacity: 1,
-              }}
-            >
-              {`${fighter1.collection} #${fighter1.token_id}`}
-            </Text>
-          </Box>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter1SpecialElement].name}`}>
-              <IconButton
-                size="md"
-                fontSize={20}
-                color="current"
-                borderRadius={100}
-                icon={elements[fighter1SpecialElement].icon}
-                aria-label={elements[fighter1SpecialElement].name}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter1Element].name}`}>
-              <IconButton
-                size="md"
-                fontSize={20}
-                color="current"
-                borderRadius={100}
-                icon={elements[fighter1Element].icon}
-                aria-label={elements[fighter1Element].name}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter1.special_attack}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiPunchBlast />}
-                aria-label={'Special Attack'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter1.special_attack / 15) * 100}
-              colorScheme="blue"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`attack | ${fighter1.attack}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiPunch />}
-                aria-label={'Attack'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter1.attack / 15) * 100}
-              colorScheme="blue"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`defense | ${fighter1.defense}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiShield />}
-                aria-label={'Defense'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter1.defense / 15) * 100}
-              colorScheme="blue"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`health | ${fighter1.health}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiHealthNormal />}
-                aria-label={'Health'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter1.health / 15) * 100}
-              colorScheme="blue"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-        </VStack>
+        <Fighter fighter={fighter1} color="blue" />
         <Box
           display='flex'
           height={{ base: "100px", md: 150 }}
@@ -541,157 +359,7 @@ export const Simulator = (props: RouteComponentProps) => {
         >
           <RiSwordFill size={24} />
         </Box>
-        <VStack spacing={4}>
-          <Box
-            borderRadius={{ base: "100px", md: 150 }}
-            borderColor={LineColor}
-            borderWidth={2}
-          >
-            {fighter2.image_preview_url ? (
-              <Image
-                boxSize={{ base: "100px", md: 150 }}
-                borderRadius={{ base: "100px", md: 150 }}
-                src={fighter2.image_preview_url}
-              />
-            ) : (
-              <Image
-                boxSize={{ base: "100px", md: 150 }}
-                borderRadius={{ base: "100px", md: 150 }}
-                src={logo}
-              />
-            )}
-          </Box>
-          <Box
-            width={{ base: "100px", md: 150 }}
-            height="60px"
-            textAlign="center"
-          >
-            <Text
-              fontSize={{ base: 10, md: 12 }}
-              textDecoration="underline"
-              opacity={0.5}
-              onClick={()=> window.open(fighter2.permalink, "_blank")}
-              _hover={{
-                cursor: 'pointer',
-                opacity: 1,
-              }}
-            >
-              {`${fighter2.collection} #${fighter2.token_id}`}
-            </Text>
-          </Box>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`s-element | ${elements[fighter2SpecialElement].name}`}>
-              <IconButton
-                size="md"
-                fontSize={20}
-                color="current"
-                borderRadius={100}
-                icon={elements[fighter2SpecialElement].icon}
-                aria-label={elements[fighter2SpecialElement].name}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Tooltip borderRadius={100} fontSize={10} label={`element | ${elements[fighter2Element].name}`}>
-              <IconButton
-                size="md"
-                fontSize={20}
-                color="current"
-                borderRadius={100}
-                icon={elements[fighter2Element].icon}
-                aria-label={elements[fighter2Element].name}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`s-attack | ${fighter2.special_attack}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiPunchBlast />}
-                aria-label={'Special Attack'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter2.special_attack / 15) * 100}
-              colorScheme="red"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`attack | ${fighter2.attack}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiPunch />}
-                aria-label={'Attack'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter2.attack / 15) * 100}
-              colorScheme="red"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`defense | ${fighter2.defense}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiShield />}
-                aria-label={'Defense'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter2.defense / 15) * 100}
-              colorScheme="red"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-          <HStack marginTop={8} align="center" spacing={4}>
-            <Tooltip borderRadius={100} fontSize={10} label={`health | ${fighter2.health}`}>
-              <IconButton
-                size="sm"
-                fontSize={18}
-                color="current"
-                borderRadius={100}
-                icon={<GiHealthNormal />}
-                aria-label={'Health'}
-                _hover={{
-                  cursor: 'default'
-                }}
-              />
-            </Tooltip>
-            <Progress
-              value={(fighter2.health / 15) * 100}
-              colorScheme="red"
-              width={{ base: "80px", md: 130 }}
-              borderRadius={100}
-            />
-          </HStack>
-        </VStack>
+        <Fighter fighter={fighter2} color="red" />
       </HStack>
       <Button
         isLoading={simulating}
