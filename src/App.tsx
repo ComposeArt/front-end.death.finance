@@ -66,7 +66,7 @@ export const App = () => (
       <NotFound default />
       <Home path="/" />
       <Simulator path="/simulator" />
-      <Simulation path="/simulation" />
+      <Simulation path="/simulator/:simulation" />
     </Nav>
   </Router>
 );

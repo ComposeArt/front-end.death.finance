@@ -12,13 +12,11 @@ import {
   Center,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { RouteComponentProps, useLocation } from "@reach/router";
+import { useLocation } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
-import { GiBoxingGlove } from "react-icons/gi";
-import { FaBomb } from "react-icons/fa";
 
 import { Fighter } from './Fighter';
-import { getPlayers } from "./utils/firebase";
+import { getSimulation } from "./utils/firebase";
 import { matchReporter } from "./utils/fighting";
 
 function delay(delay: any) {
@@ -32,48 +30,42 @@ const useQuery = (queryParam: any) => {
   return search.get(queryParam);
 };
 
-export const Simulation = (props: RouteComponentProps) => {
+let prevSimulationId: any;
+
+export const Simulation = (props: any) => {
   const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
 
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
+  const [blockNumber, setBlockNumber]: any = useState('');
+  const [randomness, setRandomness]: any = useState('');
 
-  const c1 = useQuery('c1');
-  const p1 = useQuery('p1');
-  const c2 = useQuery('c2');
-  const p2 = useQuery('p2');
-  const match = useQuery('m');
-  const randomness = useQuery('r');
-  const blockNumber = useQuery('b');
+  const simulationId = props.simulation;
 
   const [report, setReport]: any = useState([]);
 
   useEffect(() => {
     (async function getInitialData() {
-      if (c1 && p1 && c2 && p2 && match && randomness && blockNumber) {
+      if (simulationId && simulationId !== prevSimulationId) {
         try {
-          const players = await getPlayers([
-            {
-              collection: c1,
-              player: p1,
-            },
-            {
-              collection: c2,
-              player: p2,
-            },
-          ]);
+          prevSimulationId = simulationId;
+
+          const simulation: any = await getSimulation(simulationId);
 
           const result = matchReporter({
-            match,
-            fighter1: players[0],
-            fighter2: players[1],
+            match: simulation.match,
+            fighter1: simulation.fighter1,
+            fighter2: simulation.fighter2,
           });
 
           setReport(result);
-          setFighter1(players[0]);
-          setFighter2(players[1]);
+          setBlockNumber(simulation.block);
+          setRandomness(simulation.randomness);
+          setFighter1(simulation.fighter1);
+          setFighter2(simulation.fighter2);
         } catch (error) {
+          console.log(error);
           toast({
             title: 'failed to load simulation',
             status: 'error',
@@ -83,7 +75,7 @@ export const Simulation = (props: RouteComponentProps) => {
         }
       }
     })();
-  }, [c1, p1, c2, p2, match, randomness, blockNumber, toast]);
+  }, [simulationId, toast]);
 
   let fighter1Winner = false;
   let fighter2Winner = false;
@@ -99,7 +91,9 @@ export const Simulation = (props: RouteComponentProps) => {
   const name1 = `${fighter1.collection} #${_.truncate(fighter1.token_id, { length: 7 })}`;
   const name2 = `${fighter2.collection} #${_.truncate(fighter2.token_id, { length: 7 })}`;
 
-  console.log(report);
+  useEffect(() => {
+    document.title = `${name1} vs ${name2}`;
+  }, [name1, name2]);
 
   return (
     <Container maxW='container.md' centerContent>
@@ -132,14 +126,13 @@ export const Simulation = (props: RouteComponentProps) => {
         Match Log
       </Heading>
       <VStack width="100%" justify="center" align="center" spacing={4}>
-        {report.map((r: any, i: number) => {
+        {report.map((r: any, key: number) => {
           const player = r.turn === '0' ? fighter1 : fighter2;
-
-          console.log(_.split(r.log, '|'));
 
           if (r.turn === '0') {
             return (
               <HStack
+                key={key}
                 width="100%"
                 justify="flex-start"
                 align="center"
@@ -158,7 +151,7 @@ export const Simulation = (props: RouteComponentProps) => {
                 <Center textAlign="left">
                   <Text fontSize={12} fontWeight={400} color="blue.500">
                     {_.split(r.log, '|').map((w: any, i: number) => {
-                      return i % 2 ? <text style={{ fontWeight: 900 }} key={i}>{w}</text> : <text key={i}>{w}</text>
+                      return i % 2 ? <span style={{ fontWeight: 900 }} key={i}>{w}</span> : <span key={i}>{w}</span>
                     })}
                   </Text>
                 </Center>
@@ -167,6 +160,7 @@ export const Simulation = (props: RouteComponentProps) => {
           } else {
             return (
               <HStack
+                key={key}
                 width="100%"
                 justify="flex-end"
                 align="center"
@@ -177,7 +171,7 @@ export const Simulation = (props: RouteComponentProps) => {
                 <Center textAlign="right">
                   <Text fontSize={12} fontWeight={400} color="red.500">
                     {_.split(r.log, '|').map((w: any, i: number) => {
-                      return i % 2 ? <text style={{ fontWeight: 900 }} key={i}>{w}</text> : <text key={i}>{w}</text>
+                      return i % 2 ? <span style={{ fontWeight: 900 }} key={i}>{w}</span> : <span key={i}>{w}</span>
                     })}
                   </Text>
                 </Center>

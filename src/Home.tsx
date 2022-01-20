@@ -35,6 +35,10 @@ export const Home = (props: RouteComponentProps) => {
   });
 
   useEffect(() => {
+    document.title = 'NFT Fight Club';
+  }, []);
+
+  useEffect(() => {
     (async function getInitialData() {
       try {
         const playersData = await getPlayers(fighters);
@@ -71,11 +75,6 @@ export const Home = (props: RouteComponentProps) => {
         opacity={0.8}
         src={logoType}
       />
-      {/* <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
-        Welcome to the NFT
-        <br/>
-        Fight Club
-      </Heading> */}
       <Box
         borderBottomWidth={1}
         borderColor={LineColor}

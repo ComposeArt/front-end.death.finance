@@ -1,0 +1,17 @@
+{
+  "name": "hosting-functions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "deploy": "firebase deploy --only functions:preRender --project composeart-f9a7a"
+  },
+  "engines": {
+    "node": "14"
+  },
+  "dependencies": {
+    "firebase-admin": "^10.0.1",
+    "firebase-functions": "^3.16.0",
+    "lodash": "^4.17.21"
+  }
+}

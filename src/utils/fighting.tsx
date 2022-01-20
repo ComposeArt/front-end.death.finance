@@ -356,22 +356,22 @@ export const matchReporter = ({
             type = 'misses';
             log += `tries to launch a special attack, but completely misses!`
           } else {
+            log += `${p1SpecialAttackName} dealing |${attack} damage|`;
+
             if (attack === p1Stats.special_attack) {
               type = 'special-critical';
-              log += `${p1SpecialAttackName}, dazing ${p2Name} `;
+              log += ` and |dazing| them`;
             } else {
               type = 'special-attack';
-              log += `${p1SpecialAttackName} `;
             }
 
-            log += `dealing |${attack} damage|, `
             damage = attack;
 
             if (p2Stats.defense <= 0) {
               didBreak = true;
-              log += `enough to break ${p2Name}'s defense!`;
+              log += `, enough to break ${p2Name}'s defense!`;
             } else {
-              log += `leaving ${p2Name} with |${p2Stats.defense} defense| remaining.`;
+              log += `, leaving ${p2Name} with |${p2Stats.defense} defense| remaining.`;
             }
           }
         }
@@ -401,26 +401,26 @@ export const matchReporter = ({
         } else {
           p2Stats.health -= attack;
 
+          log += `${p1AttackName} dealing |${attack} damage|`;
+
           if (attack === 0) {
             type = 'misses';
             log += `tries to sneak in an attack, but completely misses!`
           } else {
             if (attack === p1Stats.attack) {
               type = 'critical';
-              log += `${p1AttackName}, dazing ${p2Name} `;
+              log += ` and |dazing| ${p2Name}`;
             } else {
               type = 'attack';
-              log += `${p1AttackName} `;
             }
 
-            log += `dealing |${attack} damage|, `;
             damage = attack;
 
             if (p2Stats.health <= 0) {
               didBreak = true;
-              log += `enough to KO ${p2Name}!`;
+              log += `, enough to KO ${p2Name}!`;
             } else {
-              log += `leaving ${p2Name} with |${p2Stats.health} health| remaining.`;
+              log += `, leaving ${p2Name} with |${p2Stats.health} health| remaining.`;
             }
           }
         }
@@ -459,22 +459,22 @@ export const matchReporter = ({
             type = 'misses';
             log += `tries to launch a special attack, but completely misses!`
           } else {
+            log += `${p2SpecialAttackName} dealing |${attack} damage|`;
+
             if (attack === p2Stats.special_attack) {
               type = 'special-critical';
-              log += `${p2SpecialAttackName}, dazing ${p1Name} `;
+              log += ` and |dazing| ${p1Name}`;
             } else {
               type = 'special-attack';
-              log += `${p2SpecialAttackName} `;
             }
 
-            log += `dealing |${attack} damage|, `;
             damage = attack;
 
             if (p1Stats.defense <= 0) {
               didBreak = true;
-              log += `enough to break ${p1Name} defense!`;
+              log += `, enough to break ${p1Name} defense!`;
             } else {
-              log += `leaving ${p1Name} with |${p1Stats.defense} defense| remaining.`;
+              log += `, leaving ${p1Name} with |${p1Stats.defense} defense| remaining.`;
             }
           }
         }
@@ -508,22 +508,22 @@ export const matchReporter = ({
             type = 'misses';
             log += `tries to sneak in an attack, but completely misses!`
           } else {
+            log += `${p2AttackName} dealing |${attack} damage|`;
+
             if (attack === p2Stats.attack) {
               type = 'critical';
-              log += `${p2AttackName}, dazing ${p1Name} `;
+              log += ` and |dazing| ${p1Name}`;
             } else {
               type = 'attack';
-              log += `${p2AttackName} `;
             }
 
-            log += `dealing |${attack} damage|, `;
             damage = attack;
 
             if (p1Stats.health <= 0) {
               didBreak = true;
-              log += `enough to KO ${p1Name}!`;
+              log += `, enough to KO ${p1Name}!`;
             } else {
-              log += `leaving ${p1Name} with |${p1Stats.health} health| remaining.`;
+              log += `, leaving ${p1Name} with |${p1Stats.health} health| remaining.`;
             }
           }
         }

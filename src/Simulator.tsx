@@ -117,22 +117,17 @@ export const Simulator = (props: RouteComponentProps) => {
 
     try {
       const result: any = await remoteSimulateFight({
-        fighterOneStats: fighter1.binary_power,
-        fighterTwoStats: fighter2.binary_power,
+        f1: fighter1,
+        f2: fighter2,
         randomness: userRandomness,
         blocknumber: userBlocknumber,
       });
 
-      if (props.location) {
+      console.log(props.location);
+      console.log(result);
 
-        const simulationURL = `${props.location.origin}/simulation?` +
-          `c1=${fighter1.collection}&` +
-          `p1=${fighter1.id}&` +
-          `c2=${fighter2.collection}&` +
-          `p2=${fighter2.id}&` +
-          `m=${result.eventLog}&` +
-          `r=${result.randomness}&` +
-          `b=${result.blockNumber}`;
+      if (props.location) {
+        const simulationURL = `${props.location.origin}/simulator/${result.simulation}`;
 
         window.open(simulationURL, "_blank");
       }
@@ -149,6 +144,7 @@ export const Simulator = (props: RouteComponentProps) => {
   }
 
   useEffect(() => {
+    document.title = 'Simulate Fights';
     setMounted(true);
   }, []);
 

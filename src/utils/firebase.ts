@@ -30,15 +30,15 @@ const defaultPayload: PayloadTypes = {
 export const PayloadContext = createContext(defaultPayload);
 
 export const remoteSimulateFight = async ({
-  fighterOneStats,
-  fighterTwoStats,
+  f1,
+  f2,
   randomness,
   blocknumber,
 }: any) => {
   const options = {
     isSimulated: randomness && blocknumber ? true : false,
-    fighterOneStats,
-    fighterTwoStats,
+    f1,
+    f2,
     random: randomness || '0',
     blockNumber: blocknumber || '1',
   };
@@ -46,6 +46,15 @@ export const remoteSimulateFight = async ({
   const result = await simulateFight(options);
 
   return result.data;
+};
+
+export const getSimulation = async (simulationId: any) => {
+  const docRef = doc(db, `nft-death-games/season_0/simulations`, simulationId);
+  const docSnap = await getDoc(docRef);
+
+  const simulation = docSnap.data();
+
+  return simulation;
 };
 
 export const getCollections = async () => {

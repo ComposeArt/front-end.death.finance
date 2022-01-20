@@ -33,12 +33,13 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
   return (
     <VStack>
     {winner && (
-      <Box position="absolute" marginTop={-8}>
+      <Box position="absolute" marginTop={-10}>
         <FaCrown fontSize={32} />
       </Box>
     )}
     <VStack spacing={4}>
       <Box
+        marginTop={winner ? -2 : 0}
         borderRadius={{ base: "100px", md: 150 }}
         borderColor={winner ? winnerColor : LineColor}
         borderWidth={2}

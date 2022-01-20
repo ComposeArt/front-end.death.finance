@@ -2,6 +2,9 @@
   "name": "death-finance-website",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "14"
+  },
   "dependencies": {
     "@chakra-ui/react": "^1.0.0",
     "@emotion/react": "^11.0.0",
@@ -28,12 +31,15 @@
     "typescript": "^3.9.5",
     "web-vitals": "^0.2.2"
   },
+  "devDependencies": {
+    "@types/reach__router": "^1.3.10"
+  },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp build/index.html functions/web/index.html && rm build/index.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "firebase deploy --project composeart-f9a7a"
+    "deploy": "firebase deploy --only hosting,functions:preRender --project composeart-f9a7a"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -49,8 +55,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/reach__router": "^1.3.10"
   }
 }
