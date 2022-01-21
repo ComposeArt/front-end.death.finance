@@ -25,6 +25,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "react": "^17.0.2",
+    "react-blockies": "^1.4.1",
     "react-dom": "^17.0.2",
     "react-icons": "^3.0.0",
     "react-scripts": "4.0.3",
@@ -32,11 +33,12 @@
     "web-vitals": "^0.2.2"
   },
   "devDependencies": {
-    "@types/reach__router": "^1.3.10"
+    "@types/reach__router": "^1.3.10",
+    "@types/react-blockies": "^1.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && cp build/index.html functions/web/index.html && rm build/index.html",
+    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && cp build/index.html functions/web/index.html && rm build/index.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy --only hosting,functions:preRender --project composeart-f9a7a"

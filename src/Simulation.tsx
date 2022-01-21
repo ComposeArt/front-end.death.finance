@@ -10,27 +10,22 @@ import {
   VStack,
   Image,
   Center,
+  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useLocation } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
+import { FaRandom } from "react-icons/fa";
+import { navigate } from "@reach/router";
 
 import { Fighter } from './Fighter';
 import { getSimulation } from "./utils/firebase";
 import { matchReporter } from "./utils/fighting";
 
-function delay(delay: any) {
-  return new Promise (function(fulfill) {
-    setTimeout(fulfill, delay);
-  });
-};
-
-const useQuery = (queryParam: any) => {
-  const search = new URLSearchParams(useLocation().search);
-  return search.get(queryParam);
-};
-
-let prevSimulationId: any;
+// function delay(delay: any) {
+//   return new Promise (function(fulfill) {
+//     setTimeout(fulfill, delay);
+//   });
+// };
 
 export const Simulation = (props: any) => {
   const toast = useToast();
@@ -47,32 +42,28 @@ export const Simulation = (props: any) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (simulationId && simulationId !== prevSimulationId) {
-        try {
-          prevSimulationId = simulationId;
+      try {
+        const simulation: any = await getSimulation(simulationId);
 
-          const simulation: any = await getSimulation(simulationId);
+        const result = matchReporter({
+          match: simulation.match,
+          fighter1: simulation.fighter1,
+          fighter2: simulation.fighter2,
+        });
 
-          const result = matchReporter({
-            match: simulation.match,
-            fighter1: simulation.fighter1,
-            fighter2: simulation.fighter2,
-          });
-
-          setReport(result);
-          setBlockNumber(simulation.block);
-          setRandomness(simulation.randomness);
-          setFighter1(simulation.fighter1);
-          setFighter2(simulation.fighter2);
-        } catch (error) {
-          console.log(error);
-          toast({
-            title: 'failed to load simulation',
-            status: 'error',
-            isClosable: true,
-            duration: 3000,
-          });
-        }
+        setReport(result);
+        setBlockNumber(simulation.block);
+        setRandomness(simulation.randomness);
+        setFighter1(simulation.fighter1);
+        setFighter2(simulation.fighter2);
+      } catch (error) {
+        console.log(error);
+        toast({
+          title: 'failed to load simulation',
+          status: 'error',
+          isClosable: true,
+          duration: 3000,
+        });
       }
     })();
   }, [simulationId, toast]);
@@ -188,6 +179,13 @@ export const Simulation = (props: any) => {
           }
         })}
       </VStack>
+      <Button
+        marginTop={8}
+        leftIcon={<FaRandom />}
+        onClick={() => {navigate(`/simulator?c1=${fighter1.collection}&p1=${fighter1.id}&c2=${fighter2.collection}&p2=${fighter2.id}`)}}
+      >
+        simulate more
+      </Button>
     </Container>
   );
 };

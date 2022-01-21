@@ -60,9 +60,9 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
         }
       } else {
         index = setMetas(index, {
-          title: 'Simulate Fight Club',
+          title: 'NFT Fight Club Simulation',
           description: 'Simulate fights between two NFTs using on-chain smart contract and on-chain randomness.',
-          image: 'https://death.finance/mgrim.png',
+          image: 'https://death.finance/meta-logo.png',
         });
 
         response.status(200).send(index);
@@ -71,7 +71,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       index = setMetas(index, {
         title: 'NFT Fight Club',
         description: 'Welcome to the NFT fight club, a competition between NFT personas in order to prove which ones are the best NFTs money can buy.',
-        image: 'https://death.finance/fight-club-logo-dark.png',
+        image: 'https://death.finance/meta-logo.png',
       });
 
       response.status(200).send(index);

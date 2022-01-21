@@ -1,5 +1,5 @@
-import * as React from "react"
-import { Button, Box, Text, HStack } from "@chakra-ui/react";
+import React, { useEffect } from "react";
+import { Button, Box, Text, HStack, useToast } from "@chakra-ui/react";
 import { useEthers, ChainId } from "@usedapp/core";
 // import { formatEther } from "@ethersproject/units";
 
@@ -8,6 +8,19 @@ export const ConnectButton = () => {
   // const etherBalance = useEtherBalance(account);
   // const blockNumber = useBlockNumber();
   const chain = chainId && ChainId[chainId];
+  const toast = useToast();
+
+  useEffect(() => {
+    if (chain !== 'Goerli') {
+      toast({
+        title: `only the goerli network is active`,
+        status: 'error',
+        duration: 3000,
+        position: 'bottom',
+        isClosable: true,
+      });
+    }
+  }, [chain, toast]);
 
   return account ? (
     <HStack spacing={4}>

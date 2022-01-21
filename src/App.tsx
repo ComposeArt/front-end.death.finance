@@ -4,7 +4,7 @@ import {
   extendTheme,
 } from "@chakra-ui/react";
 import { Router } from "@reach/router";
-import { useEthers } from "@usedapp/core";
+import { useEthers, ChainId } from "@usedapp/core";
 import "@fontsource/fira-mono";
 import "@fontsource/rock-salt";
 
@@ -15,6 +15,7 @@ import { Header } from "./Header";
 import { Home } from "./Home";
 import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
+import { Profile } from "./Profile";
 
 import { PayloadContext, getCollections, getFighters } from "./utils/firebase";
 
@@ -25,12 +26,25 @@ const theme = extendTheme({
     heading: 'Fira Mono',
     body: 'Fira Mono',
   },
+  styles: {
+    global: {
+      '.identicon': {
+        borderRadius: '50%',
+      },
+    },
+  },
 });
+
+const ScrollToTop = ({ children, location }: any) => {
+  React.useEffect(() => window.scrollTo(0, 0), [location.pathname]);
+  return children;
+};
 
 const Nav = (props: any) => {
   const [collections, setCollections]: any = useState([]);
   const [fighters, setFighters]: any = useState([]);
-  const { account } = useEthers();
+  const { account, chainId } = useEthers();
+  const chain = chainId && ChainId[chainId];
 
   useEffect(() => {
     (async function getInitialData() {
@@ -49,6 +63,7 @@ const Nav = (props: any) => {
           collections,
           fighters,
           account,
+          chain,
         }}
       >
         <Header />
@@ -61,12 +76,16 @@ const Nav = (props: any) => {
 };
 
 export const App = () => (
-  <Router>
-    <Nav path="/">
-      <NotFound default />
-      <Home path="/" />
-      <Simulator path="/simulator" />
-      <Simulation path="/simulator/:simulation" />
-    </Nav>
+  <Router primary={false}>
+    <ScrollToTop path="/">
+      <Nav path="/">
+        <NotFound default />
+        <Home path="/" />
+        <Simulator path="/simulator" />
+        <Simulation path="/simulator/:simulation" />
+        <Profile path="/profile" />
+        <Profile path="/profile/:address" />
+      </Nav>
+    </ScrollToTop>
   </Router>
 );

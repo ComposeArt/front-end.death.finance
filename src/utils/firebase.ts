@@ -3,6 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, limit, where } from 'firebase/firestore/lite';
 import _ from 'lodash';
+import { useLocation } from "@reach/router";
 
 const app = initializeApp({
   apiKey: 'AIzaSyBK-EdRy8HJWm9LiMeLPr-q_kBTfSfTcVY',
@@ -19,15 +20,60 @@ interface PayloadTypes {
   collections: [];
   fighters: [];
   account: string | null | undefined;
+  chain: string | null | undefined;
 }
 
 const defaultPayload: PayloadTypes = {
   collections: [],
   fighters: [],
   account: '',
+  chain: '',
 };
 
 export const PayloadContext = createContext(defaultPayload);
+
+export const useQuery = (queryParam: any) => {
+  const search = new URLSearchParams(useLocation().search);
+  return search.get(queryParam);
+};
+
+function delay(delay: any) {
+  return new Promise (function(fulfill) {
+    setTimeout(fulfill, delay);
+  });
+};
+
+const getAssets = async ({
+  results,
+  address,
+  offset,
+}: any): Promise<any> => {
+  const response = await fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&limit=50&offset=${offset}`);
+
+  const data = await response.json();
+
+  results = [...results, ...data.assets];
+
+  if (data.assets && data.assets.length > 0) {
+    await delay(300);
+
+    return getAssets({
+      results,
+      address,
+      offset: offset + 50,
+    });
+  } else {
+    return results;
+  }
+};
+
+export const fetchAssets = async (address: any) => {
+  return await getAssets({
+    results: [],
+    address,
+    offset: 0,
+  });
+};
 
 export const remoteSimulateFight = async ({
   f1,
@@ -96,6 +142,7 @@ export const getPlayers = async (fighters: any) => {
 
     players.push({
       fighter: fighter.id,
+      registered: fighter.timestamp,
       ...docSnap.data(),
     });
   }

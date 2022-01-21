@@ -6,7 +6,6 @@ import {
   HStack,
   Box,
   Text,
-  useColorModeValue,
   useToast,
   VStack,
   IconButton,
@@ -24,12 +23,26 @@ import { RiSwordFill } from "react-icons/ri";
 import { FaRandom } from "react-icons/fa";
 
 import { Fighter } from './Fighter';
-import { PayloadContext, getRandomPlayer, getRandomPlayers, getCollectionPlayers, remoteSimulateFight } from "./utils/firebase";
+import {
+  PayloadContext,
+  getRandomPlayer,
+  getRandomPlayers,
+  getCollectionPlayers,
+  remoteSimulateFight,
+  useQuery,
+} from "./utils/firebase";
 let prevCollection1 = '';
 let prevCollection2 = '';
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
+
+  const c1 = useQuery('c1');
+  const p1 = useQuery('p1');
+  const c2 = useQuery('c2');
+  const p2 = useQuery('p2');
+  const qRandomness = useQuery('r');
+  const qBlock = useQuery('b');
 
   const [mounted, setMounted]: any = useState(false);
 
@@ -123,9 +136,6 @@ export const Simulator = (props: RouteComponentProps) => {
         blocknumber: userBlocknumber,
       });
 
-      console.log(props.location);
-      console.log(result);
-
       if (props.location) {
         const simulationURL = `${props.location.origin}/simulator/${result.simulation}`;
 
@@ -149,9 +159,19 @@ export const Simulator = (props: RouteComponentProps) => {
   }, []);
 
   useEffect(() => {
+    if (c1 && _.indexOf(collections, c1) >= -1) {
+      setCollection1(c1);
+    }
+
+    if (c2 && _.indexOf(collections, c2) >= -1) {
+      setCollection2(c2);
+    }
+  }, [c1, c2, collections]);
+
+  useEffect(() => {
     (async function getInitialData() {
       if (mounted && collections.length) {
-        if (_.isEmpty(fighter1) && _.isEmpty(fighter2)) {
+        if (_.isEmpty(fighter1) && _.isEmpty(fighter2) && (!c1 || !c2)) {
           const result = await getRandomPlayers(collections);
 
           setFighter1(result.player1);
@@ -161,7 +181,7 @@ export const Simulator = (props: RouteComponentProps) => {
         }
       }
     })();
-  }, [mounted, collections, fighter1, fighter2]);
+  }, [mounted, collections, fighter1, fighter2, c1, c2]);
 
   useEffect(() => {
     (async function getInitialData() {
@@ -170,18 +190,20 @@ export const Simulator = (props: RouteComponentProps) => {
         setPlayer1('');
 
         const players = await getCollectionPlayers(collection1);
+        const found = _.find(players, (p) => p.id === p1);
 
         prevCollection1 = collection1;
 
+        if (found) {
+          setPlayer1(found.token_id);
+        }
+
         setPlayers1(players);
-        setFighter1({
-          collection: collection1,
-          ..._.sample(players),
-        });
+        setFighter1(found || _.sample(players));
         setLoading1(false);
       }
     })();
-  }, [collection1]);
+  }, [collection1, p1]);
 
   useEffect(() => {
     (async function getInitialData() {
@@ -193,15 +215,18 @@ export const Simulator = (props: RouteComponentProps) => {
 
         prevCollection2 = collection2;
 
+        const found = _.find(players, (p) => p.id === p2);
+
+        if (found) {
+          setPlayer2(found.token_id);
+        }
+
         setPlayers2(players);
-        setFighter2({
-          collection: collection2,
-          ..._.sample(players),
-        });
+        setFighter2(found || _.sample(players));
         setLoading2(false);
       }
     })();
-  }, [collection2]);
+  }, [collection2, p2]);
 
   return (
     <Container maxW='container.md' centerContent>

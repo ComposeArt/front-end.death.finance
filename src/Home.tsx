@@ -27,7 +27,7 @@ export const Home = (props: RouteComponentProps) => {
   const opacityColor = useColorModeValue('gray.800', 'white');
   const logoType = useColorModeValue(fcDark, fcLight);
 
-  const { collections, fighters } = useContext(PayloadContext);
+  const { account, collections, fighters } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
   const [randomPlayers, setRandomPlayers]: any = useState({
     player1: {},
@@ -44,7 +44,7 @@ export const Home = (props: RouteComponentProps) => {
         const playersData = await getPlayers(fighters);
         const randomPlayersData = await getRandomPlayers(collections);
 
-        setPlayers(playersData);
+        setPlayers(_.orderBy(playersData, ['registered'], ['desc']));
         setRandomPlayers(randomPlayersData);
       } catch (error) {
         console.log(error);
@@ -135,7 +135,7 @@ export const Home = (props: RouteComponentProps) => {
         <Box>
           <LinkButton
             text="register nfts"
-            path="/registry"
+            path={account ? `/profile/${account}` : `/profile`}
           />
         </Box>
         <Box marginTop={8}>
@@ -179,7 +179,7 @@ export const Home = (props: RouteComponentProps) => {
       <Heading as='h2' size='sm' marginTop={16} textAlign="center">
         Recently Registered
       </Heading>
-      <Wrap marginTop={8} justify='center'>
+      <Wrap marginTop={8} justify='center' spacing={4}>
         {players.map((p: any) => {
           return (
             <WrapItem key={p.fighter} margin={4}>

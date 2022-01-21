@@ -1,11 +1,13 @@
-import * as React from "react";
+import React, { useContext } from "react";
 import {
   HStack,
   Box,
   useColorModeValue,
   Image,
+  Center,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
+import Blockies from 'react-blockies';
 
 import { NavLink } from './NavLink';
 import { TwitterButton } from "./TwitterButton";
@@ -14,11 +16,15 @@ import { ConnectButton } from "./ConnectButton";
 import { MobileConnectButton } from "./MobileConnectButton";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import logo from './images/logo.png';
+import { PayloadContext } from "./utils/firebase";
 
 export const Header = () => {
   const backgroundColor = useColorModeValue('white', 'gray.800');
+  const brightColor = useColorModeValue('gray.800', 'white');
   const lineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.100', 'gray.700');
+
+  const { account, chain } = useContext(PayloadContext);
 
   return (
     <Box
@@ -54,8 +60,8 @@ export const Header = () => {
             }}
           />
           <NavLink to="/seasons/0">season_0</NavLink>
-          <NavLink to="/registry">registry</NavLink>
           <NavLink to="/simulator">simulator</NavLink>
+          <NavLink to="/chaos">chaos</NavLink>
         </HStack>
         <HStack
           h="10vh"
@@ -64,6 +70,28 @@ export const Header = () => {
           display={{ base: "none", lg: "flex" }}
         >
           <ConnectButton />
+          {account && (
+            <Center
+              height="48px"
+              width="48px"
+              borderRadius='50%'
+              borderWidth={2}
+              borderColor={lineColor}
+              _hover={{
+                cursor: 'pointer',
+                borderColor: brightColor,
+              }}
+              onClick={() => { navigate(`/profile/${account}`)}}
+            >
+              <Blockies
+                seed={account}
+                size={12}
+                scale={3}
+                color={lineColor}
+                bgColor={backgroundColor}
+              />
+            </Center>
+          )}
           <ColorModeSwitcher />
           <TwitterButton />
           <DiscordButton />
