@@ -27,9 +27,9 @@ export const Subheader = () => {
         justify="space-between"
         padding={8}
       >
-        <NavLink partially to="/seasons/0">season_0</NavLink>
-        <NavLink partially to="/registry">registry</NavLink>
+        <NavLink partially to="/season/0">season_0</NavLink>
         <NavLink partially to="/simulator">simulator</NavLink>
+        <NavLink partially to="/chaos">chaos</NavLink>
       </HStack>
     </Box>
   );

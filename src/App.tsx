@@ -18,6 +18,10 @@ import { FAQ } from "./FAQ";
 import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
 import { ProfileFighters, ProfileMatches } from "./Profile";
+import { SeasonFighters } from "./SeasonFighters";
+import { SeasonMatches } from "./SeasonMatches";
+import { SeasonRules } from "./SeasonRules";
+import { SeasonFighter } from "./SeasonFighter";
 
 import { PayloadContext, getCollections } from "./utils/firebase";
 
@@ -86,6 +90,10 @@ export const App = () => (
           <ProfileFighters path="/profile" />
           <ProfileFighters path="/profile/:address" />
           <ProfileMatches path="/profile/:address/matches" />
+          <SeasonRules path="/season/0" />
+          <SeasonFighters path="/season/0/fighters" />
+          <SeasonMatches path="/season/0/matches" />
+          <SeasonFighter path="/season/0/fighters/:id" />
         </Nav>
       </ScrollToTop>
     </QueryParamProvider>

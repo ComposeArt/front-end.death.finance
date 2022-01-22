@@ -23,6 +23,7 @@ import { FaCrown, FaCheckCircle } from "react-icons/fa";
 import logo from './images/logo.png';
 
 import { elements } from "./utils/fighting";
+import { navigate } from "@reach/router";
 
 export const Fighter = ({ fighter, color, winner = false }: any) => {
   const LineColor = useColorModeValue('gray.500', 'white.500');
@@ -61,7 +62,7 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
           borderRadius={{ base: "100px", md: 150 }}
           borderColor={winner ? winnerColor : LineColor}
           borderWidth={2}
-          onClick={() => {fighter.owner && window.open(`/seasons/0/fighters/${fighter.collection}/${fighter.token_id}`, "_blank")}}
+          onClick={() => {fighter.owner && navigate(`/season/0/fighters/${fighter.id}`)}}
           _hover={{
             borderColor: fighter.owner || winner ? winnerColor : LineColor,
             cursor: fighter.owner ? 'pointer' : 'default',

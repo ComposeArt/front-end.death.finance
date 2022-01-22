@@ -132,7 +132,7 @@ export const Home = (props: RouteComponentProps) => {
         <Box>
           <LinkButton
             text="rules"
-            path="/seasons/0/rules"
+            path="/season/0"
           />
         </Box>
         <Box>
@@ -144,7 +144,7 @@ export const Home = (props: RouteComponentProps) => {
         <Box marginTop={8}>
           <LinkButton
             text="fighters"
-            path="/seasons/0/fighters"
+            path="/season/0/fighters"
           />
         </Box>
       </HStack>
@@ -190,7 +190,7 @@ export const Home = (props: RouteComponentProps) => {
                 borderRadius="80px"
                 borderColor={LineColor}
                 borderWidth={2}
-                onClick={() => navigate(`/seasons/0/fighters/${p.collection}/${p.player.token_id}`)}
+                onClick={() => navigate(`/season/0/fighters/${p.id}`)}
                 _hover={{
                   cursor: "pointer",
                   borderColor: opacityColor,

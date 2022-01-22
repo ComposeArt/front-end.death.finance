@@ -63,7 +63,7 @@ const ProfileHeader = (props: any) => {
         marginBottom={4}
         textAlign="center"
       >
-        {props.owner || 'Loading NFTs...'}
+        {props.owner || props.loadingText}
       </Heading>
       <HStack
         w="100%"
@@ -241,6 +241,7 @@ export const ProfileFighters = (props: any) => {
         address={address}
         owner={owner}
         loading={loading}
+        loadingText="Loading NFTs..."
       />
       <Wrap marginTop={12} justify='center' spacing={12}>
         {orderedPlayers.map((p: any) => {
@@ -252,7 +253,7 @@ export const ProfileFighters = (props: any) => {
                     borderRadius="150px"
                     borderColor={lineColor}
                     borderWidth={2}
-                    onClick={() => {p.fighter && navigate(`/seasons/0/fighters/${p.collection.slug}/${p.token_id}`)}}
+                    onClick={() => {p.fighter && navigate(`/season/0/fighters/${p.id}`)}}
                     _hover={{
                       borderColor: p.fighter ? brightColor : lineColor,
                       cursor: p.fighter ? 'pointer' : 'default',
@@ -343,6 +344,7 @@ export const ProfileMatches = (props: any) => {
         address={address}
         owner={owner}
         loading={loading}
+        loadingText="Loading matches..."
       />
     </Container>
   );
