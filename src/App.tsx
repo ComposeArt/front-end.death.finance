@@ -3,8 +3,9 @@ import {
   ChakraProvider,
   extendTheme,
 } from "@chakra-ui/react";
-import { Router } from "@reach/router";
+import { Router, globalHistory } from "@reach/router";
 import { useEthers, ChainId } from "@usedapp/core";
+import { QueryParamProvider } from 'use-query-params';
 import "@fontsource/fira-mono";
 import "@fontsource/rock-salt";
 
@@ -13,11 +14,12 @@ import { Footer } from "./Footer";
 import { Subheader } from "./Subheader";
 import { Header } from "./Header";
 import { Home } from "./Home";
+import { FAQ } from "./FAQ";
 import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
-import { Profile } from "./Profile";
+import { ProfileFighters, ProfileMatches } from "./Profile";
 
-import { PayloadContext, getCollections, getFighters } from "./utils/firebase";
+import { PayloadContext, getCollections } from "./utils/firebase";
 
 const theme = extendTheme({
   initialColorMode: 'dark',
@@ -42,17 +44,14 @@ const ScrollToTop = ({ children, location }: any) => {
 
 const Nav = (props: any) => {
   const [collections, setCollections]: any = useState([]);
-  const [fighters, setFighters]: any = useState([]);
   const { account, chainId } = useEthers();
   const chain = chainId && ChainId[chainId];
 
   useEffect(() => {
     (async function getInitialData() {
       const collectionsData = await getCollections();
-      const fightersData = await getFighters();
 
       setCollections(collectionsData);
-      setFighters(fightersData);
     })();
   }, []);
 
@@ -61,8 +60,7 @@ const Nav = (props: any) => {
       <PayloadContext.Provider
         value={{
           collections,
-          fighters,
-          account,
+          account: account ? account.toLowerCase() : null,
           chain,
         }}
       >
@@ -77,15 +75,19 @@ const Nav = (props: any) => {
 
 export const App = () => (
   <Router primary={false}>
-    <ScrollToTop path="/">
-      <Nav path="/">
-        <NotFound default />
-        <Home path="/" />
-        <Simulator path="/simulator" />
-        <Simulation path="/simulator/:simulation" />
-        <Profile path="/profile" />
-        <Profile path="/profile/:address" />
-      </Nav>
-    </ScrollToTop>
+    <QueryParamProvider {...{ path: '/' }} reachHistory={globalHistory}>
+      <ScrollToTop path="/">
+        <Nav path="/">
+          <NotFound default />
+          <Home path="/" />
+          <FAQ path="/faq" />
+          <Simulator path="/simulator" />
+          <Simulation path="/simulator/:simulation" />
+          <ProfileFighters path="/profile" />
+          <ProfileFighters path="/profile/:address" />
+          <ProfileMatches path="/profile/:address/matches" />
+        </Nav>
+      </ScrollToTop>
+    </QueryParamProvider>
   </Router>
 );

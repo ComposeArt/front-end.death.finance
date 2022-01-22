@@ -401,12 +401,12 @@ export const matchReporter = ({
         } else {
           p2Stats.health -= attack;
 
-          log += `${p1AttackName} dealing |${attack} damage|`;
-
           if (attack === 0) {
             type = 'misses';
             log += `tries to sneak in an attack, but completely misses!`
           } else {
+            log += `${p1AttackName} dealing |${attack} damage|`;
+
             if (attack === p1Stats.attack) {
               type = 'critical';
               log += ` and |dazing| ${p2Name}`;

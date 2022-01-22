@@ -18,7 +18,7 @@ import {
   GiShield,
   GiHealthNormal,
 } from "react-icons/gi";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaCheckCircle } from "react-icons/fa";
 
 import logo from './images/logo.png';
 
@@ -55,24 +55,36 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
       </Box>
     )}
     <VStack spacing={4}>
-      <Box
-        marginTop={winner ? -2 : 0}
-        borderRadius={{ base: "100px", md: 150 }}
-        borderColor={winner ? winnerColor : LineColor}
-        borderWidth={2}
-      >
-        {fighter.image_preview_url ? (
-          <Image
-            boxSize={{ base: "100px", md: 150 }}
-            borderRadius={{ base: "100px", md: 150 }}
-            src={fighter.image_preview_url}
-          />
-        ) : (
-          <Image
-            boxSize={{ base: "100px", md: 150 }}
-            borderRadius={{ base: "100px", md: 150 }}
-            src={logo}
-          />
+      <Box position="relative" marginBottom={4}>
+        <Box
+          marginTop={winner ? -2 : 0}
+          borderRadius={{ base: "100px", md: 150 }}
+          borderColor={winner ? winnerColor : LineColor}
+          borderWidth={2}
+          onClick={() => {fighter.owner && window.open(`/seasons/0/fighters/${fighter.collection}/${fighter.token_id}`, "_blank")}}
+          _hover={{
+            borderColor: fighter.owner || winner ? winnerColor : LineColor,
+            cursor: fighter.owner ? 'pointer' : 'default',
+          }}
+        >
+          {fighter.image_preview_url ? (
+            <Image
+              boxSize={{ base: "100px", md: 150 }}
+              borderRadius={{ base: "100px", md: 150 }}
+              src={fighter.image_preview_url}
+            />
+          ) : (
+            <Image
+              boxSize={{ base: "100px", md: 150 }}
+              borderRadius={{ base: "100px", md: 150 }}
+              src={logo}
+            />
+          )}
+        </Box>
+        {fighter.owner && (
+          <Box position="absolute" right="10px" bottom="0px">
+            <FaCheckCircle fontSize={32} />
+          </Box>
         )}
       </Box>
       <Box
@@ -90,7 +102,7 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
             opacity: 1,
           }}
         >
-          {`${fighter.collection} #${_.truncate(fighter.token_id, { length: 7 })}`}
+          {fighter.collection ? `${fighter.collection} #${_.truncate(fighter.token_id, { length: 7 })}` : '-'}
         </Text>
       </Box>
       <HStack marginTop={8} align="center" spacing={4}>

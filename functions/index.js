@@ -67,6 +67,22 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
 
         response.status(200).send(index);
       }
+    } else if (path[1] === 'profile') {
+      index = setMetas(index, {
+        title: 'Profile | NFT Fight Club',
+        description: path[2] ? `Checkout ${path[2]}'s fighter posse. Do they have what it takes to win the tournament?` : 'Welcome to the NFT fight club, a competition between NFT personas in order to prove which ones are the best NFTs money can buy.',
+        image: 'https://death.finance/meta-logo.png',
+      });
+
+      response.status(200).send(index);
+    } else if (path[1] === 'faq') {
+      index = setMetas(index, {
+        title: 'FAQ | NFT Fight Club',
+        description: 'Answering all your questions regarding the NFT Fight Club.',
+        image: 'https://death.finance/meta-logo.png',
+      });
+
+      response.status(200).send(index);
     } else {
       index = setMetas(index, {
         title: 'NFT Fight Club',

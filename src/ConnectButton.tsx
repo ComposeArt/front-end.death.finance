@@ -11,7 +11,7 @@ export const ConnectButton = () => {
   const toast = useToast();
 
   useEffect(() => {
-    if (chain !== 'Goerli') {
+    if (account && chain !== 'Goerli') {
       toast({
         title: `only the goerli network is active`,
         status: 'error',
@@ -20,7 +20,7 @@ export const ConnectButton = () => {
         isClosable: true,
       });
     }
-  }, [chain, toast]);
+  }, [account, chain, toast]);
 
   return account ? (
     <HStack spacing={4}>

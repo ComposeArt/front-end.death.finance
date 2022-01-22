@@ -18,31 +18,26 @@ import {
   useDisclosure,
   Fade,
 } from "@chakra-ui/react";
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
 import { FaRandom } from "react-icons/fa";
+import { useQueryParam, StringParam } from 'use-query-params';
 
 import { Fighter } from './Fighter';
 import {
   PayloadContext,
   getRandomPlayer,
-  getRandomPlayers,
   getCollectionPlayers,
   remoteSimulateFight,
-  useQuery,
 } from "./utils/firebase";
-let prevCollection1 = '';
-let prevCollection2 = '';
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
 
-  const c1 = useQuery('c1');
-  const p1 = useQuery('p1');
-  const c2 = useQuery('c2');
-  const p2 = useQuery('p2');
-  const qRandomness = useQuery('r');
-  const qBlock = useQuery('b');
+  const [c1, setC1] = useQueryParam('c1', StringParam);
+  const [c2, setC2] = useQueryParam('c2', StringParam);
+  const [p1, setP1] = useQueryParam('p1', StringParam);
+  const [p2, setP2] = useQueryParam('p2', StringParam);
 
   const [mounted, setMounted]: any = useState(false);
 
@@ -69,6 +64,32 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
 
+  const simulateFight = async () => {
+    setSimulating(true);
+
+    try {
+      const result: any = await remoteSimulateFight({
+        f1: fighter1,
+        f2: fighter2,
+        randomness: userRandomness,
+        blocknumber: userBlocknumber,
+      });
+
+      console.log(result);
+
+      navigate(`/simulator/${result.simulation}`);
+    } catch (error) {
+      toast({
+        title: 'failed to simulate fight',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+
+    setSimulating(false);
+  };
+
   const randomFighter1 = async () => {
     try {
       setLoading1(true);
@@ -76,6 +97,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection1) {
         const foundP1 = _.find(players1, (p: any) => p.token_id === player1);
         if (player1 && foundP1) {
+          setP1(player1)
           setFighter1(foundP1);
         } else {
           setFighter1(_.sample(players1));
@@ -104,6 +126,7 @@ export const Simulator = (props: RouteComponentProps) => {
       if (collection2) {
         const foundP2 = _.find(players2, (p: any) => p.token_id === player2);
         if (player2 && foundP2) {
+          setP2(player2)
           setFighter2(foundP2);
         } else {
           setFighter2(_.sample(players2));
@@ -125,34 +148,6 @@ export const Simulator = (props: RouteComponentProps) => {
     setLoading2(false);
   };
 
-  const simulateFight = async () => {
-    setSimulating(true);
-
-    try {
-      const result: any = await remoteSimulateFight({
-        f1: fighter1,
-        f2: fighter2,
-        randomness: userRandomness,
-        blocknumber: userBlocknumber,
-      });
-
-      if (props.location) {
-        const simulationURL = `${props.location.origin}/simulator/${result.simulation}`;
-
-        window.open(simulationURL, "_blank");
-      }
-    } catch (error) {
-      toast({
-        title: 'failed to simulate fight',
-        status: 'error',
-        isClosable: true,
-        duration: 3000,
-      });
-    }
-
-    setSimulating(false);
-  }
-
   useEffect(() => {
     document.title = 'Simulate Fights';
     setMounted(true);
@@ -171,13 +166,18 @@ export const Simulator = (props: RouteComponentProps) => {
   useEffect(() => {
     (async function getInitialData() {
       if (mounted && collections.length) {
-        if (_.isEmpty(fighter1) && _.isEmpty(fighter2) && (!c1 || !c2)) {
-          const result = await getRandomPlayers(collections);
+        if (_.isEmpty(fighter1) && _.isEmpty(fighter2)) {
+          if (!c1) {
+            const randomPlayer1 = await getRandomPlayer(collections);
+            setFighter1(randomPlayer1);
+            setLoading1(false);
+          }
 
-          setFighter1(result.player1);
-          setFighter2(result.player2);
-          setLoading1(false);
-          setLoading2(false);
+          if (!c2) {
+            const randomPlayer2 = await getRandomPlayer(collections);
+            setFighter2(randomPlayer2);
+            setLoading2(false);
+          }
         }
       }
     })();
@@ -185,20 +185,18 @@ export const Simulator = (props: RouteComponentProps) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection1 && collection1 !== prevCollection1) {
+      if (collection1) {
         setLoading1(true);
         setPlayer1('');
 
         const players = await getCollectionPlayers(collection1);
-        const found = _.find(players, (p) => p.id === p1);
 
-        prevCollection1 = collection1;
+        const found = _.find(players, (p) => p.token_id === p1);
 
+        setPlayers1(players);
         if (found) {
           setPlayer1(found.token_id);
         }
-
-        setPlayers1(players);
         setFighter1(found || _.sample(players));
         setLoading1(false);
       }
@@ -207,15 +205,13 @@ export const Simulator = (props: RouteComponentProps) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection2 && collection2 !== prevCollection2) {
+      if (collection2) {
         setLoading2(true);
         setPlayer2('');
 
         const players = await getCollectionPlayers(collection2);
 
-        prevCollection2 = collection2;
-
-        const found = _.find(players, (p) => p.id === p2);
+        const found = _.find(players, (p) => p.token_id === p2);
 
         if (found) {
           setPlayer2(found.token_id);
@@ -251,7 +247,12 @@ export const Simulator = (props: RouteComponentProps) => {
             size="sm"
             placeholder='All Collections'
             value={collection1}
-            onChange={(event) => setCollection1(event.target.value)}
+            onChange={(event) => {
+              setCollection1(event.target.value);
+              setC1(event.target.value || undefined);
+              setP1(undefined);
+              setPlayer1('');
+            }}
             borderRadius={100}
             _hover={{
               cursor: 'pointer'
@@ -313,7 +314,12 @@ export const Simulator = (props: RouteComponentProps) => {
             size="sm"
             placeholder='All Collections'
             value={collection2}
-            onChange={(event) => setCollection2(event.target.value)}
+            onChange={(event) => {
+              setCollection2(event.target.value);
+              setC2(event.target.value || undefined);
+              setP2(undefined);
+              setPlayer2('');
+            }}
             borderRadius={100}
             _hover={{
               cursor: 'pointer'

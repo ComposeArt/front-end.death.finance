@@ -21,12 +21,6 @@ import { Fighter } from './Fighter';
 import { getSimulation } from "./utils/firebase";
 import { matchReporter } from "./utils/fighting";
 
-// function delay(delay: any) {
-//   return new Promise (function(fulfill) {
-//     setTimeout(fulfill, delay);
-//   });
-// };
-
 export const Simulation = (props: any) => {
   const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
@@ -35,10 +29,24 @@ export const Simulation = (props: any) => {
   const [fighter2, setFighter2]: any = useState({});
   const [blockNumber, setBlockNumber]: any = useState('');
   const [randomness, setRandomness]: any = useState('');
+  const [error, setError]: any = useState(false);
 
   const simulationId = props.simulation;
 
   const [report, setReport]: any = useState([]);
+
+  useEffect(() => {
+    if (error) {
+      setError(false);
+
+      toast({
+        title: 'failed to load simulation',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [error, toast]);
 
   useEffect(() => {
     (async function getInitialData() {
@@ -58,15 +66,10 @@ export const Simulation = (props: any) => {
         setFighter2(simulation.fighter2);
       } catch (error) {
         console.log(error);
-        toast({
-          title: 'failed to load simulation',
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
+        setError(true);
       }
     })();
-  }, [simulationId, toast]);
+  }, [simulationId]);
 
   let fighter1Winner = false;
   let fighter2Winner = false;
@@ -182,7 +185,7 @@ export const Simulation = (props: any) => {
       <Button
         marginTop={8}
         leftIcon={<FaRandom />}
-        onClick={() => {navigate(`/simulator?c1=${fighter1.collection}&p1=${fighter1.id}&c2=${fighter2.collection}&p2=${fighter2.id}`)}}
+        onClick={() => {navigate(`/simulator?c1=${fighter1.collection}&p1=${fighter1.token_id}&c2=${fighter2.collection}&p2=${fighter2.token_id}`)}}
       >
         simulate more
       </Button>

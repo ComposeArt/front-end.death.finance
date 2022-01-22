@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import _ from "lodash";
 import moment from "moment";
 import {
   Heading,
@@ -8,7 +9,6 @@ import {
   Box,
   Text,
   useColorModeValue,
-  useToast,
   Wrap,
   WrapItem,
 } from "@chakra-ui/react";
@@ -16,18 +16,18 @@ import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
 
 import { LinkButton } from "./LinkButton";
+import { ListCollections } from "./ListCollections";
 import grim from './images/mgrim-flip.png';
 import fcDark from './images/fight-club-logo-dark.png';
 import fcLight from './images/fight-club-logo-light.png';
-import { PayloadContext, getPlayers, getRandomPlayers } from "./utils/firebase";
+import { PayloadContext, getRandomPlayer, getLatestFighters } from "./utils/firebase";
 
 export const Home = (props: RouteComponentProps) => {
-  const toast = useToast();
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.800', 'white');
   const logoType = useColorModeValue(fcDark, fcLight);
 
-  const { account, collections, fighters } = useContext(PayloadContext);
+  const { account, collections } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
   const [randomPlayers, setRandomPlayers]: any = useState({
     player1: {},
@@ -41,27 +41,30 @@ export const Home = (props: RouteComponentProps) => {
   useEffect(() => {
     (async function getInitialData() {
       try {
-        const playersData = await getPlayers(fighters);
-        const randomPlayersData = await getRandomPlayers(collections);
+        const randomPlayer1 = await getRandomPlayer(collections);
+        const randomPlayer2 = await getRandomPlayer(collections);
+        const latestFighters = await getLatestFighters();
 
-        setPlayers(_.orderBy(playersData, ['registered'], ['desc']));
-        setRandomPlayers(randomPlayersData);
+        setPlayers(_.orderBy(latestFighters, ['timestamp'], ['desc']));
+        setRandomPlayers({
+          player1: randomPlayer1,
+          player2: randomPlayer2,
+        });
       } catch (error) {
         console.log(error);
-        toast({
-          title: `${error}`,
-          status: 'error',
-          isClosable: true,
-          duration: 3000,
-        });
       }
     })();
-  }, [collections, fighters, toast]);
+  }, [collections]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const randomPlayersData = await getRandomPlayers(collections);
-      setRandomPlayers(randomPlayersData);
+      const randomPlayer1 = await getRandomPlayer(collections);
+      const randomPlayer2 = await getRandomPlayer(collections);
+
+      setRandomPlayers({
+        player1: randomPlayer1,
+        player2: randomPlayer2,
+      });
     }, 3000);
 
     return () => clearInterval(interval);
@@ -123,7 +126,7 @@ export const Home = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        preseason starts {moment().to(moment('2022-02-14', 'YYYY-MM-DD'))}
+        preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
       </Text>
       <HStack marginTop={8} justify="center" spacing={4}>
         <Box>
@@ -182,12 +185,12 @@ export const Home = (props: RouteComponentProps) => {
       <Wrap marginTop={8} justify='center' spacing={4}>
         {players.map((p: any) => {
           return (
-            <WrapItem key={p.fighter} margin={4}>
+            <WrapItem key={p.id} margin={4}>
               <Box
                 borderRadius="80px"
                 borderColor={LineColor}
                 borderWidth={2}
-                onClick={() => navigate(`/seasons/0/fighters/${p.fighter}`)}
+                onClick={() => navigate(`/seasons/0/fighters/${p.collection}/${p.player.token_id}`)}
                 _hover={{
                   cursor: "pointer",
                   borderColor: opacityColor,
@@ -196,7 +199,7 @@ export const Home = (props: RouteComponentProps) => {
                 <Image
                   boxSize="80px"
                   borderRadius="80px"
-                  src={p.image_preview_url}
+                  src={p.player.image_preview_url}
                 />
               </Box>
             </WrapItem>
@@ -206,26 +209,7 @@ export const Home = (props: RouteComponentProps) => {
       <Heading as='h2' size='sm' marginTop={16} textAlign="center">
         {collections.length} Collections
       </Heading>
-      <Wrap marginTop={4} justify='center'>
-        {collections.map((c: any) => {
-          return (
-            <WrapItem key={c.id}>
-              <Text
-                fontSize={12}
-                opacity={0.5}
-                textDecoration="underline"
-                onClick={()=> window.open(c.url, "_blank")}
-                _hover={{
-                  cursor: "pointer",
-                  opacity: 1,
-                }}
-              >
-                {c.name}
-              </Text>
-            </WrapItem>
-          );
-        })}
-      </Wrap>
+      <ListCollections collections={collections} />
     </Container>
   );
 };

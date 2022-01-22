@@ -23,8 +23,9 @@ export const Header = () => {
   const brightColor = useColorModeValue('gray.800', 'white');
   const lineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.100', 'gray.700');
+  const blockieColor = useColorModeValue('white', '#1A202C');
 
-  const { account, chain } = useContext(PayloadContext);
+  const { account } = useContext(PayloadContext);
 
   return (
     <Box
@@ -59,9 +60,9 @@ export const Header = () => {
               backgroundColor: opacityColor,
             }}
           />
-          <NavLink to="/seasons/0">season_0</NavLink>
-          <NavLink to="/simulator">simulator</NavLink>
-          <NavLink to="/chaos">chaos</NavLink>
+          <NavLink partially to="/seasons/0">season_0</NavLink>
+          <NavLink partially to="/simulator">simulator</NavLink>
+          <NavLink partially to="/chaos">chaos</NavLink>
         </HStack>
         <HStack
           h="10vh"
@@ -84,11 +85,11 @@ export const Header = () => {
               onClick={() => { navigate(`/profile/${account}`)}}
             >
               <Blockies
-                seed={account}
+                seed={account || ''}
                 size={12}
                 scale={3}
-                color={lineColor}
-                bgColor={backgroundColor}
+                bgColor={blockieColor}
+                spotColor={blockieColor}
               />
             </Center>
           )}
@@ -122,6 +123,28 @@ export const Header = () => {
           />
         </HStack>
         <HStack padding={4}>
+          {account && (
+            <Center
+              height="48px"
+              width="48px"
+              borderRadius='50%'
+              borderWidth={2}
+              borderColor={lineColor}
+              _hover={{
+                cursor: 'pointer',
+                borderColor: brightColor,
+              }}
+              onClick={() => { navigate(`/profile/${account}`)}}
+            >
+              <Blockies
+                seed={account || ''}
+                size={12}
+                scale={3}
+                bgColor={blockieColor}
+                spotColor={blockieColor}
+              />
+            </Center>
+          )}
           <MobileConnectButton />
           <ColorModeSwitcher />
           <TwitterButton />
