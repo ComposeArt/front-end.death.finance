@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import _ from "lodash";
 import {
   HStack,
@@ -24,10 +24,9 @@ import logo from './images/logo.png';
 
 import { elements } from "./utils/fighting";
 import { navigate } from "@reach/router";
+import { PayloadContext } from "./utils/firebase";
 
-export const Fighter = ({ fighter, color, winner = false }: any) => {
-  const LineColor = useColorModeValue('gray.500', 'white.500');
-  const winnerColor = useColorModeValue('gray.800', 'white');
+export const FighterStats = ({ fighter, color, big }: any) => {
   const useTooltipTouch = useBreakpointValue({ base: true, md: false });
 
   const fighterSpecialElement: any = fighter.special_element || 0;
@@ -49,64 +48,8 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
   };
 
   return (
-    <VStack>
-    {winner && (
-      <Box position="absolute" marginTop={-10}>
-        <FaCrown fontSize={32} />
-      </Box>
-    )}
-    <VStack spacing={4}>
-      <Box position="relative" marginBottom={4}>
-        <Box
-          marginTop={winner ? -2 : 0}
-          borderRadius={{ base: "100px", md: 150 }}
-          borderColor={winner ? winnerColor : LineColor}
-          borderWidth={2}
-          onClick={() => {fighter.owner && navigate(`/season/0/fighters/${fighter.id}`)}}
-          _hover={{
-            borderColor: fighter.owner || winner ? winnerColor : LineColor,
-            cursor: fighter.owner ? 'pointer' : 'default',
-          }}
-        >
-          {fighter.image_preview_url ? (
-            <Image
-              boxSize={{ base: "100px", md: 150 }}
-              borderRadius={{ base: "100px", md: 150 }}
-              src={fighter.image_preview_url}
-            />
-          ) : (
-            <Image
-              boxSize={{ base: "100px", md: 150 }}
-              borderRadius={{ base: "100px", md: 150 }}
-              src={logo}
-            />
-          )}
-        </Box>
-        {fighter.owner && (
-          <Box position="absolute" right="10px" bottom="0px">
-            <FaCheckCircle fontSize={32} />
-          </Box>
-        )}
-      </Box>
-      <Box
-        width={{ base: "100px", md: 150 }}
-        height="50px"
-        textAlign="center"
-      >
-        <Text
-          fontSize={{ base: 10, md: 12 }}
-          textDecoration="underline"
-          opacity={0.5}
-          onClick={()=> window.open(fighter.permalink, "_blank")}
-          _hover={{
-            cursor: 'pointer',
-            opacity: 1,
-          }}
-        >
-          {fighter.collection ? `${fighter.collection} #${_.truncate(fighter.token_id, { length: 7 })}` : '-'}
-        </Text>
-      </Box>
-      <HStack marginTop={8} align="center" spacing={4}>
+    <VStack justify="center" align="center" spacing={2}>
+      <HStack marginTop={8} marginBottom={2} align="center" spacing={4}>
         <CustomTooltip
           borderRadius={100}
           fontSize={10}
@@ -170,7 +113,7 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
           />
         </CustomTooltip>
       </HStack>
-      <HStack marginTop={8} align="center" spacing={4}>
+      <HStack align="center" spacing={4}>
         <CustomTooltip
           borderRadius={100}
           fontSize={10}
@@ -205,11 +148,11 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
         <Progress
           value={(fighter.special_attack / 15) * 100}
           colorScheme={color}
-          width={{ base: "80px", md: 130 }}
+          width={{ base: big ? "200px" : "80px", md: big ? "200px" : "150px" }}
           borderRadius={100}
         />
       </HStack>
-      <HStack marginTop={8} align="center" spacing={4}>
+      <HStack  align="center" spacing={4}>
         <CustomTooltip
           borderRadius={100}
           fontSize={10}
@@ -244,11 +187,11 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
         <Progress
           value={(fighter.attack / 15) * 100}
           colorScheme={color}
-          width={{ base: "80px", md: 130 }}
+          width={{ base: big ? "200px" : "80px", md: big ? "200px" : "150px" }}
           borderRadius={100}
         />
       </HStack>
-      <HStack marginTop={8} align="center" spacing={4}>
+      <HStack align="center" spacing={4}>
         <CustomTooltip
           borderRadius={100}
           fontSize={10}
@@ -283,11 +226,11 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
         <Progress
           value={(fighter.defense / 15) * 100}
           colorScheme={color}
-          width={{ base: "80px", md: 130 }}
+          width={{ base: big ? "200px" : "80px", md: big ? "200px" : "150px" }}
           borderRadius={100}
         />
       </HStack>
-      <HStack marginTop={8} align="center" spacing={4}>
+      <HStack align="center" spacing={4}>
         <CustomTooltip
           borderRadius={100}
           fontSize={10}
@@ -322,10 +265,92 @@ export const Fighter = ({ fighter, color, winner = false }: any) => {
         <Progress
           value={(fighter.health / 15) * 100}
           colorScheme={color}
-          width={{ base: "80px", md: 130 }}
+          width={{ base: big ? "200px" : "80px", md: big ? "200px" : "150px" }}
           borderRadius={100}
         />
       </HStack>
+    </VStack>
+  );
+};
+
+export const FighterPortrait = ({ fighter, winner, big }: any) => {
+  const LineColor = useColorModeValue('gray.500', 'white.500');
+  const winnerColor = useColorModeValue('gray.800', 'white');
+
+  const { account } = useContext(PayloadContext);
+
+  return (
+    <>
+      <Box position="relative" marginBottom={4}>
+        <Box
+          marginTop={winner ? -2 : 0}
+          borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+          borderColor={winner ? winnerColor : LineColor}
+          borderWidth={2}
+          onClick={() => {fighter.owner && navigate(`/season/0/fighters/${fighter.id}`)}}
+          _hover={{
+            borderColor: fighter.owner || winner ? winnerColor : LineColor,
+            cursor: fighter.owner ? 'pointer' : 'default',
+          }}
+        >
+          {fighter.image_preview_url ? (
+            <Image
+              boxSize={{ base: big ? "150" : "100px", md: 150 }}
+              borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+              src={fighter.image_preview_url}
+            />
+          ) : (
+            <Image
+              boxSize={{ base: big ? "150" : "100px", md: 150 }}
+              borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+              src={logo}
+            />
+          )}
+        </Box>
+        {fighter.owner && (
+          <>
+            <Box color={fighter.owner === account ? 'green.500' : 'current'} display={{ base: big ? 'block' : 'none', md: 'block' }} position="absolute" right="10px" bottom="0px">
+              <FaCheckCircle fontSize={32} />
+            </Box>
+            <Box color={fighter.owner === account ? 'green.500' : 'current'}  display={{ base: big ? 'none' : 'block', md: 'none' }} position="absolute" right="10px" bottom="0px">
+              <FaCheckCircle fontSize={24} />
+            </Box>
+          </>
+        )}
+      </Box>
+      <Box
+        width={{ base: "100px", md: 150 }}
+        height="32px"
+        textAlign="center"
+      >
+        <Text
+          fontSize={{ base: 10, md: 12 }}
+          textDecoration="underline"
+          opacity={0.5}
+          onClick={()=> window.open(fighter.permalink, "_blank")}
+          _hover={{
+            cursor: 'pointer',
+            opacity: 1,
+          }}
+        >
+          {fighter.collection ? `${fighter.collection} #${_.truncate(fighter.token_id, { length: 7 })}` : '-'}
+        </Text>
+      </Box>
+    </>
+  )
+};
+
+export const Fighter = ({ fighter, color = 'blue', winner = false }: any) => {
+  return (
+    <VStack>
+    {winner && (
+      <Box position="absolute" marginTop={-10}>
+        <FaCrown fontSize={32} />
+      </Box>
+    )}
+    <VStack spacing={2}>
+      <FighterPortrait fighter={fighter} winner={winner} />
+      <FighterStats fighter={fighter} color={color} />
     </VStack>
     </VStack>
   );

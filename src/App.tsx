@@ -19,11 +19,12 @@ import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
 import { ProfileFighters, ProfileMatches } from "./Profile";
 import { SeasonFighters } from "./SeasonFighters";
+import { SeasonCollections } from "./SeasonCollections";
 import { SeasonMatches } from "./SeasonMatches";
 import { SeasonRules } from "./SeasonRules";
 import { SeasonFighter } from "./SeasonFighter";
 
-import { PayloadContext, getCollections } from "./utils/firebase";
+import { PayloadContext, getCollections, getSeason } from "./utils/firebase";
 
 const theme = extendTheme({
   initialColorMode: 'dark',
@@ -48,14 +49,17 @@ const ScrollToTop = ({ children, location }: any) => {
 
 const Nav = (props: any) => {
   const [collections, setCollections]: any = useState([]);
+  const [season, setSeason]: any = useState([]);
   const { account, chainId } = useEthers();
   const chain = chainId && ChainId[chainId];
 
   useEffect(() => {
     (async function getInitialData() {
       const collectionsData = await getCollections();
+      const seasonDta = await getSeason();
 
       setCollections(collectionsData);
+      setSeason(seasonDta);
     })();
   }, []);
 
@@ -64,6 +68,7 @@ const Nav = (props: any) => {
       <PayloadContext.Provider
         value={{
           collections,
+          season,
           account: account ? account.toLowerCase() : null,
           chain,
         }}
@@ -92,6 +97,7 @@ export const App = () => (
           <ProfileMatches path="/profile/:address/matches" />
           <SeasonRules path="/season/0" />
           <SeasonFighters path="/season/0/fighters" />
+          <SeasonCollections path="/season/0/collections" />
           <SeasonMatches path="/season/0/matches" />
           <SeasonFighter path="/season/0/fighters/:id" />
         </Nav>

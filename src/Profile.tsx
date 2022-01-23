@@ -19,7 +19,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { RiSwordFill } from "react-icons/ri";
 import { FaCheckCircle, FaBookDead } from "react-icons/fa";
 
 import { NavLink } from "./NavLink";
@@ -266,7 +265,7 @@ export const ProfileFighters = (props: any) => {
                     />
                   </Box>
                   {p.fighter && (
-                    <Box position="absolute" right="10px" bottom="0px">
+                    <Box color={p.fighter.owner === account ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
                       <FaCheckCircle fontSize={32} />
                     </Box>
                   )}

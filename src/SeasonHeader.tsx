@@ -28,8 +28,9 @@ export const SeasonHeader = (props: any) => {
         spacing={8}
         marginTop={8}
       >
-        <NavLink to={`/season/0/fighters`}>fighters</NavLink>
         <NavLink to={`/season/0`}>rules</NavLink>
+        <NavLink to={`/season/0/collections`}>collections</NavLink>
+        <NavLink to={`/season/0/fighters`}>fighters</NavLink>
         <NavLink to={`/season/0/matches`}>matches</NavLink>
       </HStack>
     </Container>

@@ -29,12 +29,14 @@ const registerFighter = httpsCallable(functions, 'registerFighter');
 
 interface PayloadTypes {
   collections: [];
+  season: any,
   account: string | null | undefined;
   chain: string | null | undefined;
 }
 
 const defaultPayload: PayloadTypes = {
   collections: [],
+  season: {},
   account: '',
   chain: '',
 };
@@ -142,6 +144,15 @@ export const remoteRegisterFighter = async ({
   });
 
   return result.data;
+};
+
+export const getSeason = async () => {
+  const docRef = doc(db, `nft-death-games`, 'season_0');
+  const docSnap = await getDoc(docRef);
+
+  const season = docSnap.data();
+
+  return season;
 };
 
 export const getSimulation = async (simulationId: any) => {
