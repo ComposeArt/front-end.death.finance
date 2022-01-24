@@ -30,6 +30,10 @@ import {
   getCollectionPlayers,
   remoteSimulateFight,
 } from "./utils/firebase";
+import { collection } from "firebase/firestore";
+
+let prevCollection1: any;
+let prevCollection2: any;
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
@@ -185,7 +189,8 @@ export const Simulator = (props: RouteComponentProps) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection1) {
+      if (collection1 && collection1 !== prevCollection1) {
+        prevCollection1 = collection1;
         setLoading1(true);
         setPlayer1('');
 
@@ -205,7 +210,8 @@ export const Simulator = (props: RouteComponentProps) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection2) {
+      if (collection2 && collection2 !== prevCollection2) {
+        prevCollection2 = collection2;
         setLoading2(true);
         setPlayer2('');
 

@@ -46,7 +46,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "connect-src 'self' https://us-central1-composeart-f9a7a.cloudfunctions.net https://firestore.googleapis.com https://api.opensea.io; default-src 'self'; font-src https://death.finance; img-src 'self' https://lh3.googleusercontent.com ; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; upgrade-insecure-requests;"
+          "value": "connect-src 'self' https://us-central1-composeart-f9a7a.cloudfunctions.net https://firestore.googleapis.com https://api.opensea.io; default-src 'self'; font-src https://death.finance; img-src 'self' https://storage.opensea.io https://lh3.googleusercontent.com ; manifest-src 'self'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; upgrade-insecure-requests;"
         }
       ]
     }]
