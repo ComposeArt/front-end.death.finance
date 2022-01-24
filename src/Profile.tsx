@@ -131,31 +131,33 @@ export const ProfileFighters = (props: any) => {
   };
 
   useEffect(() => {
-    document.title = 'Profile';
-  }, []);
-
-  useEffect(() => {
     if (!address && account) {
       navigate(`/profile/${account}`);
     }
   }, [account, address]);
 
   useEffect(() => {
-    const fighterListener = streamOwnerFighters({ address }, (data: any) => {
-      setFighters((prevFighters: any) => {
-        const newFighters = {
-          ...prevFighters,
-        };
+    if (address) {
+      document.title = address;
 
-        newFighters[data.id] = data;
+      const fighterListener = streamOwnerFighters({ address }, (data: any) => {
+        setFighters((prevFighters: any) => {
+          const newFighters = {
+            ...prevFighters,
+          };
 
-        return newFighters;
+          newFighters[data.id] = data;
+
+          return newFighters;
+        });
       });
-    });
 
-    return () => {
-      fighterListener();
-    };
+      return () => {
+        fighterListener();
+      };
+    } else {
+      document.title = 'Profile';
+    }
   }, [address]);
 
   useEffect(() => {

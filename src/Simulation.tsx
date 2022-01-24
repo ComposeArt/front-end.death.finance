@@ -17,7 +17,7 @@ import { RiSwordFill } from "react-icons/ri";
 import { FaRandom } from "react-icons/fa";
 import { navigate } from "@reach/router";
 
-import { Fighter } from './Fighter';
+import { FighterPortrait } from './Fighter';
 import { getSimulation } from "./utils/firebase";
 import { matchReporter } from "./utils/fighting";
 
@@ -89,6 +89,8 @@ export const Simulation = (props: any) => {
     document.title = `${name1} vs ${name2}`;
   }, [name1, name2]);
 
+  console.log(fighter2Winner)
+
   return (
     <Container maxW='container.md' centerContent>
       <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5}>
@@ -104,7 +106,7 @@ export const Simulation = (props: any) => {
         Winner {fighter1Winner ? name1 : (fighter2Winner ? name2 : '-')}
       </Text>
       <HStack marginTop={12} align="flex-start" spacing={8}>
-        <Fighter fighter={fighter1} color="blue" winner={fighter1Winner} />
+        <FighterPortrait fighter={fighter1} winner={fighter1Winner} />
         <Box
           display='flex'
           height={{ base: "100px", md: 150 }}
@@ -114,7 +116,7 @@ export const Simulation = (props: any) => {
         >
           <RiSwordFill size={24} />
         </Box>
-        <Fighter fighter={fighter2} color="red" winner={fighter2Winner} />
+        <FighterPortrait fighter={fighter2} winner={fighter2Winner} />
       </HStack>
       <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5} marginBottom={8}>
         Match Log

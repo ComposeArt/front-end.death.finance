@@ -210,6 +210,12 @@ export const Home = (props: RouteComponentProps) => {
         {collections.length} Collections
       </Heading>
       <ListCollections collections={collections} />
+      <Box marginTop={8}>
+        <LinkButton
+          text="view collections"
+          path="/season/0/collections"
+        />
+      </Box>
     </Container>
   );
 };

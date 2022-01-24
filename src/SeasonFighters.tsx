@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import _ from "lodash";
 import { useFuzzy } from 'react-use-fuzzy';
 import {
@@ -20,12 +20,14 @@ import { navigate } from "@reach/router";
 import { FaCheckCircle, FaSearch } from "react-icons/fa";
 
 import { SeasonHeader } from "./SeasonHeader";
-import { getAllFighters } from "./utils/firebase";
+import { getAllFighters, PayloadContext } from "./utils/firebase";
 
 export const SeasonFighters = (props: any) => {
   const toast = useToast();
   const lineColor = useColorModeValue('gray.500', 'white.500');
   const brightColor = useColorModeValue('gray.800', 'white');
+
+  const { account } = useContext(PayloadContext);
 
   const [loading, setLoading]: any = useState(true);
   const [fighters, setFighters]: any = useState([]);
@@ -67,8 +69,12 @@ export const SeasonFighters = (props: any) => {
     }
   }, [errorLoading, toast]);
 
+  useEffect(() => {
+    document.title = 'Fighters | Season 0 | NFT Fight Club';
+  }, []);
+
   return (
-    <Container maxW='container.md' centerContent>
+    <Container maxW='container.lg' centerContent>
       <SeasonHeader />
       <InputGroup
         size="sm"
@@ -113,13 +119,13 @@ export const SeasonFighters = (props: any) => {
                       src={item.player.image_preview_url}
                     />
                   </Box>
-                  <Box position="absolute" right="10px" bottom="0px">
+                  <Box color={account === item.owner ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
                     <FaCheckCircle fontSize={32} />
                   </Box>
                 </Box>
                 <Box
                   width="150px"
-                  height="50px"
+                  height="32px"
                   textAlign="center"
                 >
                   <Text

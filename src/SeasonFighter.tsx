@@ -11,77 +11,19 @@ import {
   Wrap,
   WrapItem,
   VStack,
-  Center,
-  InputLeftAddon,
-  Input,
   Button,
   HStack,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
 import { FaRandom } from "react-icons/fa";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
 
 import { NavLink } from "./NavLink";
 import { FighterPortrait, FighterStats } from './Fighter';
 import { PayloadContext, getFighter } from "./utils/firebase";
-import { register } from "./serviceWorker";
-
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  events: [],
-  scales: {
-    x: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        display: false,
-      }
-    },
-    y: {
-      stacked: true,
-      grid: {
-        display: false,
-        drawBorder: false,
-      },
-      ticks: {
-        display: false,
-      }
-    },
-  },
-  plugins: {
-    legend: {
-      display: false,
-      position: 'top' as const,
-    }
-  }
-};
+import { PowerDistribution } from "./PowerDistribution";
 
 const FighterHeader = (props: any) => {
   const formatAddress = props.fighter.owner ? `${props.fighter.owner.slice(0, 6)}...${props.fighter.owner.slice(props.fighter.owner.length - 4, props.fighter.owner.length)}` : '-';
-  const registered = props.fighter.timestamp ? moment(props.fighter.timestamp, 'x').format('MMM Do YYYY') : '';
 
   return (
     <>
@@ -94,33 +36,29 @@ const FighterHeader = (props: any) => {
       >
         {`${props.fighter.collection} #${_.truncate(props.fighter.token_id, { length: 7 })}`}
       </Heading>
-      <NavLink to={`/profile/${props.fighter.owner}`}>
-        {formatAddress} {props.fighter.owner === props.account ? '(you)' : ''}
-      </NavLink>
-        <HStack
-          w="100%"
-          align="center"
-          justify="center"
-          spacing={8}
-          marginTop={4}
-        >
-          <NavLink to={`/season/0/collections/${props.fighter.collection}`}>collection</NavLink>
-          <NavLink to={`/season/0/fighters/${props.fighter.id}`}>stats</NavLink>
-          <NavLink to={`/season/0/fighters/${props.fighter.id}/matches`}>matches</NavLink>
-        </HStack>
-        <Text opacity={0.5} fontSize={8} marginTop={4} marginBottom={12}>
-          {registered}
-        </Text>
+      <Box marginBottom={4}>
+        <NavLink to={`/profile/${props.fighter.owner}`}>
+          {formatAddress} {props.fighter.owner === props.account ? '(you)' : ''}
+        </NavLink>
+      </Box>
+      <FighterPortrait fighter={props.fighter} big />
+      <HStack
+        w="100%"
+        align="center"
+        justify="center"
+        spacing={8}
+        marginTop={4}
+      >
+        <NavLink to={`/season/0/collections/${props.fighter.collection}`}>collection</NavLink>
+        <NavLink to={`/season/0/fighters/${props.fighter.id}`}>stats</NavLink>
+        <NavLink to={`/season/0/fighters/${props.fighter.id}/matches`}>matches</NavLink>
+      </HStack>
     </>
   );
 };
 
 export const SeasonFighter = (props: any) => {
   const toast = useToast();
-
-  const chartColor = useColorModeValue('#718096', 'rgba(255, 255, 255, 0.16)');
-  const chartSoftColor = useColorModeValue('#A0AEC0', 'rgba(255, 255, 255, 0.08)');
-  const chartBrightColor = useColorModeValue('#1A202C', 'white');
 
   const fighterId = props.id;
 
@@ -129,6 +67,14 @@ export const SeasonFighter = (props: any) => {
   const [errorLoading, setErrorLoading]: any = useState(false);
 
   const { account, collections, season } = useContext(PayloadContext);
+
+  const collection = _.find(collections, (c:any) => c.id === fighter.collection) || {};
+
+  const formatFighter = {
+    ...fighter.player,
+    owner: fighter.owner,
+    timestamp: fighter.timestamp,
+  };
 
   useEffect(() => {
     (async function getInitialData() {
@@ -163,75 +109,14 @@ export const SeasonFighter = (props: any) => {
     }
   }, [errorLoading, toast]);
 
-  const formatFighter = {
-    ...fighter.player,
-    owner: fighter.owner,
-    timestamp: fighter.timestamp,
-  };
-
-  const seasonGroupedPower: any = {};
-  let lessPower = 0;
-  let morePower = 0;
-
-  _.forEach(season.power_levels, (v, k) => {
-    const key = _.floor(parseInt(k, 10) / 5) * 5;
-    if (!seasonGroupedPower[key]) {
-      seasonGroupedPower[key] = 0;
-    }
-
-    seasonGroupedPower[key] += v;
-
-    if (key <= formatFighter.power) {
-      lessPower++;
-    }
-
-    if (key > formatFighter.power) {
-      morePower++;
-    }
-  });
-
-  const percentile = lessPower / (morePower + lessPower) * 100;
-
-  const chartData = {
-    labels: _.keys(seasonGroupedPower),
-    datasets: [
-      {
-        data: _.values(seasonGroupedPower),
-        backgroundColor: _.chain(seasonGroupedPower).keys().map((p: any) => formatFighter.power >= parseInt(p, 10) ? chartBrightColor : chartSoftColor).value(),
-        borderRadius: 100,
-      },
-    ],
-  };
-
-  const pieData = {
-    labels: ['', ''],
-    datasets: [
-      {
-        data: [60, 40],
-        backgroundColor: [chartColor, chartSoftColor],
-        borderColor: chartSoftColor
-      },
-      // {
-      //   data: [30, 70],
-      //   backgroundColor: [chartColor, chartSoftColor],
-      //   borderColor: chartSoftColor
-      // },
-    ],
-  };
+  useEffect(() => {
+    document.title = `${formatFighter.collection} #${_.truncate(formatFighter.token_id, { length: 7 })}`;
+  }, [formatFighter]);
 
   return (
     <Container maxW='container.md' centerContent>
       <FighterHeader fighter={formatFighter} account={account} />
-      <FighterPortrait fighter={formatFighter} big />
-      <Box textAlign="center" height="100px" marginBottom={4} marginTop={4}>
-        <Bar
-          options={chartOptions}
-          data={chartData}
-        />
-        <Text fontSize={10} opacity={0.5}>
-          {_.round(percentile, 2)} percentile
-        </Text>
-      </Box>
+      <PowerDistribution fighter={formatFighter} collection={collection} season={season} />
       <Wrap marginTop={4} justify='center' spacing={12}>
         <WrapItem>
           <FighterStats fighter={formatFighter} big />
@@ -368,7 +253,7 @@ export const SeasonFighter = (props: any) => {
   );
 };
 
-export const SeasonMatches = (props: any) => {
+export const SeasonFighterMatches = (props: any) => {
   const toast = useToast();
 
   const chartColor = useColorModeValue('#718096', 'rgba(255, 255, 255, 0.16)');
@@ -383,7 +268,52 @@ export const SeasonMatches = (props: any) => {
 
   const { account, collections, season } = useContext(PayloadContext);
 
+  const formatFighter = {
+    ...fighter.player,
+    owner: fighter.owner,
+    timestamp: fighter.timestamp,
+  };
+
+  useEffect(() => {
+    (async function getInitialData() {
+      setLoading(true);
+      try {
+        if (fighterId) {
+          const result = await getFighter(fighterId);
+
+          if (result) {
+            setFighter(result);
+          } else {
+            navigate('/season/0/fighters');
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        setErrorLoading(true);
+      }
+      setLoading(false);
+    })();
+  }, [fighterId]);
+
+  useEffect(() => {
+    if (errorLoading) {
+      setErrorLoading(false);
+      toast({
+        title: 'failed to load fighter',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [errorLoading, toast]);
+
+  useEffect(() => {
+    document.title = `Matches | ${formatFighter.collection} #${_.truncate(formatFighter.token_id, { length: 7 })}`;
+  }, [formatFighter]);
+
   return (
-    <Container maxW='container.md' centerContent></Container>
+    <Container maxW='container.md' centerContent>
+      <FighterHeader fighter={formatFighter} account={account} />
+    </Container>
   )
 };

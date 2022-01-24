@@ -39,6 +39,10 @@ export const SeasonMatches = (props: any) => {
 
   const { account, collections } = useContext(PayloadContext);
 
+  useEffect(() => {
+    document.title = 'Matches | Season 0 | NFT Fight Club';
+  }, []);
+
   return (
     <Container maxW='container.md' centerContent>
       <SeasonHeader />

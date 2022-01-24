@@ -218,6 +218,22 @@ export const getAllFighters = async () => {
   return fighters;
 };
 
+export const getCollectionFighters = async (collectionId: any) => {
+  const fighters: any = [];
+
+  const ref1 = collection(db, `nft-death-games/season_0/fighters`);
+  const query1 = query(ref1, where("collection", "==", collectionId), orderBy("timestamp", "desc"));
+
+  const snapshot1 = await getDocs(query1);
+
+  snapshot1.forEach((docSnap) => {
+    fighters.push(docSnap.data());
+  });
+
+  return fighters;
+};
+
+
 export const getCollectionPlayers = async (collectionId: any) => {
   const ref1 = collection(db, `nft-death-games/season_0/collections/${collectionId}/players`);
 

@@ -22,7 +22,9 @@ import { SeasonFighters } from "./SeasonFighters";
 import { SeasonCollections } from "./SeasonCollections";
 import { SeasonMatches } from "./SeasonMatches";
 import { SeasonRules } from "./SeasonRules";
-import { SeasonFighter } from "./SeasonFighter";
+import { SeasonCollection, SeasonCollectionFighters, SeasonCollectionMatches } from "./SeasonCollection";
+import { SeasonFighter, SeasonFighterMatches } from "./SeasonFighter";
+
 
 import { PayloadContext, getCollections, getSeason } from "./utils/firebase";
 
@@ -100,6 +102,10 @@ export const App = () => (
           <SeasonCollections path="/season/0/collections" />
           <SeasonMatches path="/season/0/matches" />
           <SeasonFighter path="/season/0/fighters/:id" />
+          <SeasonFighterMatches path="/season/0/fighters/:id/matches" />
+          <SeasonCollection path="/season/0/collections/:id" />
+          <SeasonCollectionFighters path="/season/0/collections/:id/fighters" />
+          <SeasonCollectionMatches path="/season/0/collections/:id/matches" />
         </Nav>
       </ScrollToTop>
     </QueryParamProvider>

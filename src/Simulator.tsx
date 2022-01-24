@@ -23,7 +23,7 @@ import { RiSwordFill } from "react-icons/ri";
 import { FaRandom } from "react-icons/fa";
 import { useQueryParam, StringParam } from 'use-query-params';
 
-import { Fighter } from './Fighter';
+import { FighterPortrait } from './Fighter';
 import {
   PayloadContext,
   getRandomPlayer,
@@ -376,7 +376,7 @@ export const Simulator = (props: RouteComponentProps) => {
         </VStack>
       </HStack>
       <HStack marginTop={12} align="flex-start" spacing={8}>
-        <Fighter fighter={fighter1} color="blue" />
+        <FighterPortrait fighter={fighter1} />
         <Box
           display='flex'
           height={{ base: "100px", md: 150 }}
@@ -386,7 +386,7 @@ export const Simulator = (props: RouteComponentProps) => {
         >
           <RiSwordFill size={24} />
         </Box>
-        <Fighter fighter={fighter2} color="red" />
+        <FighterPortrait fighter={fighter2} />
       </HStack>
       <Button
         isLoading={simulating}

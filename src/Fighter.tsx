@@ -280,11 +280,15 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
   const { account } = useContext(PayloadContext);
 
   return (
-    <>
+    <VStack>
       <Box position="relative" marginBottom={4}>
+        {winner && (
+          <Box position="absolute" left="59px" top="-42px">
+            <FaCrown fontSize={32} />
+          </Box>
+        )}
         <Box
-          marginTop={winner ? -2 : 0}
-          borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+          borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
           borderColor={winner ? winnerColor : LineColor}
           borderWidth={2}
           onClick={() => {fighter.owner && navigate(`/season/0/fighters/${fighter.id}`)}}
@@ -295,14 +299,14 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
         >
           {fighter.image_preview_url ? (
             <Image
-              boxSize={{ base: big ? "150" : "100px", md: 150 }}
-              borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+              boxSize={{ base: big ? "150px" : "100px", md: 150 }}
+              borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
               src={fighter.image_preview_url}
             />
           ) : (
             <Image
-              boxSize={{ base: big ? "150" : "100px", md: 150 }}
-              borderRadius={{ base: big ? "150" : "100px", md: 150 }}
+              boxSize={{ base: big ? "150px" : "100px", md: 150 }}
+              borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
               src={logo}
             />
           )}
@@ -336,22 +340,22 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
           {fighter.collection ? `${fighter.collection} #${_.truncate(fighter.token_id, { length: 7 })}` : '-'}
         </Text>
       </Box>
-    </>
+    </VStack>
   )
 };
 
 export const Fighter = ({ fighter, color = 'blue', winner = false }: any) => {
   return (
     <VStack>
-    {winner && (
-      <Box position="absolute" marginTop={-10}>
-        <FaCrown fontSize={32} />
-      </Box>
-    )}
-    <VStack spacing={2}>
-      <FighterPortrait fighter={fighter} winner={winner} />
-      <FighterStats fighter={fighter} color={color} />
-    </VStack>
+      {winner && (
+        <Box position="absolute" marginTop={-10}>
+          <FaCrown fontSize={32} />
+        </Box>
+      )}
+      <VStack spacing={2}>
+        <FighterPortrait fighter={fighter} winner={winner} />
+        <FighterStats fighter={fighter} color={color} />
+      </VStack>
     </VStack>
   );
 };
