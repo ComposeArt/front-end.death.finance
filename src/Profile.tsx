@@ -19,7 +19,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { FaCheckCircle, FaBookDead } from "react-icons/fa";
+import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle } from "react-icons/fa";
 
 import { NavLink } from "./NavLink";
 import { ListCollections } from "./ListCollections";
@@ -115,6 +115,8 @@ export const ProfileFighters = (props: any) => {
       await remoteRegisterFighter({
         owner: address,
         collection: p.collection.slug,
+        contract: p.asset_contract.address,
+        token_id: p.token_id,
         player: p.id,
       });
     } catch (error) {
@@ -250,25 +252,46 @@ export const ProfileFighters = (props: any) => {
             <WrapItem key={p.id} margin={4}>
               <VStack>
                 <Box position="relative" marginBottom={4}>
+                  {p.fighter && p.fighter.is_invalid && (
+                    <Text textShadow="2px 2px #fff"  fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                      REFUSING TO FIGHT
+                    </Text>
+                  )}
+                  {p.fighter && p.fighter.is_doping && (
+                    <Text textShadow="2px 2px #fff"  fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                      BANNED FOR DOPING
+                    </Text>
+                  )}
                   <Box
                     borderRadius="150px"
                     borderColor={lineColor}
                     borderWidth={2}
-                    onClick={() => {p.fighter && navigate(`/season/0/fighters/${p.id}`)}}
+                    onClick={() => {p.fighter && !p.fighter.is_invalid && navigate(`/season/0/fighters/${p.id}`)}}
                     _hover={{
-                      borderColor: p.fighter ? brightColor : lineColor,
-                      cursor: p.fighter ? 'pointer' : 'default',
+                      borderColor: (p.fighter && !p.fighter.is_invalid ) ? brightColor : lineColor,
+                      cursor: (p.fighter && !p.fighter.is_invalid ) ? 'pointer' : 'default',
                     }}
                   >
                     <Image
                       boxSize="150px"
                       borderRadius="150px"
                       src={p.image_preview_url}
+                      opacity={p.fighter && (p.fighter.is_doping || p.fighter.is_invalid) ? 0.3 : 1}
                     />
                   </Box>
-                  {p.fighter && (
+                  {p.fighter && !p.fighter.is_doping && !p.fighter.is_invalid && (
                     <Box color={p.fighter.owner === account ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
                       <FaCheckCircle fontSize={32} />
+                    </Box>
+                  )}
+                  {p.fighter && p.fighter.is_doping && (
+                    <Box color={'red.500'} position="absolute" right="10px" bottom="0px">
+                      <FaExclamationCircle fontSize={32} />
+                    </Box>
+                  )}
+                  {p.fighter && p.fighter.is_invalid && (
+                    <Box color={'red.500'} position="absolute" right="10px" bottom="0px">
+                      <FaTimesCircle fontSize={32} />
                     </Box>
                   )}
                 </Box>

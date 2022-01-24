@@ -17,7 +17,8 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { FaCheckCircle, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import { FighterPortrait } from './Fighter';
 
 import { SeasonHeader } from "./SeasonHeader";
 import { getAllFighters, PayloadContext } from "./utils/firebase";
@@ -42,13 +43,14 @@ export const SeasonFighters = (props: any) => {
       setLoading(true);
       try {
         const allFighters = await getAllFighters();
-
-        setFighters(allFighters.map((f:any) => {
+        const orderedFighters = allFighters.filter((f: any) => !f.is_invalid).map((f:any) => {
           return {
             ...f,
             name: `${f.collection} #${_.truncate(f.player.token_id, { length: 7 })}`,
           };
-        }));
+        });
+
+        setFighters(orderedFighters);
       } catch (error) {
         console.log(error);
         setErrorLoading(true);
@@ -99,49 +101,17 @@ export const SeasonFighters = (props: any) => {
         {result.map((r: any) => {
           let item = r.item || r;
 
+          const formatFighter = {
+            ...item.player,
+            owner: item.owner,
+            timestamp: item.timestamp,
+            is_invalid: item.is_invalid,
+            is_doping: item.is_doping,
+          };
+
           return (
-            <WrapItem key={item.id} margin={4}>
-              <VStack>
-                <Box position="relative" marginBottom={4}>
-                  <Box
-                    borderRadius="150px"
-                    borderColor={lineColor}
-                    borderWidth={2}
-                    onClick={() => {navigate(`/season/0/fighters/${item.id}`)}}
-                    _hover={{
-                      borderColor: brightColor,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <Image
-                      boxSize="150px"
-                      borderRadius="150px"
-                      src={item.player.image_preview_url}
-                    />
-                  </Box>
-                  <Box color={account === item.owner ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
-                    <FaCheckCircle fontSize={32} />
-                  </Box>
-                </Box>
-                <Box
-                  width="150px"
-                  height="32px"
-                  textAlign="center"
-                >
-                  <Text
-                    fontSize={{ base: 10, md: 12 }}
-                    textDecoration="underline"
-                    opacity={0.5}
-                    onClick={()=> window.open(item.player.permalink, "_blank")}
-                    _hover={{
-                      cursor: 'pointer',
-                      opacity: 1,
-                    }}
-                  >
-                    {item.name}
-                  </Text>
-                </Box>
-              </VStack>
+            <WrapItem key={formatFighter.id} margin={4}>
+              <FighterPortrait fighter={formatFighter} big />
             </WrapItem>
           );
         })}

@@ -74,6 +74,8 @@ export const SeasonFighter = (props: any) => {
     ...fighter.player,
     owner: fighter.owner,
     timestamp: fighter.timestamp,
+    is_invalid: fighter.is_invalid,
+    is_doping: fighter.is_doping,
   };
 
   useEffect(() => {

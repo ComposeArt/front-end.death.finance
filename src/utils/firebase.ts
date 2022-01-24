@@ -135,11 +135,15 @@ export const remoteSimulateFight = async ({
 export const remoteRegisterFighter = async ({
   owner,
   collection,
+  contract,
+  token_id,
   player,
 }: any) => {
   const result = await registerFighter({
     ownerAddress: owner,
     collection,
+    contract,
+    token_id,
     playerId: player,
   });
 

@@ -18,7 +18,7 @@ import {
   GiShield,
   GiHealthNormal,
 } from "react-icons/gi";
-import { FaCrown, FaCheckCircle } from "react-icons/fa";
+import { FaCrown, FaCheckCircle, FaTimesCircle, FaExclamationCircle } from "react-icons/fa";
 
 import logo from './images/logo.png';
 
@@ -279,6 +279,8 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
 
   const { account } = useContext(PayloadContext);
 
+  const is_doping = (fighter.is_doping || fighter.power === 84);
+
   return (
     <VStack>
       <Box position="relative" marginBottom={4}>
@@ -286,6 +288,11 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
           <Box position="absolute" left="59px" top="-42px">
             <FaCrown fontSize={32} />
           </Box>
+        )}
+        {is_doping && (
+          <Text textShadow="2px 2px #fff" fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+            BANNED FOR DOPING
+          </Text>
         )}
         <Box
           borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
@@ -302,6 +309,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
               boxSize={{ base: big ? "150px" : "100px", md: 150 }}
               borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
               src={fighter.image_preview_url}
+              opacity={(fighter.is_doping || fighter.is_invalid) ? 0.3 : 1}
             />
           ) : (
             <Image
@@ -311,13 +319,23 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
             />
           )}
         </Box>
-        {fighter.owner && (
+        {fighter.owner && !is_doping && (
           <>
             <Box color={fighter.owner === account ? 'green.500' : 'current'} display={{ base: big ? 'block' : 'none', md: 'block' }} position="absolute" right="10px" bottom="0px">
               <FaCheckCircle fontSize={32} />
             </Box>
             <Box color={fighter.owner === account ? 'green.500' : 'current'}  display={{ base: big ? 'none' : 'block', md: 'none' }} position="absolute" right="10px" bottom="0px">
               <FaCheckCircle fontSize={24} />
+            </Box>
+          </>
+        )}
+        {is_doping && (
+          <>
+            <Box color={'red.500'} display={{ base: big ? 'block' : 'none', md: 'block' }} position="absolute" right="10px" bottom="0px">
+              <FaExclamationCircle fontSize={32} />
+            </Box>
+            <Box color={'red.500'}  display={{ base: big ? 'none' : 'block', md: 'none' }} position="absolute" right="10px" bottom="0px">
+              <FaExclamationCircle fontSize={24} />
             </Box>
           </>
         )}

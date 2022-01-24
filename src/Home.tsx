@@ -45,7 +45,9 @@ export const Home = (props: RouteComponentProps) => {
         const randomPlayer2 = await getRandomPlayer(collections);
         const latestFighters = await getLatestFighters();
 
-        setPlayers(_.orderBy(latestFighters, ['timestamp'], ['desc']));
+        const filterInvalid = _.filter(latestFighters, (f: any) => !f.is_invalid);
+
+        setPlayers(filterInvalid);
         setRandomPlayers({
           player1: randomPlayer1,
           player2: randomPlayer2,

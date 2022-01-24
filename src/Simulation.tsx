@@ -89,8 +89,6 @@ export const Simulation = (props: any) => {
     document.title = `${name1} vs ${name2}`;
   }, [name1, name2]);
 
-  console.log(fighter2Winner)
-
   return (
     <Container maxW='container.md' centerContent>
       <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5}>

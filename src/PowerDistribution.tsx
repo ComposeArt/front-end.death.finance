@@ -113,14 +113,14 @@ export const PowerDistribution = (props: any) => {
     labels: _.keys(groupPower),
     datasets: [
       {
-        data: _.values(groupPower),
-        backgroundColor: _.chain(groupPower).keys().map((p: any) => chartSoftColor).value(),
-        borderRadius: 100,
-      },
-      {
         data: _.values(cGroupedPower),
         backgroundColor: _.chain(cGroupedPower).keys().map((p: any) => props.fighter && props.fighter.power >= parseInt(p, 10) ? chartBrightColor : chartColor).value(),
-        borderRadius: 100,
+        borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
+      },
+      {
+        data: _.values(groupPower),
+        backgroundColor: _.chain(groupPower).keys().map((p: any) => chartSoftColor).value(),
+        borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
       },
     ],
   };
