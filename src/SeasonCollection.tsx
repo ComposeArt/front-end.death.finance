@@ -93,17 +93,17 @@ export const SeasonCollection = (props: any) => {
   const [fighters, setFighters]: any = useState([]);
   const [errorLoading, setErrorLoading]: any = useState(false);
 
-  const { collections, season, account } = useContext(PayloadContext);
+  const { collections, season } = useContext(PayloadContext);
 
   const collectionId = props.id;
   const collection = _.find(collections, (c:any) => c.id === collectionId) || {};
 
   useEffect(() => {
     (async function getInitialData() {
-      if (!_.isEmpty(collections) && collection.id) {
+      if (!_.isEmpty(collections) && _.find(collections, (c:any) => c.id === collectionId)) {
         setLoading(true);
         try {
-          const allFighters = await getCollectionFighters(collection.id);
+          const allFighters = await getCollectionFighters(collectionId);
           const orderedFighters = allFighters.filter((f: any) => !f.is_invalid).map((f:any) => {
             return {
               ...f,
@@ -120,7 +120,7 @@ export const SeasonCollection = (props: any) => {
         navigate('/season/0/collections');
       }
     })();
-  }, [collection, collections]);
+  }, [collectionId, collections]);
 
   useEffect(() => {
     if (errorLoading) {
@@ -141,7 +141,7 @@ export const SeasonCollection = (props: any) => {
   return (
     <Container maxW='container.lg' centerContent>
       <CollectionHeader collection={collection} />
-      <PowerDistribution collection={collection} season={season} />
+      <PowerDistribution isCollection collection={collection} season={season} />
       <Text fontSize={12} opacity={0.5}>
         {collection.total || 0} NFTs | {fighters.length} Registered
       </Text>
@@ -273,16 +273,12 @@ export const SeasonCollection = (props: any) => {
 
 export const SeasonCollectionFighters = (props: any) => {
   const toast = useToast();
-  const lineColor = useColorModeValue('gray.500', 'white.500');
-  const brightColor = useColorModeValue('gray.800', 'white');
-  const chartColor = useColorModeValue('#718096', 'rgba(255, 255, 255, 0.16)');
-  const chartSoftColor = useColorModeValue('#A0AEC0', 'rgba(255, 255, 255, 0.08)');
 
   const [loading, setLoading]: any = useState(true);
   const [fighters, setFighters]: any = useState([]);
   const [errorLoading, setErrorLoading]: any = useState(false);
 
-  const { collections, season, account } = useContext(PayloadContext);
+  const { collections } = useContext(PayloadContext);
 
   const collectionId = props.id;
   const collection = _.find(collections, (c:any) => c.id === collectionId) || {};
@@ -293,10 +289,10 @@ export const SeasonCollectionFighters = (props: any) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (!_.isEmpty(collections) && collection.id) {
+      if (!_.isEmpty(collections) && _.find(collections, (c:any) => c.id === collectionId)) {
         setLoading(true);
         try {
-          const allFighters = await getCollectionFighters(collection.id);
+          const allFighters = await getCollectionFighters(collectionId);
           const orderedFighters = allFighters.filter((f: any) => !f.is_invalid).map((f:any) => {
             return {
               ...f,
@@ -313,7 +309,7 @@ export const SeasonCollectionFighters = (props: any) => {
         navigate('/season/0/collections');
       }
     })();
-  }, [collection, collections]);
+  }, [collectionId, collections]);
 
   useEffect(() => {
     if (errorLoading) {
@@ -399,10 +395,10 @@ export const SeasonCollectionMatches = (props: any) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (!_.isEmpty(collections) && collection.id) {
+      if (!_.isEmpty(collections) && _.find(collections, (c:any) => c.id === collectionId)) {
         setLoading(true);
         try {
-          const allMatches = await getCollectionMatches(collection.id);
+          const allMatches = await getCollectionMatches(collectionId);
           const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
 
           setMatches(orderedMatches);
@@ -415,7 +411,7 @@ export const SeasonCollectionMatches = (props: any) => {
         navigate('/season/0/collections');
       }
     })();
-  }, [collection]);
+  }, [collectionId, collections]);
 
   useEffect(() => {
     if (errorLoading) {

@@ -29,7 +29,7 @@ import { SeasonCollection, SeasonCollectionFighters, SeasonCollectionMatches } f
 import { SeasonFighter, SeasonFighterMatches } from "./SeasonFighter";
 import { SeasonMatch } from "./SeasonMatch";
 
-import { PayloadContext, getCollections, getSeason, streamChain } from "./utils/firebase";
+import { PayloadContext, RemoteChainPayloadContext, getCollections, getSeason, streamChain } from "./utils/firebase";
 
 const theme = extendTheme({
   initialColorMode: 'dark',
@@ -60,20 +60,25 @@ const Nav = (props: any) => {
   const chain = chainId && ChainId[chainId];
 
   useEffect(() => {
+    let chainListener: any;
+
     (async function getInitialData() {
       const collectionsData = await getCollections();
       const seasonDta = await getSeason();
 
-      const chainListener = streamChain((data: any) => {
+      chainListener = streamChain((data: any) => {
         setRemoteChain(data);
       });
 
       setCollections(collectionsData);
       setSeason(seasonDta);
+    })();
+
+    if (chainListener) {
       return () => {
         chainListener();
       };
-    })();
+    }
   }, []);
 
   return (
@@ -84,13 +89,16 @@ const Nav = (props: any) => {
           season,
           account: account ? account.toLowerCase() : null,
           chain,
-          remoteChain,
         }}
       >
-        <Header />
-        <Subheader />
-        {props.children}
-        <Footer />
+        <RemoteChainPayloadContext.Provider
+          value={remoteChain}
+        >
+          <Header />
+          <Subheader />
+          {props.children}
+          <Footer />
+        </RemoteChainPayloadContext.Provider>
       </PayloadContext.Provider>
     </ChakraProvider>
   );

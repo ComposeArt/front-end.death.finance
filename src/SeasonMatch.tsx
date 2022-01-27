@@ -8,9 +8,6 @@ import {
   Heading,
   Text,
   VStack,
-  Image,
-  Center,
-  Button,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { RiSwordFill } from "react-icons/ri";
@@ -23,8 +20,8 @@ import { getMatch } from "./utils/firebase";
 export const SeasonMatch = (props: any) => {
   const toast = useToast();
 
-  const LineColor = useColorModeValue('gray.500', 'white.500');
-  const winnerColor = useColorModeValue('gray.800', 'white');
+  // const LineColor = useColorModeValue('gray.500', 'white.500');
+  // const winnerColor = useColorModeValue('gray.800', 'white');
 
   const matchId = props.id;
 

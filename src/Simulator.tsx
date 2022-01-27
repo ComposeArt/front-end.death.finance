@@ -26,6 +26,7 @@ import { useQueryParam, StringParam } from 'use-query-params';
 import { FighterPortrait } from './Fighter';
 import {
   PayloadContext,
+  RemoteChainPayloadContext,
   getRandomPlayer,
   getCollectionPlayers,
   remoteSimulateFight,
@@ -44,7 +45,8 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const [mounted, setMounted]: any = useState(false);
 
-  const { collections, account, remoteChain } = useContext(PayloadContext);
+  const { collections, account } = useContext(PayloadContext);
+  const { blockNumber, randomness } = useContext(RemoteChainPayloadContext);
 
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
@@ -240,10 +242,16 @@ export const Simulator = (props: RouteComponentProps) => {
         they will happen during preseason and the main tournament
       </Text>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        Current Block {remoteChain.blockNumber} (can't run on blocks divisible by 5)
+        Current Block (can't run on blocks divisible by 5)
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {blockNumber}
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Current Randomness {remoteChain.randomness}
+        Current Randomness
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {randomness}
       </Text>
       {!account && (
         <Text textAlign="center" color="red.500" fontSize={12}>
@@ -413,7 +421,7 @@ export const Simulator = (props: RouteComponentProps) => {
           (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
           (userRandomness && !userBlocknumber) ||
           (!userRandomness && userBlocknumber) ||
-          (remoteChain.blockNumber % 5 === 0)
+          (parseInt(blockNumber, 10) % 5 === 0)
         }
       >
         FIGHT

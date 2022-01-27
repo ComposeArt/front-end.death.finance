@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import _, { flowRight } from "lodash";
+import _ from "lodash";
 import Blockies from 'react-blockies';
 import {
   Heading,
@@ -240,13 +240,17 @@ export const ProfileFighters = (props: any) => {
 
   const transferredFighters = _.reduce(fighters, (result: any, f: any, i: any): any => {
     if (!_.find(orderedPlayers, (p: any) => p.id.toString() === i)) {
-      result.push(f);
+      result.push({
+        ...f,
+        ...f.player,
+        is_traded: true,
+      });
     };
 
     return result;
   }, []);
 
-  const combinedPlayers = [...orderedPlayers, ...transferredFighters];
+  const combinedPlayers = orderedPlayers.length ? [...orderedPlayers, ...transferredFighters] : [];
 
   return (
     <Container maxW='container.lg' centerContent>
@@ -263,13 +267,18 @@ export const ProfileFighters = (props: any) => {
               <VStack>
                 <Box position="relative" marginBottom={4}>
                   {p.fighter && p.fighter.is_invalid && (
-                    <Text textShadow="2px 2px #fff"  fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                    <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       REFUSING TO FIGHT
                     </Text>
                   )}
                   {p.fighter && p.fighter.is_doping && (
-                    <Text textShadow="2px 2px #fff"  fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                    <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       BANNED FOR DOPING
+                    </Text>
+                  )}
+                  {p.is_traded && (
+                    <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                      TRADED
                     </Text>
                   )}
                   <Box
@@ -286,7 +295,7 @@ export const ProfileFighters = (props: any) => {
                       boxSize="150px"
                       borderRadius="150px"
                       src={p.image_preview_url}
-                      opacity={p.fighter && (p.fighter.is_doping || p.fighter.is_invalid) ? 0.3 : 1}
+                      opacity={(p.fighter && (p.fighter.is_doping || p.fighter.is_invalid)) || p.is_traded ? 0.3 : 1}
                     />
                   </Box>
                   {p.fighter && !p.fighter.is_doping && !p.fighter.is_invalid && (
@@ -320,7 +329,7 @@ export const ProfileFighters = (props: any) => {
                       opacity: 1,
                     }}
                   >
-                    {`${p.collection.slug} #${_.truncate(p.token_id, { length: 7 })}`}
+                    {`${p.collection.slug || p.collection} #${_.truncate(p.token_id, { length: 7 })}`}
                   </Text>
                 </Box>
                 {!p.fighter && isOwner && (

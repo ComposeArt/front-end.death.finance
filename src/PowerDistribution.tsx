@@ -15,7 +15,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 
 ChartJS.register(
   ArcElement,
@@ -67,19 +67,9 @@ export const PowerDistribution = (props: any) => {
   };
 
   const seasonGroupedPower: any = {};
-  const collectionGroupedPower: any = {};
 
   let lessPower = 0;
   let morePower = 0;
-
-  _.forEach(props.collection.power_levels, (v, k) => {
-    const key = _.floor(parseInt(k, 10) / 5) * 5;
-    if (!collectionGroupedPower[key]) {
-      collectionGroupedPower[key] = 0;
-    }
-
-    collectionGroupedPower[key] += v;
-  });
 
   _.forEach(props.season.power_levels, (v, k) => {
     const key = _.floor(parseInt(k, 10) / 5) * 5;
@@ -98,6 +88,19 @@ export const PowerDistribution = (props: any) => {
     }
   });
 
+  const collectionGroupedPower: any = {};
+
+  if (props.isCollection) {
+    _.forEach(props.collection.power_levels, (v, k) => {
+      const key = _.floor(parseInt(k, 10) / 5) * 5;
+      if (!collectionGroupedPower[key]) {
+        collectionGroupedPower[key] = 0;
+      }
+
+      collectionGroupedPower[key] += v;
+    });
+  }
+
   const maxCollection = _.max(_.map(collectionGroupedPower, (p: any) => p));
   const maxSeason = _.max(_.map(seasonGroupedPower, (p: any) => p));
 
@@ -109,20 +112,25 @@ export const PowerDistribution = (props: any) => {
     cGroupedPower[k] = (collectionGroupedPower[k] || 0) / maxCollection;
   });
 
+  const datasets = [];
+
+  if (props.isCollection) {
+    datasets.push({
+      data: _.values(cGroupedPower),
+      backgroundColor: _.chain(cGroupedPower).keys().map((p: any) => props.fighter && props.fighter.power >= parseInt(p, 10) ? chartBrightColor : chartColor).value(),
+      borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
+    });
+  } else {
+    datasets.push(    {
+      data: _.values(groupPower),
+      backgroundColor: _.chain(groupPower).keys().map((p: any) => props.fighter && props.fighter.power >= parseInt(p, 10) ? chartBrightColor : chartColor).value(),
+      borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
+    });
+  }
+
   const chartData = {
     labels: _.keys(groupPower),
-    datasets: [
-      {
-        data: _.values(cGroupedPower),
-        backgroundColor: _.chain(cGroupedPower).keys().map((p: any) => props.fighter && props.fighter.power >= parseInt(p, 10) ? chartBrightColor : chartColor).value(),
-        borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
-      },
-      {
-        data: _.values(groupPower),
-        backgroundColor: _.chain(groupPower).keys().map((p: any) => chartSoftColor).value(),
-        borderRadius: {topLeft: 100, topRight: 100, bottomLeft: 100, bottomRight: 100},
-      },
-    ],
+    datasets,
   };
 
   const percentile = lessPower / (morePower + lessPower) * 100;

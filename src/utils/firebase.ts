@@ -32,7 +32,12 @@ interface PayloadTypes {
   season: any,
   account: string | null | undefined;
   chain: string | null | undefined;
-  remoteChain: any;
+}
+
+interface RemotePayloadTypes {
+  blockNumber: any;
+  contractAddress: string | null | undefined;
+  randomness: string | null | undefined;
 }
 
 const defaultPayload: PayloadTypes = {
@@ -40,10 +45,16 @@ const defaultPayload: PayloadTypes = {
   season: {},
   account: '',
   chain: '',
-  remoteChain: {},
+};
+
+const defaultRemoteChainPayload: RemotePayloadTypes = {
+  blockNumber: '',
+  contractAddress: '',
+  randomness: '',
 };
 
 export const PayloadContext = createContext(defaultPayload);
+export const RemoteChainPayloadContext = createContext(defaultRemoteChainPayload);
 
 function delay(delay: any) {
   return new Promise (function(fulfill) {
