@@ -45,8 +45,10 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const [mounted, setMounted]: any = useState(false);
 
-  const { collections, account } = useContext(PayloadContext);
+  const { collections, account, chain } = useContext(PayloadContext);
   const { blockNumber, randomness } = useContext(RemoteChainPayloadContext);
+
+  console.log(chain)
 
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
@@ -253,9 +255,9 @@ export const Simulator = (props: RouteComponentProps) => {
       <Text marginTop={2} fontSize={12} textAlign="center">
         {randomness}
       </Text>
-      {!account && (
-        <Text textAlign="center" color="red.500" fontSize={12}>
-          connect to metamask to use client side or we can simulate using our oracle
+      {(!account || chain !== 'Goerli') && (
+        <Text marginTop={4} textAlign="center" color="red.500" fontSize={12}>
+          connect to Goerli Ethereum on metamask to use client side or we can simulate using our oracle
         </Text>
       )}
       <HStack marginTop={8} justify="center" spacing={16}>
