@@ -1,26 +1,25 @@
 import React, { useEffect, useState, useContext } from "react";
 import _ from "lodash";
-import moment from "moment";
 import {
   Container,
   Heading,
   Box,
   Text,
-  useColorModeValue,
   useToast,
+  Button,
+  HStack,
   Wrap,
   WrapItem,
   VStack,
-  Button,
-  HStack,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
 import { FaRandom } from "react-icons/fa";
 
 import { NavLink } from "./NavLink";
 import { FighterPortrait, FighterStats } from './Fighter';
-import { PayloadContext, getFighter } from "./utils/firebase";
+import { PayloadContext, getFighter, getFighterMatches } from "./utils/firebase";
 import { PowerDistribution } from "./PowerDistribution";
+import { Matches } from './Matches';
 
 const FighterHeader = (props: any) => {
   const formatAddress = props.fighter.owner ? `${props.fighter.owner.slice(0, 6)}...${props.fighter.owner.slice(props.fighter.owner.length - 4, props.fighter.owner.length)}` : '-';
@@ -50,8 +49,8 @@ const FighterHeader = (props: any) => {
         marginTop={4}
       >
         <NavLink to={`/season/0/collections/${props.fighter.collection}`}>collection</NavLink>
-        <NavLink to={`/season/0/fighters/${props.fighter.id}`}>stats</NavLink>
-        <NavLink to={`/season/0/fighters/${props.fighter.id}/matches`}>matches</NavLink>
+        <NavLink state={{ fighter: props.fighter }} to={`/season/0/fighters/${props.fighter.id}`}>stats</NavLink>
+        <NavLink state={{ fighter: props.fighter }} to={`/season/0/fighters/${props.fighter.id}/matches`}>matches</NavLink>
       </HStack>
     </>
   );
@@ -62,27 +61,17 @@ export const SeasonFighter = (props: any) => {
 
   const fighterId = props.id;
 
-  const [loading, setLoading]: any = useState(true);
+  const stateFighter = _.get(props, 'location.state.fighter', {});
+
   const [fighter, setFighter]: any = useState({});
   const [errorLoading, setErrorLoading]: any = useState(false);
 
   const { account, collections, season } = useContext(PayloadContext);
 
-  const collection = _.find(collections, (c:any) => c.id === fighter.collection) || {};
-
-  const formatFighter = {
-    ...fighter.player,
-    owner: fighter.owner,
-    timestamp: fighter.timestamp,
-    is_invalid: fighter.is_invalid,
-    is_doping: fighter.is_doping,
-  };
-
   useEffect(() => {
     (async function getInitialData() {
-      setLoading(true);
       try {
-        if (fighterId) {
+        if (fighterId && _.isEmpty(stateFighter)) {
           const result = await getFighter(fighterId);
 
           if (result) {
@@ -95,9 +84,8 @@ export const SeasonFighter = (props: any) => {
         console.log(error);
         setErrorLoading(true);
       }
-      setLoading(false);
     })();
-  }, [fighterId]);
+  }, [fighterId, stateFighter]);
 
   useEffect(() => {
     if (errorLoading) {
@@ -112,8 +100,23 @@ export const SeasonFighter = (props: any) => {
   }, [errorLoading, toast]);
 
   useEffect(() => {
-    document.title = `${formatFighter.collection} #${_.truncate(formatFighter.token_id, { length: 7 })}`;
-  }, [formatFighter]);
+    if (_.isEmpty(stateFighter)) {
+      document.title = `${fighter.collection} #${fighter.player ? _.truncate(fighter.player.token_id, { length: 7 }) : '0'}`;
+    } else {
+      document.title = `${stateFighter.collection} #${_.truncate(stateFighter.token_id, { length: 7 })}`;
+    }
+  }, [fighter, stateFighter]);
+
+  const formatFighter = {
+    ...fighter.player,
+    owner: fighter.owner,
+    timestamp: fighter.timestamp,
+    is_invalid: fighter.is_invalid,
+    is_doping: fighter.is_doping,
+    ...stateFighter,
+  };
+
+  const collection = _.find(collections, (c:any) => c.id === formatFighter.collection) || {};
 
   return (
     <Container maxW='container.md' centerContent>
@@ -258,35 +261,37 @@ export const SeasonFighter = (props: any) => {
 export const SeasonFighterMatches = (props: any) => {
   const toast = useToast();
 
-  const chartColor = useColorModeValue('#718096', 'rgba(255, 255, 255, 0.16)');
-  const chartSoftColor = useColorModeValue('#A0AEC0', 'rgba(255, 255, 255, 0.08)');
-  const chartBrightColor = useColorModeValue('#1A202C', 'white');
-
   const fighterId = props.id;
+  const stateFighter = _.get(props, 'location.state.fighter', {});
 
   const [loading, setLoading]: any = useState(true);
   const [fighter, setFighter]: any = useState({});
   const [errorLoading, setErrorLoading]: any = useState(false);
+  const [matches, setMatches]: any = useState([]);
 
-  const { account, collections, season } = useContext(PayloadContext);
-
-  const formatFighter = {
-    ...fighter.player,
-    owner: fighter.owner,
-    timestamp: fighter.timestamp,
-  };
+  const { account } = useContext(PayloadContext);
 
   useEffect(() => {
     (async function getInitialData() {
       setLoading(true);
       try {
         if (fighterId) {
-          const result = await getFighter(fighterId);
+          if (_.isEmpty(stateFighter)) {
+            const result = await getFighter(fighterId);
 
-          if (result) {
-            setFighter(result);
+            if (result) {
+              const fighterMatches = await getFighterMatches(fighterId);
+              const orderedMatches = _.sortBy(fighterMatches, (m: any) => parseInt(m.block, 10));
+
+              setMatches(orderedMatches);
+              setFighter(result);
+            } else {
+              navigate('/season/0/fighters');
+            }
           } else {
-            navigate('/season/0/fighters');
+            const fighterMatches = await getFighterMatches(fighterId);
+            const orderedMatches = _.sortBy(fighterMatches, (m: any) => parseInt(m.block, 10));
+            setMatches(orderedMatches);
           }
         }
       } catch (error) {
@@ -295,7 +300,7 @@ export const SeasonFighterMatches = (props: any) => {
       }
       setLoading(false);
     })();
-  }, [fighterId]);
+  }, [fighterId, stateFighter]);
 
   useEffect(() => {
     if (errorLoading) {
@@ -310,12 +315,24 @@ export const SeasonFighterMatches = (props: any) => {
   }, [errorLoading, toast]);
 
   useEffect(() => {
-    document.title = `Matches | ${formatFighter.collection} #${_.truncate(formatFighter.token_id, { length: 7 })}`;
-  }, [formatFighter]);
+    if (_.isEmpty(stateFighter)) {
+      document.title = `Matches | ${fighter.collection} #${fighter.player ? _.truncate(fighter.player.token_id, { length: 7 }) : '0'}`;
+    } else {
+      document.title = `Matches | ${stateFighter.collection} #${_.truncate(stateFighter.token_id, { length: 7 })}`;
+    }
+  }, [fighter, stateFighter]);
+
+  const formatFighter = {
+    ...fighter.player,
+    owner: fighter.owner,
+    timestamp: fighter.timestamp,
+    ...stateFighter,
+  };
 
   return (
-    <Container maxW='container.md' centerContent>
+    <Container maxW='container.lg' centerContent>
       <FighterHeader fighter={formatFighter} account={account} />
+      <Matches matches={matches} loading={loading} />
     </Container>
   )
 };

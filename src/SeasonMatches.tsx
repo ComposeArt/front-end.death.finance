@@ -1,51 +1,58 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import _ from "lodash";
-import moment from "moment";
-import Blockies from 'react-blockies';
 import {
-  Heading,
   Container,
-  HStack,
-  Image,
-  Box,
-  Text,
-  useColorModeValue,
   useToast,
-  Wrap,
-  WrapItem,
-  Center,
-  keyframes,
-  VStack,
-  Button,
 } from "@chakra-ui/react";
-import { navigate } from "@reach/router";
-import { RiSwordFill } from "react-icons/ri";
-import { FaCheckCircle, FaBookDead } from "react-icons/fa";
 
 import { SeasonHeader } from "./SeasonHeader";
-import { NavLink } from "./NavLink";
-import { ListCollections } from "./ListCollections";
-import { PayloadContext, fetchAssets, streamOwnerFighters, remoteRegisterFighter } from "./utils/firebase";
+
+import { getAllMatches } from "./utils/firebase";
+import { Matches } from './Matches';
 
 export const SeasonMatches = (props: any) => {
-  const [mounted, setMounted]: any = useState(false);
+  const toast = useToast();
+
   const [loading, setLoading]: any = useState(true);
-  const [owner, setOwner]: any = useState('');
+  const [matches, setMatches]: any = useState([]);
   const [errorLoading, setErrorLoading]: any = useState(false);
-
-  const [registering, setRegistering]: any = useState('');
-
-  const address = props.address;
-
-  const { account, collections } = useContext(PayloadContext);
 
   useEffect(() => {
     document.title = 'Matches | Season 0 | NFT Fight Club';
   }, []);
 
+  useEffect(() => {
+    (async function getInitialData() {
+      setLoading(true);
+      try {
+        const allMatches = await getAllMatches();
+        const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
+
+        setMatches(orderedMatches);
+      } catch (error) {
+        console.log(error);
+        setErrorLoading(true);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (errorLoading) {
+      setErrorLoading(false);
+      toast({
+        title: 'failed to load matches',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [errorLoading, toast]);
+
   return (
-    <Container maxW='container.md' centerContent>
+    <Container maxW='container.lg' centerContent>
       <SeasonHeader />
+      <Matches matches={matches} loading={loading} />
     </Container>
   );
 };

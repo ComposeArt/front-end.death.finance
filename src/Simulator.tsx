@@ -30,7 +30,6 @@ import {
   getCollectionPlayers,
   remoteSimulateFight,
 } from "./utils/firebase";
-import { collection } from "firebase/firestore";
 
 let prevCollection1: any;
 let prevCollection2: any;
@@ -45,7 +44,7 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const [mounted, setMounted]: any = useState(false);
 
-  const { collections, account } = useContext(PayloadContext);
+  const { collections, account, remoteChain } = useContext(PayloadContext);
 
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
@@ -240,6 +239,12 @@ export const Simulator = (props: RouteComponentProps) => {
         <br/>
         they will happen during preseason and the main tournament
       </Text>
+      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
+        Current Block {remoteChain.blockNumber} (can't run on blocks divisible by 5)
+      </Text>
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+        Current Randomness {remoteChain.randomness}
+      </Text>
       {!account && (
         <Text textAlign="center" color="red.500" fontSize={12}>
           connect to metamask to use client side or we can simulate using our oracle
@@ -407,7 +412,8 @@ export const Simulator = (props: RouteComponentProps) => {
           (userBlocknumber && parseInt(userBlocknumber, 10) % 5 === 0) ||
           (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
           (userRandomness && !userBlocknumber) ||
-          (!userRandomness && userBlocknumber)
+          (!userRandomness && userBlocknumber) ||
+          (remoteChain.blockNumber % 5 === 0)
         }
       >
         FIGHT

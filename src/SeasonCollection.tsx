@@ -19,12 +19,13 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { FaCheckCircle, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 
-import { PayloadContext, getCollectionFighters } from "./utils/firebase";
+import { PayloadContext, getCollectionFighters, getCollectionMatches } from "./utils/firebase";
 import { NavLink } from "./NavLink";
 import { PowerDistribution } from "./PowerDistribution";
 import { FighterPortrait } from './Fighter';
+import { Matches } from './Matches';
 
 export const CollectionHeader = (props: any) => {
   const lineColor = useColorModeValue('gray.500', 'white.500');
@@ -382,17 +383,12 @@ export const SeasonCollectionFighters = (props: any) => {
 
 export const SeasonCollectionMatches = (props: any) => {
   const toast = useToast();
-  const lineColor = useColorModeValue('gray.500', 'white.500');
-  const brightColor = useColorModeValue('gray.800', 'white');
-  const chartColor = useColorModeValue('#718096', 'rgba(255, 255, 255, 0.16)');
-  const chartSoftColor = useColorModeValue('#A0AEC0', 'rgba(255, 255, 255, 0.08)');
-  const chartBrightColor = useColorModeValue('#1A202C', 'white');
+
+  const { collections } = useContext(PayloadContext);
 
   const [loading, setLoading]: any = useState(true);
-  const [fighters, setFighters]: any = useState([]);
+  const [matches, setMatches]: any = useState([]);
   const [errorLoading, setErrorLoading]: any = useState(false);
-
-  const { collections, season, account } = useContext(PayloadContext);
 
   const collectionId = props.id;
   const collection = _.find(collections, (c:any) => c.id === collectionId) || {};
@@ -401,9 +397,42 @@ export const SeasonCollectionMatches = (props: any) => {
     document.title = `Matches | ${collectionId}`;
   }, [collectionId]);
 
+  useEffect(() => {
+    (async function getInitialData() {
+      if (!_.isEmpty(collections) && collection.id) {
+        setLoading(true);
+        try {
+          const allMatches = await getCollectionMatches(collection.id);
+          const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
+
+          setMatches(orderedMatches);
+        } catch (error) {
+          console.log(error);
+          setErrorLoading(true);
+        }
+        setLoading(false);
+      } else if (!_.isEmpty(collections)) {
+        navigate('/season/0/collections');
+      }
+    })();
+  }, [collection]);
+
+  useEffect(() => {
+    if (errorLoading) {
+      setErrorLoading(false);
+      toast({
+        title: 'failed to load matches',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [errorLoading, toast]);
+
   return (
     <Container maxW='container.lg' centerContent>
       <CollectionHeader collection={collection} />
+      <Matches matches={matches} loading={loading} />
     </Container>
   );
 };

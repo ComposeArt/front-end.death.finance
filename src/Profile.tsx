@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import _ from "lodash";
-import moment from "moment";
+import _, { flowRight } from "lodash";
 import Blockies from 'react-blockies';
 import {
   Heading,
@@ -11,10 +10,10 @@ import {
   Text,
   useColorModeValue,
   useToast,
-  Wrap,
-  WrapItem,
   Center,
   keyframes,
+  Wrap,
+  WrapItem,
   VStack,
   Button,
 } from "@chakra-ui/react";
@@ -23,7 +22,8 @@ import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle } from "r
 
 import { NavLink } from "./NavLink";
 import { ListCollections } from "./ListCollections";
-import { PayloadContext, fetchAssets, streamOwnerFighters, remoteRegisterFighter } from "./utils/firebase";
+import { PayloadContext, fetchAssets, streamOwnerFighters, remoteRegisterFighter, getOwnerMatches } from "./utils/firebase";
+import { Matches } from './Matches';
 
 const spin = keyframes`
   from {transform: rotate(0deg);}
@@ -190,7 +190,7 @@ export const ProfileFighters = (props: any) => {
     if (mounted) {
       setTimeout(() => {
         setLoading(false);
-      }, 1000);
+      }, 2000);
     }
   }, [mounted]);
 
@@ -238,6 +238,16 @@ export const ProfileFighters = (props: any) => {
     .sortBy([(p: any) => _.get(p, 'fighter.timestamp')])
     .value();
 
+  const transferredFighters = _.reduce(fighters, (result: any, f: any, i: any): any => {
+    if (!_.find(orderedPlayers, (p: any) => p.id.toString() === i)) {
+      result.push(f);
+    };
+
+    return result;
+  }, []);
+
+  const combinedPlayers = [...orderedPlayers, ...transferredFighters];
+
   return (
     <Container maxW='container.lg' centerContent>
       <ProfileHeader
@@ -247,7 +257,7 @@ export const ProfileFighters = (props: any) => {
         loadingText="Loading NFTs..."
       />
       <Wrap marginTop={12} justify='center' spacing={12}>
-        {orderedPlayers.map((p: any) => {
+        {combinedPlayers.map((p: any) => {
           return (
             <WrapItem key={p.id} margin={4}>
               <VStack>
@@ -351,25 +361,57 @@ export const ProfileFighters = (props: any) => {
 };
 
 export const ProfileMatches = (props: any) => {
-  const [mounted, setMounted]: any = useState(false);
-  const [loading, setLoading]: any = useState(true);
-  const [owner, setOwner]: any = useState('');
-  const [errorLoading, setErrorLoading]: any = useState(false);
+  const toast = useToast();
 
-  const [registering, setRegistering]: any = useState('');
+  const { account } = useContext(PayloadContext);
 
   const address = props.address;
 
-  const { account, collections } = useContext(PayloadContext);
+  const [loading, setLoading]: any = useState(true);
+  const [matches, setMatches]: any = useState([]);
+  const [errorLoading, setErrorLoading]: any = useState(false);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (address) {
+        document.title = `Matches | ${address}`;
+
+        setLoading(true);
+        try {
+          const allMatches = await getOwnerMatches(address);
+          const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
+
+          setMatches(orderedMatches);
+        } catch (error) {
+          console.log(error);
+          setErrorLoading(true);
+        }
+        setLoading(false);
+      }
+    })();
+  }, [address]);
+
+  useEffect(() => {
+    if (errorLoading) {
+      setErrorLoading(false);
+      toast({
+        title: 'failed to load matches',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+    }
+  }, [errorLoading, toast]);
 
   return (
-    <Container maxW='container.md' centerContent>
+    <Container maxW='container.lg' centerContent>
       <ProfileHeader
         address={address}
-        owner={owner}
+        owner={account}
         loading={loading}
         loadingText="Loading matches..."
       />
+      <Matches matches={matches} loading={loading} />
     </Container>
   );
 };

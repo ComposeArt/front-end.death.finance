@@ -1,34 +1,24 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import { useFuzzy } from 'react-use-fuzzy';
 import {
   Container,
-  Image,
-  Box,
-  Text,
-  useColorModeValue,
   useToast,
   Wrap,
   WrapItem,
-  VStack,
   InputGroup,
   InputLeftAddon,
   Input,
   Spinner,
 } from "@chakra-ui/react";
-import { navigate } from "@reach/router";
 import { FaSearch } from "react-icons/fa";
 import { FighterPortrait } from './Fighter';
 
 import { SeasonHeader } from "./SeasonHeader";
-import { getAllFighters, PayloadContext } from "./utils/firebase";
+import { getAllFighters } from "./utils/firebase";
 
 export const SeasonFighters = (props: any) => {
   const toast = useToast();
-  const lineColor = useColorModeValue('gray.500', 'white.500');
-  const brightColor = useColorModeValue('gray.800', 'white');
-
-  const { account } = useContext(PayloadContext);
 
   const [loading, setLoading]: any = useState(true);
   const [fighters, setFighters]: any = useState([]);
@@ -81,7 +71,7 @@ export const SeasonFighters = (props: any) => {
       <InputGroup
         size="sm"
         width={{ base: "260px" }}
-        marginTop={12}
+        marginTop={8}
       >
         <InputLeftAddon
           children={loading ? <Spinner size='sm' /> : <FaSearch />}

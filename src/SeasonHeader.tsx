@@ -5,6 +5,8 @@ import {
   Container,
   HStack,
   Text,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 
 import { NavLink } from "./NavLink";
@@ -21,18 +23,29 @@ export const SeasonHeader = (props: any) => {
       <Text fontSize={12} color="red.500" marginTop={4}>
         preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
       </Text>
-      <HStack
-        w="100%"
-        align="center"
-        justify="center"
-        spacing={8}
-        marginTop={8}
-      >
-        <NavLink to={`/season/0`}>rules</NavLink>
-        <NavLink to={`/season/0/collections`}>collections</NavLink>
-        <NavLink to={`/season/0/fighters`}>fighters</NavLink>
-        <NavLink to={`/season/0/matches`}>matches</NavLink>
-      </HStack>
+        <Wrap
+          width="100%"
+          align="center"
+          justify="center"
+          spacing={8}
+          marginTop={8}
+        >
+          <WrapItem>
+            <NavLink to={`/season/0`}>rules</NavLink>
+          </WrapItem>
+          <WrapItem>
+            <NavLink to={`/season/0/collections`}>collections</NavLink>
+          </WrapItem>
+          <WrapItem>
+            <NavLink to={`/season/0/fighters`}>fighters</NavLink>
+          </WrapItem>
+          <WrapItem>
+            <NavLink to={`/season/0/matches`}>matches</NavLink>
+          </WrapItem>
+          <WrapItem>
+            <NavLink to={`/season/0/tournament`}>tournament</NavLink>
+          </WrapItem>
+        </Wrap>
     </Container>
   );
 };

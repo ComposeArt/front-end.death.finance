@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from "react";
-import _ from "lodash";
 import { useFuzzy } from 'react-use-fuzzy';
 import {
   Container,
@@ -39,7 +38,7 @@ export const SeasonCollections = (props: any) => {
       <InputGroup
         size="sm"
         width={{ base: "260px" }}
-        marginTop={12}
+        marginTop={8}
       >
         <InputLeftAddon
           children={<FaSearch />}

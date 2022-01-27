@@ -4,7 +4,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "@reach/router";
 
-export const NavLink = ({ partially, to, children }: any) => {
+export const NavLink = ({ partially, to, children, state }: any) => {
   return (
     <Text
       fontSize="sm"
@@ -15,6 +15,7 @@ export const NavLink = ({ partially, to, children }: any) => {
       <Link
         to={to}
         children={children}
+        state={state}
         getProps={(p) => {
           let active = p.isCurrent;
 

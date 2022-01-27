@@ -18,9 +18,9 @@ import {
   GiShield,
   GiHealthNormal,
 } from "react-icons/gi";
-import { FaCrown, FaCheckCircle, FaTimesCircle, FaExclamationCircle } from "react-icons/fa";
+import { FaCrown, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
-import logo from './images/logo.png';
+import logoSmall from './images/logo-small.png';
 
 import { elements } from "./utils/fighting";
 import { navigate } from "@reach/router";
@@ -315,7 +315,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
             <Image
               boxSize={{ base: big ? "150px" : "100px", md: 150 }}
               borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
-              src={logo}
+              src={logoSmall}
             />
           )}
         </Box>

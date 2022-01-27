@@ -32,6 +32,7 @@ interface PayloadTypes {
   season: any,
   account: string | null | undefined;
   chain: string | null | undefined;
+  remoteChain: any;
 }
 
 const defaultPayload: PayloadTypes = {
@@ -39,6 +40,7 @@ const defaultPayload: PayloadTypes = {
   season: {},
   account: '',
   chain: '',
+  remoteChain: {},
 };
 
 export const PayloadContext = createContext(defaultPayload);
@@ -154,18 +156,21 @@ export const getSeason = async () => {
   const docRef = doc(db, `nft-death-games`, 'season_0');
   const docSnap = await getDoc(docRef);
 
-  const season = docSnap.data();
-
-  return season;
+  return docSnap.data();
 };
 
 export const getSimulation = async (simulationId: any) => {
   const docRef = doc(db, `nft-death-games/season_0/simulations`, simulationId);
   const docSnap = await getDoc(docRef);
 
-  const simulation = docSnap.data();
+  return docSnap.data();
+};
 
-  return simulation;
+export const getMatch = async (matchId: any) => {
+  const docRef = doc(db, `nft-death-games/season_0/matches`, matchId);
+  const docSnap = await getDoc(docRef);
+
+  return docSnap.data();
 };
 
 export const getCollections = async () => {
@@ -173,21 +178,122 @@ export const getCollections = async () => {
 
   const querySnapshot = await getDocs(collection(db, "nft-death-games/season_0/collections"));
 
-  querySnapshot.forEach((doc) => {
+  querySnapshot.forEach((docSnap) => {
     collections.push({
-      id: doc.id,
-      ...doc.data(),
+      id: docSnap.id,
+      ...docSnap.data(),
     });
   });
 
   return collections;
 };
 
+export const getAllMatches = async () => {
+  const matches: any = [];
+
+  const querySnapshot = await getDocs(collection(db, "nft-death-games/season_0/matches"));
+
+  querySnapshot.forEach((docSnap) => {
+    matches.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  return matches;
+};
+
+export const getFighterMatches = async (id: any) => {
+  const matches: any = [];
+
+  const ref = collection(db, "nft-death-games/season_0/matches");
+  const query1 = query(ref, where("fighter1", "==", id))
+  const query2 = query(ref, where("fighter2", "==", id))
+
+  const snapshot1 = await getDocs(query1);
+  const snapshot2 = await getDocs(query2);
+
+  snapshot1.forEach((docSnap) => {
+    matches.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  snapshot2.forEach((docSnap) => {
+    matches.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  return matches;
+};
+
+export const getOwnerMatches = async (id: any) => {
+  const matches: any = [];
+
+  const ref = collection(db, "nft-death-games/season_0/matches");
+  const query1 = query(ref, where("owner1", "==", id))
+  const query2 = query(ref, where("owner2", "==", id))
+
+  const snapshot1 = await getDocs(query1);
+  const snapshot2 = await getDocs(query2);
+
+  snapshot1.forEach((docSnap) => {
+    matches.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  snapshot2.forEach((docSnap) => {
+    if (!_.find(matches, (f) => f.id === docSnap.id)) {
+      matches.push({
+        id: docSnap.id,
+        ...docSnap.data(),
+      });
+    }
+  });
+
+  return matches;
+};
+
+export const getCollectionMatches = async (id: any) => {
+  const matches: any = [];
+
+  const ref = collection(db, "nft-death-games/season_0/matches");
+  const query1 = query(ref, where("collection1", "==", id))
+  const query2 = query(ref, where("collection2", "==", id))
+
+  const snapshot1 = await getDocs(query1);
+  const snapshot2 = await getDocs(query2);
+
+  snapshot1.forEach((docSnap) => {
+    matches.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  snapshot2.forEach((docSnap) => {
+    if (!_.find(matches, (f) => f.id === docSnap.id)) {
+      matches.push({
+        id: docSnap.id,
+        ...docSnap.data(),
+      });
+    }
+  });
+
+  return matches;
+};
+
+
 export const getLatestFighters = async () => {
   const fighters: any = [];
 
   const ref1 = collection(db, `nft-death-games/season_0/fighters`);
-  const query1 = query(ref1, orderBy("timestamp", "desc"), limit(10));
+  const query1 = query(ref1, orderBy("timestamp", "desc"), limit(9));
 
   const snapshot1 = await getDocs(query1);
 
@@ -310,6 +416,15 @@ export const streamOwnerFighters = ({
           ...change.doc.data(),
         });
       }
+    });
+  });
+};
+
+export const streamChain = (callback: any) => {
+  return onSnapshot(doc(db, "chains", "goerli"), (d) => {
+    callback({
+      id: d.id,
+      ...d.data(),
     });
   });
 };

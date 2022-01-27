@@ -63,6 +63,7 @@ export const Header = () => {
           <NavLink partially to="/season/0">season_0</NavLink>
           <NavLink partially to="/simulator">simulator</NavLink>
           <NavLink partially to="/chaos">chaos</NavLink>
+          <NavLink partially to="/grims">grims</NavLink>
         </HStack>
         <HStack
           h="10vh"
