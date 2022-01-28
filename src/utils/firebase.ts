@@ -270,6 +270,19 @@ export const getOwnerMatches = async (id: any) => {
   return matches;
 };
 
+export const getBracketMatches = async (id: any) => {
+  const ref1 = collection(db, `nft-death-games/season_0/tournament/${id}/matches`);
+
+  const matches: any = [];
+
+  const snapshot1 = await getDocs(ref1);
+  snapshot1.forEach((d) => {
+    matches.push(d.data());
+  });
+
+  return matches;
+};
+
 export const getCollectionMatches = async (id: any) => {
   const matches: any = [];
 

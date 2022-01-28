@@ -43,6 +43,9 @@ const theme = extendTheme({
       '.identicon': {
         borderRadius: '50%',
       },
+      '.tournament': {
+        justifyContent: 'center',
+      }
     },
   },
 });
@@ -130,6 +133,7 @@ export const App = () => (
           <SeasonCollectionFighters path="/season/0/collections/:id/fighters" />
           <SeasonCollectionMatches path="/season/0/collections/:id/matches" />
           <SeasonTournament path="/season/0/tournament" />
+          <SeasonTournament path="/season/0/tournament/:id" />
         </Nav>
       </ScrollToTop>
     </QueryParamProvider>

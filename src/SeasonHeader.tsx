@@ -42,7 +42,7 @@ export const SeasonHeader = (props: any) => {
             <NavLink to={`/season/0/matches`}>matches</NavLink>
           </WrapItem>
           <WrapItem>
-            <NavLink to={`/season/0/tournament`}>tournament</NavLink>
+            <NavLink to={`/season/0/tournament/alpha`}>tournament</NavLink>
           </WrapItem>
         </Wrap>
     </Container>
