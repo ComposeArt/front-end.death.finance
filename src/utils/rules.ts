@@ -80,9 +80,9 @@ These would be normalized within the stats value ranges, and would translate to:
 6. Element: 9
 
 
-## Fights
+## Matches
 
-Fights consist of a maximum of 10 turns - each turn is an attempt by either fighter to deplete their opponent’s defense or health. The first fighter to take a turn is the one with the least value for their aggregate stats of s-attack, defense, attack, and health.
+Matches consist of a maximum of 10 turns - each turn is an attempt by either fighter to deplete their opponent’s defense or health. The first fighter to take a turn is the one with the least value for their aggregate stats of s-attack, defense, attack, and health.
 
 Fighters must start off using their s-attack to deplete their opponent’s defense. After their opponent’s defense is depleted, they will go on to use their attack to deplete their health.
 
@@ -113,5 +113,61 @@ When a fighter hits a random number which is at the top of their range for their
 
 In the case that, after 10 bouts, both fighters are still standing, the one with more health left will be deemed the victor. So, if both fighters continuously dodged one-another for all 10 bouts, the one with the greater health stat would win by default.
 
-In the case that both fighters are standing and their leftover health is the same, the outcome will be determined by random coinflip.
+In the case that both fighters are standing and their leftover health is the same, the outcome will be determined by random coin flip.
+
+## Tournament
+
+The top 1024 registered fighters will be drafted into a month-long elimination tournament.
+
+### Structure
+
+**Initial Brackets (Best of One)**
+The tournament will consist of 4 256-fighter 'initial brackets' (alpha, beta, gamma, delta), which will each advance until there are 32 fighters left in each. Each pair within the bracket will play a single game to decide who advances and who is eliminated.
+
+**Secondary Brackets (Best of Three)**
+The 32 winners from each of the 'initial brackets' will advance to the two 64-fighter 'secondary brackets' (kappa, psi) which will each advance until there are 16 fighters left in each. Each pair within the bracket will play three games to decide who advances and who is eliminated.
+
+**Final Bracket (Best of Five)**
+The 16 winners from each of the 'secondary brackets' will advance to the 32-fighter 'final bracket' (omega) which will yield the final two fighters for the tournament. Each pair within the bracket will play five games to decide who advances and who is eliminated.
+
+**Final Match (Best of Seven)**
+The final pair will play best of seven to decide who wins the tournament; the winner will take home 5% of the total pooled ETH staked on fighters throughout the tournament's progression.
+
+### Schedule
+
+Before the tournament kicks off, the power levels for all participating fighters as well as the block numbers at which all matches occur will be decided and locked into the on-chain smart contract with a provenance hash. The smart contract will also provide a verification function for individuals to independently verify the outcomes of all tournament matches.
+
+Every bracket will progress simultaneously with what are known as 'rounds' (e.g. going from 256 to 128 fighters or 128 to 64 fighters). Between rounds, there will be a verification period where observers are allowed to challenge the results of any tournament fight for the previous round followed by a staking period (explained below).
+
+### Chaos
+
+Every fifth block, observers will be able to 'Add Chaos' to the smart contract to alter the outcome of subsequent fights. To ensure that there is no contention relating to when chaos was added and when a match occurred, we are barring matches from occurring on every fifth block. In this way, our source of randomness is locked in and past fights are able to be easily replayed and verified without worry of transaction ordering.
+
+__Note: Contributors to contract chaos will receive tiered rewards for their participation at the end of the tournament__
+
+### Staking
+
+Throughout the tournament, observers will be able to stake ETH on fighters to earn yield on their outcomes; staking occurs at the beginning of brackets as well as between bracket rounds. Observers may only stake ETH for one fighter at a time.
+
+__Note: By staking, users will automatically add chaos to the smart contract__
+
+**Multipliers**
+When a user stakes ETH towards a fighter, they are issued a certain amount of equity against the total pool of ETH - this equity is directly proportional to their respective % of the pool. All users who have their fighters advance to the next round will have their equity doubled whilst those who have their fighters eliminated will see their equity drop to zero.
+
+To give an example - a 0.01 ETH stake on the first round of the tournament (assuming the fighter advanced to the final round) would give a user the same amount of equity in the total pool as a 51.2 ETH (512x) stake on the final round. In this way, users are handsomely rewarded for being die-hard fans of certain fighters.
+
+**Fighter Elimination**
+In the case that a fighter is eliminated, all equity which is held by observers staking towards that fighter drops to zero. At this point, the previously staked ETH is locked into the overall pool and each observer is free to stake new ETH towards a new fighter.
+
+**Redemption**
+Those observers who staked towards the winning fighter will be able to redeem their yield after the final verification period. Their yield will be equivalent to their percentage of total equity of 95% of the pool - the remaining 5% will go to the owner of the winning NFT.
+
+### Emergency Withdrawal
+
+In the case that the contract enters into some error state, an "emergencyWithdrawal" function has been included to allow users to redeem all previously staked ETH for the tournament in a single transaction; this inhibits ETH from being locked and indefiniteyl inaccessible.
+
+### Banned Fighters
+
+Fighters exhibiting exceptional power levels will be cited as doping and banned from participation in the tournament.
+
 `;

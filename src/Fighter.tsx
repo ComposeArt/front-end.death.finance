@@ -290,7 +290,16 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
           </Box>
         )}
         {is_doping && (
-          <Text textShadow="2px 2px #fff" fontWeight={900} color="red" textAlign="center" position="absolute" top="50px" left="0px">
+          <Text
+            textShadow="2px 2px #fff"
+            fontWeight={900}
+            color="red"
+            textAlign="center"
+            position="absolute"
+            top={{ base: big ? "50px" : "30px", md: "50px" }}
+            left="0px"
+            fontSize={{ base: big ? 16 : 12, md: 16 }}
+          >
             BANNED FOR DOPING
           </Text>
         )}
@@ -309,7 +318,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
               boxSize={{ base: big ? "150px" : "100px", md: 150 }}
               borderRadius={{ base: big ? "150px" : "100px", md: 150 }}
               src={fighter.image_preview_url}
-              opacity={(fighter.is_doping || fighter.is_invalid) ? 0.3 : 1}
+              opacity={is_doping ? 0.3 : 1}
             />
           ) : (
             <Image

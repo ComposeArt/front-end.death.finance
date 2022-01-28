@@ -21,7 +21,7 @@ import {
 import { RouteComponentProps } from "@reach/router";
 
 import { NavLink } from "./NavLink";
-import { PayloadContext } from "./utils/firebase";
+import { PayloadContext, RemoteChainPayloadContext } from "./utils/firebase";
 
 export const Chaos = (props: RouteComponentProps) => {
   const lineColor = useColorModeValue('gray.500', 'white.500');
@@ -31,16 +31,13 @@ export const Chaos = (props: RouteComponentProps) => {
   }, []);
 
   const { account, chain } = useContext(PayloadContext);
-
-  console.log(chain);
+  const { blockNumber, randomness } = useContext(RemoteChainPayloadContext);
 
   const [loading, setLoading]: any = useState(false);
-  const [randomness, setRandomness]: any = useState('0');
   const [userRandomness, setUserRandomness]: any = useState('');
   const [userCount, setUserCount]: any = useState(1);
-  const [block, setBlock]: any = useState('5');
 
-  const block5 = block % 5;
+  const block5 = blockNumber % 5;
 
   return (
     <Container maxW='container.md' centerContent>
@@ -51,7 +48,7 @@ export const Chaos = (props: RouteComponentProps) => {
         current randomness: {randomness}
       </Text>
       <Text textAlign="center" opacity={0.5} fontSize={12} marginBottom={4}>
-        current block number: {block}
+        current block number: {blockNumber}
       </Text>
       {(!account || chain !== 'Goerli') && (
         <Text color="red.500" textAlign="center" fontSize={12} marginBottom={4}>

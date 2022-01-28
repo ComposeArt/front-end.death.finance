@@ -32,6 +32,7 @@ export const Simulation = (props: any) => {
   const [error, setError]: any = useState(false);
 
   const simulationId = props.simulation;
+  const stateSimulation = _.get(props, 'location.state', {});
 
   const [report, setReport]: any = useState([]);
 
@@ -53,23 +54,39 @@ export const Simulation = (props: any) => {
       try {
         const simulation: any = await getSimulation(simulationId);
 
-        const result = matchReporter({
-          match: simulation.match,
-          fighter1: simulation.fighter1,
-          fighter2: simulation.fighter2,
-        });
+        if (simulation) {
+          const result = matchReporter({
+            match: simulation.match,
+            fighter1: simulation.fighter1,
+            fighter2: simulation.fighter2,
+          });
 
-        setReport(result);
-        setBlockNumber(simulation.block);
-        setRandomness(simulation.randomness);
-        setFighter1(simulation.fighter1);
-        setFighter2(simulation.fighter2);
+          setReport(result);
+          setBlockNumber(simulation.block);
+          setRandomness(simulation.randomness);
+          setFighter1(simulation.fighter1);
+          setFighter2(simulation.fighter2);
+        } else if (simulationId === 'local') {
+          const result = matchReporter({
+            match: stateSimulation.match,
+            fighter1: stateSimulation.fighter1,
+            fighter2: stateSimulation.fighter2,
+          });
+
+          setReport(result);
+          setBlockNumber(stateSimulation.block);
+          setRandomness(stateSimulation.randomness);
+          setFighter1(stateSimulation.fighter1);
+          setFighter2(stateSimulation.fighter2);
+        } else {
+          navigate('/simulator');
+        }
       } catch (error) {
         console.log(error);
         setError(true);
       }
     })();
-  }, [simulationId]);
+  }, [simulationId, stateSimulation]);
 
   let fighter1Winner = false;
   let fighter2Winner = false;

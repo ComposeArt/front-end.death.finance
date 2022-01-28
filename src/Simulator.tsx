@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
+import { ethers } from "ethers";
+import { useContractCall } from "@usedapp/core";
 import _ from "lodash";
 import {
   Heading,
@@ -31,9 +33,48 @@ import {
   getCollectionPlayers,
   remoteSimulateFight,
 } from "./utils/firebase";
+import contractAbi from "./utils/fightClub.json";
 
 let prevCollection1: any;
 let prevCollection2: any;
+
+const contractInterface = new ethers.utils.Interface(contractAbi);
+const contractAddress = '0xEA896aA63f6495f50a26c49749306b28B07E79e0';
+
+const LocalSimulator = (props: any) => {
+  const localSimulation = useContractCall({
+    abi: contractInterface,
+    address: contractAddress,
+    method: 'fight',
+    args: [
+      true,
+      String(props.fighter1.binary_power),
+      String(props.fighter2.binary_power),
+      String(props.blockNumber),
+      props.randomness
+    ],
+  });
+
+  useEffect(() => {
+    if (localSimulation && localSimulation.length) {
+      const eventLog = BigInt((localSimulation[0]).toString().replace('.', '')).toString(2);
+
+      navigate(`/simulator/local`, {
+        state: {
+          match: eventLog,
+          block: props.blockNumber,
+          randomness: props.randomness,
+          fighter1: props.fighter1,
+          fighter2: props.fighter2,
+        }
+      });
+    } else {
+      console.log('running')
+    }
+  }, [localSimulation, props]);
+
+  return <></>;
+};
 
 export const Simulator = (props: RouteComponentProps) => {
   const toast = useToast();
@@ -48,14 +89,13 @@ export const Simulator = (props: RouteComponentProps) => {
   const { collections, account, chain } = useContext(PayloadContext);
   const { blockNumber, randomness } = useContext(RemoteChainPayloadContext);
 
-  console.log(chain)
-
   const [fighter1, setFighter1]: any = useState({});
   const [fighter2, setFighter2]: any = useState({});
 
   const [loading1, setLoading1]: any = useState(true);
   const [loading2, setLoading2]: any = useState(true);
   const [simulating, setSimulating]: any = useState(false);
+  const [simulatingLocal, setSimulatingLocal]: any = useState(false);
 
   const [collection1, setCollection1]: any = useState('');
   const [collection2, setCollection2]: any = useState('');
@@ -75,16 +115,24 @@ export const Simulator = (props: RouteComponentProps) => {
     setSimulating(true);
 
     try {
-      const result: any = await remoteSimulateFight({
-        f1: fighter1,
-        f2: fighter2,
-        randomness: userRandomness,
-        blocknumber: userBlocknumber,
-      });
+      if (!account || chain !== 'Goerli') {
+        const result: any = await remoteSimulateFight({
+          f1: fighter1,
+          f2: fighter2,
+          randomness: userRandomness,
+          blocknumber: userBlocknumber,
+        });
 
-      console.log(result);
-
-      navigate(`/simulator/${result.simulation}`);
+        navigate(`/simulator/${result.simulation}`);
+      } else {
+        toast({
+          title: 'simulating contract call',
+          status: 'info',
+          isClosable: true,
+          duration: 3000,
+        });
+        setSimulatingLocal(true);
+      }
     } catch (error) {
       toast({
         title: 'failed to simulate fight',
@@ -92,9 +140,8 @@ export const Simulator = (props: RouteComponentProps) => {
         isClosable: true,
         duration: 3000,
       });
+      setSimulating(false);
     }
-
-    setSimulating(false);
   };
 
   const randomFighter1 = async () => {
@@ -235,6 +282,16 @@ export const Simulator = (props: RouteComponentProps) => {
 
   return (
     <Container maxW='container.md' centerContent>
+      {simulating && simulatingLocal && (
+        <LocalSimulator
+          fighter1={fighter1}
+          fighter2={fighter2}
+          blockNumber={userBlocknumber || blockNumber}
+          randomness={userRandomness || randomness}
+          setSimulating={setSimulating}
+          setSimulatingLocal={setSimulatingLocal}
+        />
+      )}
       <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
         Let's Dance
       </Heading>
@@ -423,7 +480,7 @@ export const Simulator = (props: RouteComponentProps) => {
           (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
           (userRandomness && !userBlocknumber) ||
           (!userRandomness && userBlocknumber) ||
-          (parseInt(blockNumber, 10) % 5 === 0)
+          (!userBlocknumber && (parseInt(blockNumber, 10) % 5 === 0))
         }
       >
         FIGHT
@@ -457,30 +514,7 @@ export const Simulator = (props: RouteComponentProps) => {
             marginTop={4}
           >
             <InputLeftAddon
-              children='#'
-              borderRadius={100}
-            />
-            <Input
-              borderRadius={100}
-              fontSize={12}
-              type='number'
-              placeholder='randomness'
-              errorBorderColor='red.500'
-              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
-              value={userRandomness}
-              onChange={(event) => {
-                setUserRandomness(event.target.value);
-              }}
-              isDisabled={simulating}
-            />
-          </InputGroup>
-          <InputGroup
-            size="sm"
-            width={{ base: "160px", md: 200 }}
-            marginTop={4}
-          >
-            <InputLeftAddon
-              children='#'
+              children='b#'
               borderRadius={100}
             />
             <Input
@@ -501,8 +535,31 @@ export const Simulator = (props: RouteComponentProps) => {
               isDisabled={simulating}
             />
           </InputGroup>
+          <InputGroup
+            size="sm"
+            width={{ base: "160px", md: 200 }}
+            marginTop={4}
+          >
+            <InputLeftAddon
+              children='r#'
+              borderRadius={100}
+            />
+            <Input
+              borderRadius={100}
+              fontSize={12}
+              type='number'
+              placeholder='randomness'
+              errorBorderColor='red.500'
+              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
+              value={userRandomness}
+              onChange={(event) => {
+                setUserRandomness(event.target.value);
+              }}
+              isDisabled={simulating}
+            />
+          </InputGroup>
           <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
-            Use the below inputs to replace the current block number and current randomness in the smart contract.
+            Use the above inputs to replace the current block number and current randomness in the smart contract.
             <br/><br/>
             Can run on any blocks other than those divisible by 5 (0, 5, 10, 15, ...).
             <br/><br/>

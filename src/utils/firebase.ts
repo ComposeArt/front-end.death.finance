@@ -36,7 +36,7 @@ interface PayloadTypes {
 
 interface RemotePayloadTypes {
   blockNumber: any;
-  contractAddress: string | null | undefined;
+  contractAddress: any;
   randomness: string | null | undefined;
 }
 
