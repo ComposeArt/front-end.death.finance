@@ -39,7 +39,7 @@ let prevCollection1: any;
 let prevCollection2: any;
 
 const contractInterface = new ethers.utils.Interface(contractAbi);
-const contractAddress = '0xEA896aA63f6495f50a26c49749306b28B07E79e0';
+const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
 
 const LocalSimulator = (props: any) => {
   const localSimulation = useContractCall({
