@@ -66,7 +66,7 @@ export const Simulation = (props: any) => {
           setRandomness(simulation.randomness);
           setFighter1(simulation.fighter1);
           setFighter2(simulation.fighter2);
-        } else if (simulationId === 'local') {
+        } else if (simulationId === 'local' && !_.isEmpty(stateSimulation)) {
           const result = matchReporter({
             match: stateSimulation.match,
             fighter1: stateSimulation.fighter1,

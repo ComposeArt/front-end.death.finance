@@ -39,7 +39,7 @@ let prevCollection1: any;
 let prevCollection2: any;
 
 const contractInterface = new ethers.utils.Interface(contractAbi);
-const contractAddress = '0xEA896aA63f6495f50a26c49749306b28B07E79e0';
+const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
 
 const LocalSimulator = (props: any) => {
   const localSimulation = useContractCall({
@@ -50,8 +50,8 @@ const LocalSimulator = (props: any) => {
       true,
       String(props.fighter1.binary_power),
       String(props.fighter2.binary_power),
+      props.randomness,
       String(props.blockNumber),
-      props.randomness
     ],
   });
 
@@ -69,7 +69,9 @@ const LocalSimulator = (props: any) => {
         }
       });
     } else {
-      console.log('running')
+      setTimeout(() => {
+        props.setSimulating(false);
+      }, 10000);
     }
   }, [localSimulation, props]);
 
@@ -301,9 +303,9 @@ export const Simulator = (props: RouteComponentProps) => {
         they will happen during preseason and the main tournament
       </Text>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        Current Block (can't run on blocks divisible by 5)
+        Current Block
       </Text>
-      <Text marginTop={2} fontSize={12} textAlign="center">
+      <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
         {blockNumber}
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
@@ -475,12 +477,12 @@ export const Simulator = (props: RouteComponentProps) => {
         isDisabled={
           (userRandomness && parseInt(userRandomness, 10) < 0) ||
           (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
-          (userBlocknumber && parseInt(userBlocknumber, 10) < 0) ||
-          (userBlocknumber && parseInt(userBlocknumber, 10) % 5 === 0) ||
+          (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
+          (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
           (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
           (userRandomness && !userBlocknumber) ||
           (!userRandomness && userBlocknumber) ||
-          (!userBlocknumber && (parseInt(blockNumber, 10) % 5 === 0))
+          (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0))
         }
       >
         FIGHT
@@ -514,7 +516,7 @@ export const Simulator = (props: RouteComponentProps) => {
             marginTop={4}
           >
             <InputLeftAddon
-              children='b#'
+              children='#'
               borderRadius={100}
             />
             <Input
@@ -525,8 +527,8 @@ export const Simulator = (props: RouteComponentProps) => {
               errorBorderColor='red.500'
               value={userBlocknumber}
               isInvalid={
-                parseInt(userBlocknumber, 10) < 0 ||
-                parseInt(userBlocknumber, 10) % 5 === 0 ||
+                parseInt(userBlocknumber, 10) < 9 ||
+                _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0 ||
                 _.indexOf(userBlocknumber, '.') > -1
               }
               onChange={(event) => {
@@ -541,7 +543,7 @@ export const Simulator = (props: RouteComponentProps) => {
             marginTop={4}
           >
             <InputLeftAddon
-              children='r#'
+              children='#'
               borderRadius={100}
             />
             <Input
@@ -561,7 +563,7 @@ export const Simulator = (props: RouteComponentProps) => {
           <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
             Use the above inputs to replace the current block number and current randomness in the smart contract.
             <br/><br/>
-            Can run on any blocks other than those divisible by 5 (0, 5, 10, 15, ...).
+            Can only run on blocks that have an odd 2 digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
             <br/><br/>
             Only positive whole numbers for both fields.
           </Text>

@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import _ from "lodash";
+import { Contract } from "@ethersproject/contracts";
+import { useContractFunction } from "@usedapp/core";
+import { ethers } from "ethers";
 import {
   Heading,
   Container,
-  HStack,
   Text,
   useColorModeValue,
   VStack,
-  Fade,
   Button,
   Box,
   InputGroup,
@@ -17,13 +18,20 @@ import {
   Wrap,
   WrapItem,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 
 import { NavLink } from "./NavLink";
 import { PayloadContext, RemoteChainPayloadContext } from "./utils/firebase";
+import contractAbi from "./utils/fightClub.json";
+
+const simpleContractInterface = new ethers.utils.Interface(contractAbi);
+const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
+const contract = new Contract(contractAddress, simpleContractInterface);
 
 export const Chaos = (props: RouteComponentProps) => {
+  const toast = useToast();
   const lineColor = useColorModeValue('gray.500', 'white.500');
 
   useEffect(() => {
@@ -37,21 +45,54 @@ export const Chaos = (props: RouteComponentProps) => {
   const [userRandomness, setUserRandomness]: any = useState('');
   const [userCount, setUserCount]: any = useState(1);
 
-  const block5 = blockNumber % 5;
+  const blockBad = _.floor(parseInt(blockNumber, 10) / 10 % 2) !== 0;
+
+  const { state, send } = useContractFunction(contract, "addRandomness", {});
+
+  console.log(state);
+
+  useEffect(() => {
+    if (state.errorMessage) {
+      toast({
+        title: 'failed to add chaos',
+        status: 'error',
+        isClosable: true,
+        duration: 3000,
+      });
+
+      setLoading(false);
+    }
+
+    if (state.status === "Success") {
+      setLoading(false);
+      // TODO update server to update user stats and get how many times.
+    }
+  }, [state]);
+
+  const addChaos = async () => {
+    setLoading(true);
+    send(userRandomness);
+  };
 
   return (
     <Container maxW='container.md' centerContent>
       <Heading size='md' marginTop={12} textAlign="center">
         Adding Chaos to Fights
       </Heading>
-      <Text textAlign="center" opacity={0.5} fontSize={12} marginTop={4}>
-        current randomness: {randomness}
+      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
+        Current Block
       </Text>
-      <Text textAlign="center" opacity={0.5} fontSize={12} marginBottom={4}>
-        current block number: {blockNumber}
+      <Text marginTop={2} fontSize={12} textAlign="center" color={blockBad ? 'red' : 'current'}>
+        {blockNumber}
+      </Text>
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+        Current Randomness
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {randomness}
       </Text>
       {(!account || chain !== 'Goerli') && (
-        <Text color="red.500" textAlign="center" fontSize={12} marginBottom={4}>
+        <Text color="red.500" textAlign="center" fontSize={12} marginTop={4} marginBottom={4}>
           connect to the goerli chain to add chaos
         </Text>
       )}
@@ -70,12 +111,12 @@ export const Chaos = (props: RouteComponentProps) => {
             type='number'
             placeholder='randomness'
             errorBorderColor='red.500'
-            isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
+            isInvalid={parseInt(userRandomness, 10) < 2 || _.indexOf(userRandomness, '.') > -1}
             value={userRandomness}
             onChange={(event) => {
               setUserRandomness(event.target.value);
             }}
-            isDisabled={loading}
+            isDisabled={loading || blockBad}
             onKeyPress={(event) => {
               if (event.key === 'Enter') {
                 // TODO
@@ -87,13 +128,13 @@ export const Chaos = (props: RouteComponentProps) => {
           isLoading={loading}
           loadingText='Adding Chaos...'
           onClick={() => {
-            // TODO
+            addChaos();
           }}
           marginTop={12}
           isDisabled={
             (userRandomness && parseInt(userRandomness, 10) < 0) ||
             (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
-            block5 ||
+            blockBad ||
             !account ||
             chain !== 'Goerli'
           }
@@ -104,12 +145,16 @@ export const Chaos = (props: RouteComponentProps) => {
       <Box width="80%">
         <Text textAlign="left" fontSize={12} marginTop={8} marginBottom={4}>
           Chaos allows the matches to use unique randomness to prevent parties knowing the outcome of the fight.
-          You can only add chaos every 5th block and on days with matches scheduled.
           <br/><br/>
           By adding chaos to the fights, you can and earn super rare prop drops for the future Grim personas!
         </Text>
         <NavLink to='/grims'>Find out how you can get even more rewards!</NavLink>
       </Box>
+      <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
+        Can only run on blocks that have an even 2 digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.
+        <br/><br/>
+        {`Only positive whole numbers > 2`}
+      </Text>
       <VStack marginTop={12}>
         <Text>
           Chaos Added

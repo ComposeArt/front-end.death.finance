@@ -3,10 +3,7 @@ import _ from "lodash";
 import moment from "moment";
 import {
   Bracket,
-  RoundProps,
   Seed,
-  SeedItem,
-  SeedTeam,
   SingleLineSeed,
   RenderSeedProps
 } from 'react-brackets';
@@ -23,7 +20,7 @@ import {
   WrapItem,
   Center,
   VStack,
-  Button,
+  useBreakpointValue,
   Tooltip,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
@@ -31,20 +28,23 @@ import logoSmall from './images/logo-small.png';
 
 import { NavLink } from "./NavLink";
 import { PayloadContext, getBracketMatches } from "./utils/firebase";
+import { SeasonHeader } from "./SeasonHeader";
 
 export const SeasonTournament = (props: any) => {
   const toast = useToast();
 
   const [loading, setLoading]: any = useState(true);
   const [errorLoading, setErrorLoading]: any = useState(false);
+  const [slide, setSlide]: any = useState(0);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const winnerColor = useColorModeValue('gray.800', 'white');
-  const seedColor = useColorModeValue('white', '#1A202C');
+  const bgColor = useColorModeValue('#1A202C', 'white');
 
   const [matches, setMatches]: any = useState([]);
 
-  const bracket = props.id;
+  const bracket = props.id || 'alpha';
 
   const { account } = useContext(PayloadContext);
 
@@ -79,7 +79,10 @@ export const SeasonTournament = (props: any) => {
           };
 
           return {
-            title,
+            title: {
+              bracket: title,
+              best_of: v[0].best_of,
+            },
             seeds: v.map((m: any) => {
               return {
                 id: m.id,
@@ -89,6 +92,7 @@ export const SeasonTournament = (props: any) => {
                 score2: 0,
                 rank1: m.rank1 + 1,
                 rank2: m.rank2 + 1,
+                best_of: m.best_of,
               }
             }),
           }
@@ -115,17 +119,13 @@ export const SeasonTournament = (props: any) => {
     }
   }, [errorLoading, toast]);
 
+  const rounds = _.times(matches.length, String);
+
+  console.log(isMobile, rounds)
+
   return (
     <Container maxW='container.lg' centerContent overflowX="hidden">
-      <Heading size='lg' marginTop={16} textAlign="center">
-        Season 0 Tournament
-      </Heading>
-      <Text marginTop={4}>
-        “let's talk about nft fight club”
-      </Text>
-      <Text fontSize={12} color="red.500" marginTop={4}>
-        preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
-      </Text>
+      <SeasonHeader />
       <Wrap
         width="100%"
         align="center"
@@ -134,32 +134,208 @@ export const SeasonTournament = (props: any) => {
         marginTop={8}
       >
         <WrapItem>
-          <NavLink to={`/season/0/tournament/alpha`}>alpha (bo1)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'alpha'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/alpha`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'alpha' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              alpha
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/beta`}>beta (bo1)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'beta'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/beta`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'beta' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              beta
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/gamma`}>gamma (bo1)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'gamma'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/gamma`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'gamma' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              gamma
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/delta`}>delta (bo1)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'delta'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/delta`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'delta' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              delta
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/zeta`}>zeta (bo3)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'zeta'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/zeta`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'zeta' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              zeta
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/theta`}>theta (bo3)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'theta'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/theta`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'theta' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              theta
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/sigma`}>sigma (bo5)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'sigma'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/sigma`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'sigma' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              sigma
+            </Text>
+          </Box>
         </WrapItem>
         <WrapItem>
-          <NavLink to={`/season/0/tournament/omega`}>omega (bo7)</NavLink>
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={bracket === 'omega'  ? winnerColor : LineColor}
+            borderRadius={100}
+            onClick={() => {
+              navigate(`/season/0/tournament/omega`);
+              setSlide(0);
+            }}
+            opacity={bracket === 'omega' ? 1 : 0.5}
+            _hover={{
+              borderColor: winnerColor,
+              cursor: 'pointer',
+              opacity: 1,
+            }}
+          >
+            <Text fontSize={14}>
+              omega
+            </Text>
+          </Box>
         </WrapItem>
       </Wrap>
+      {isMobile && (
+        <HStack
+          width="100%"
+          height="30px"
+          align="center"
+          justify="center"
+          spacing={4}
+          marginTop={8}
+        >
+          {rounds.map((r: any, i: any) => {
+            return (
+              <Box
+                key={i}
+                borderRadius={100}
+                bg={bgColor}
+                width="14px"
+                height="14px"
+                opacity={i === slide ? 1 : 0.5}
+                onClick={() => {setSlide(i)}}
+              />
+            );
+          })}
+        </HStack>
+      )}
       <Center
-        marginTop={12}
+        marginTop={8}
         width="100%"
         overflowX="scroll"
         justifyContent="center"
@@ -169,17 +345,23 @@ export const SeasonTournament = (props: any) => {
           <Bracket
             bracketClassName="tournament"
             rounds={matches}
-            roundTitleComponent={(title: React.ReactNode, roundIndex: number) => {
+            roundTitleComponent={(title: any, roundIndex: number) => {
               return (
-                <Text textAlign="center" marginBottom={12}>
-                  { title }
-                </Text>
+                <Box textAlign="center" marginBottom={4}>
+                  <Text>
+                    {`Round ${roundIndex + 1}`}
+                  </Text>
+                  <Text fontSize={12} opacity={0.5}>
+                    { title.bracket }
+                  </Text>
+                  <Text fontSize={12} opacity={0.5}>
+                    best of {title.best_of}
+                  </Text>
+                </Box>
               );
             }}
             mobileBreakpoint={640}
             renderSeedComponent={({seed, breakpoint, roundIndex, seedIndex}: RenderSeedProps) => {
-              console.log(roundIndex);
-
               const Wrapper = roundIndex === 2 ? SingleLineSeed : Seed;
 
               return (
@@ -235,6 +417,12 @@ export const SeasonTournament = (props: any) => {
                   </VStack>
                 </Wrapper>
               );
+            }}
+            swipeableProps={{
+              index: slide,
+              onChangeIndex: (index: any, indexLatest: any) => {
+                setSlide(index);
+              }
             }}
           />
         </Box>

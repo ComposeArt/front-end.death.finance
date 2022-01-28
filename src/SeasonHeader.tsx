@@ -16,7 +16,7 @@ export const SeasonHeader = (props: any) => {
       <Heading size='lg' marginTop={16} textAlign="center">
         Season 0
       </Heading>
-      <Text marginTop={4}>
+      <Text textAlign="center" marginTop={4}>
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
@@ -42,7 +42,7 @@ export const SeasonHeader = (props: any) => {
             <NavLink to={`/season/0/matches`}>matches</NavLink>
           </WrapItem>
           <WrapItem>
-            <NavLink to={`/season/0/tournament/alpha`}>tournament</NavLink>
+            <NavLink partially to={`/season/0/tournament`}>tournament</NavLink>
           </WrapItem>
         </Wrap>
     </Container>
