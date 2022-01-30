@@ -184,7 +184,7 @@ export const Chaos = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                x1 Chaos
+                1x Chaos
                 <br/>
                 ??????
               </Text>
@@ -205,7 +205,7 @@ export const Chaos = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                x2 Chaos
+                2x Chaos
                 <br/>
                 ??????
               </Text>
@@ -226,7 +226,7 @@ export const Chaos = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                x3 Chaos
+                3x Chaos
                 <br/>
                 ??????
               </Text>
@@ -247,7 +247,7 @@ export const Chaos = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                x5 Chaos
+                5x Chaos
                 <br/>
                 ??????
               </Text>
@@ -268,7 +268,7 @@ export const Chaos = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                x8 Chaos
+                8x Chaos
                 <br/>
                 ??????
               </Text>

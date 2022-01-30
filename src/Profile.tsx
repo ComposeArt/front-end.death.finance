@@ -18,7 +18,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle } from "react-icons/fa";
+import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle, FaCrown } from "react-icons/fa";
 
 import { NavLink } from "./NavLink";
 import { ListCollections } from "./ListCollections";
@@ -235,7 +235,7 @@ export const ProfileFighters = (props: any) => {
         ...p,
       };
     })
-    .sortBy([(p: any) => _.get(p, 'fighter.timestamp')])
+    .sortBy([(p: any) => _.get(p, 'fighter.seed'), (p: any) => _.get(p, 'fighter.timestamp')])
     .value();
 
   const transferredFighters = _.reduce(fighters, (result: any, f: any, i: any): any => {
@@ -262,16 +262,18 @@ export const ProfileFighters = (props: any) => {
       />
       <Wrap marginTop={12} justify='center' spacing={12}>
         {combinedPlayers.map((p: any) => {
+          const fighter = p.fighter || {};
+
           return (
             <WrapItem key={p.id} margin={4}>
               <VStack>
                 <Box position="relative" marginBottom={4}>
-                  {p.fighter && p.fighter.is_invalid && (
+                  {fighter.is_invalid && (
                     <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       REFUSING TO FIGHT
                     </Text>
                   )}
-                  {p.fighter && p.fighter.is_doping && (
+                  {fighter.is_doping && (
                     <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       BANNED FOR DOPING
                     </Text>
@@ -285,35 +287,49 @@ export const ProfileFighters = (props: any) => {
                     borderRadius="150px"
                     borderColor={lineColor}
                     borderWidth={2}
-                    onClick={() => {p.fighter && !p.fighter.is_invalid && navigate(`/season/0/fighters/${p.id}`)}}
+                    onClick={() => {!_.isEmpty(fighter) && !fighter.is_invalid && navigate(`/season/0/fighters/${p.id}`)}}
                     _hover={{
-                      borderColor: (p.fighter && !p.fighter.is_invalid ) ? brightColor : lineColor,
-                      cursor: (p.fighter && !p.fighter.is_invalid ) ? 'pointer' : 'default',
+                      borderColor: (!_.isEmpty(fighter) && !fighter.is_invalid) ? brightColor : lineColor,
+                      cursor: (!_.isEmpty(fighter)&& !fighter.is_invalid) ? 'pointer' : 'default',
                     }}
                   >
                     <Image
                       boxSize="150px"
                       borderRadius="150px"
                       src={p.image_preview_url}
-                      opacity={(p.fighter && (p.fighter.is_doping || p.fighter.is_invalid)) || p.is_traded ? 0.3 : 1}
+                      opacity={fighter.is_doping || fighter.is_invalid || p.is_traded ? 0.3 : 1}
                     />
                   </Box>
-                  {p.fighter && !p.fighter.is_doping && !p.fighter.is_invalid && (
-                    <Box color={p.fighter.owner === account ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
+                  {!_.isEmpty(fighter) && !fighter.is_doping && !fighter.is_invalid && (
+                    <Box color={fighter.owner === account ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
                       <FaCheckCircle fontSize={32} />
                     </Box>
                   )}
-                  {p.fighter && p.fighter.is_doping && (
+                  {fighter.is_doping && (
                     <Box color={'red.500'} position="absolute" right="10px" bottom="0px">
                       <FaExclamationCircle fontSize={32} />
                     </Box>
                   )}
-                  {p.fighter && p.fighter.is_invalid && (
+                  {fighter.is_invalid && (
                     <Box color={'red.500'} position="absolute" right="10px" bottom="0px">
                       <FaTimesCircle fontSize={32} />
                     </Box>
                   )}
                 </Box>
+                {fighter.bracket && (
+                  <Text
+                    fontSize={{ base: 10, md: 12 }}
+                    opacity={0.5}
+                    onClick={() => {navigate(`/season/0/tournament/${fighter.bracket}?match=${fighter.next_match}`)}}
+                    _hover={{
+                      cursor: 'pointer',
+                      opacity: 1,
+                      textDecoration: "underline"
+                    }}
+                  >
+                    👑 {parseInt(fighter.seed, 10) + 1} ({fighter.bracket})
+                  </Text>
+                )}
                 <Box
                   width="150px"
                   height="50px"
@@ -323,7 +339,7 @@ export const ProfileFighters = (props: any) => {
                     fontSize={{ base: 10, md: 12 }}
                     textDecoration="underline"
                     opacity={0.5}
-                    onClick={()=> window.open(p.permalink, "_blank")}
+                    onClick={() => window.open(p.permalink, "_blank")}
                     _hover={{
                       cursor: 'pointer',
                       opacity: 1,
@@ -332,7 +348,7 @@ export const ProfileFighters = (props: any) => {
                     {`${p.collection.slug || p.collection} #${_.truncate(p.token_id, { length: 7 })}`}
                   </Text>
                 </Box>
-                {!p.fighter && isOwner && (
+                {_.isEmpty(fighter) && isOwner && (
                   <Button
                     isLoading={registering === p.id}
                     loadingText='Register'

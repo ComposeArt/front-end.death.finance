@@ -114,6 +114,9 @@ export const SeasonFighter = (props: any) => {
     timestamp: fighter.timestamp,
     is_invalid: fighter.is_invalid,
     is_doping: fighter.is_doping,
+    seed: fighter.seed,
+    bracket: fighter.bracket,
+    next_match: fighter.next_match,
     ...stateFighter,
   };
 
@@ -271,8 +274,6 @@ export const SeasonFighterMatches = (props: any) => {
   const [matches, setMatches]: any = useState([]);
 
   const { account } = useContext(PayloadContext);
-
-  console.log(fighter);
 
   useEffect(() => {
     (async function getInitialData() {

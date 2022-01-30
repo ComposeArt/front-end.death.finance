@@ -19,6 +19,7 @@ import {
   Button,
   useDisclosure,
   Fade,
+  Switch,
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
@@ -98,6 +99,7 @@ export const Simulator = (props: RouteComponentProps) => {
   const [loading2, setLoading2]: any = useState(true);
   const [simulating, setSimulating]: any = useState(false);
   const [simulatingLocal, setSimulatingLocal]: any = useState(false);
+  const [useLocal, setUseLocal]: any = useState(false);
 
   const [collection1, setCollection1]: any = useState('');
   const [collection2, setCollection2]: any = useState('');
@@ -246,72 +248,63 @@ export const Simulator = (props: RouteComponentProps) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection1 && collection1 !== prevCollection1) {
-        if (collection1 === collection2 && !_.isEmpty(players2)) {
-          setLoading1(true);
-          setPlayers1(players2);
+      if (collection1) {
+        setLoading1(true);
 
-          const found = _.find(players2, (p) => p.token_id === p1);
+        const players = await getCollectionPlayers(collection1);
 
-          if (found) {
-            setPlayer1(found.token_id);
-          }
-          setFighter1(found || _.sample(players2));
-          setLoading1(false);
-        } else {
-          prevCollection1 = collection1;
-          setLoading1(true);
-          setPlayer1('');
-
-          const players = await getCollectionPlayers(collection1);
-
-          const found = _.find(players, (p) => p.token_id === p1);
-
-          setPlayers1(players);
-          if (found) {
-            setPlayer1(found.token_id);
-          }
-          setFighter1(found || _.sample(players));
-          setLoading1(false);
-        }
+        setPlayers1(players);
+        setFighter1(_.sample(players));
+        setLoading1(false);
       }
     })();
-  }, [collection1, collection2, players2, p1]);
+  }, [collection1]);
 
   useEffect(() => {
     (async function getInitialData() {
-      if (collection2 && collection2 !== prevCollection2) {
-        if (collection2 === collection1 && !_.isEmpty(players1)) {
-          setLoading2(true);
-          setPlayers2(players1);
+      if (p1 && !_.isEmpty(players1)) {
+        const found = _.find(players1, (p: any) => p.token_id === p1);
 
-          const found = _.find(players1, (p) => p.token_id === p2);
-
-          if (found) {
-            setPlayer2(found.token_id);
-          }
-          setFighter2(found || _.sample(players1));
-          setLoading2(false);
+        if (found) {
+          setPlayer1(p1);
+          setFighter1(found);
         } else {
-          prevCollection2 = collection2;
-          setLoading2(true);
-          setPlayer2('');
-
-          const players = await getCollectionPlayers(collection2);
-
-          const found = _.find(players, (p) => p.token_id === p2);
-
-          if (found) {
-            setPlayer2(found.token_id);
-          }
-
-          setPlayers2(players);
-          setFighter2(found || _.sample(players));
-          setLoading2(false);
+          setP1(undefined)
         }
       }
     })();
-  }, [collection2, collection1, players1, p2]);
+  }, [players1, p1]);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (collection2) {
+        setLoading2(true);
+
+        const players = await getCollectionPlayers(collection2);
+
+        setPlayers2(players);
+        setFighter2(_.sample(players));
+        setLoading2(false);
+      }
+    })();
+  }, [collection2]);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (p2 && !_.isEmpty(players2)) {
+        const found = _.find(players2, (p: any) => p.token_id === p2);
+
+        if (found) {
+          setPlayer2(p2);
+          setFighter2(found);
+        } else {
+          setP2(undefined)
+        }
+      }
+    })();
+  }, [players2, p2]);
+
+  const runLocally = useLocal && account && chain === 'Goerli';
 
   return (
     <Container maxW='container.md' centerContent>
@@ -500,32 +493,11 @@ export const Simulator = (props: RouteComponentProps) => {
         <FighterPortrait fighter={fighter2} />
       </HStack>
       <HStack marginTop={12} spacing={8} justify="center" align="center">
-        {account && chain === 'Goerli' && (
-          <Button
-            isLoading={simulating}
-            loadingText='Simulating'
-            leftIcon={<RiSwordFill />}
-            onClick={() => {simulateLocalFight()}}
-            isDisabled={
-              (userRandomness && parseInt(userRandomness, 10) < 0) ||
-              (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
-              (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
-              (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
-              (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
-              (userRandomness && !userBlocknumber) ||
-              (!userRandomness && userBlocknumber) ||
-              (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0)) ||
-              loading1 || loading2
-            }
-          >
-            LOCAL
-          </Button>
-        )}
         <Button
           isLoading={simulating}
           loadingText='Simulating'
           leftIcon={<RiSwordFill />}
-          onClick={() => {simulateFight()}}
+          onClick={() => {runLocally ? simulateLocalFight() : simulateFight()}}
           isDisabled={
             (userRandomness && parseInt(userRandomness, 10) < 0) ||
             (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
@@ -538,10 +510,9 @@ export const Simulator = (props: RouteComponentProps) => {
             loading1 || loading2
           }
         >
-          ORACLE
+          FIGHT
         </Button>
       </HStack>
-
       <Button
         onClick={() => {
           if (isOpen) {
@@ -615,6 +586,21 @@ export const Simulator = (props: RouteComponentProps) => {
               isDisabled={simulating}
             />
           </InputGroup>
+          <Text
+            fontSize={12}
+            opacity={0.5}
+            marginTop={4}
+            marginBottom={2}
+          >
+            oracle | local
+          </Text>
+          <Switch
+            size='md'
+            isChecked={runLocally}
+            onChange={() => {setUseLocal(!useLocal)}}
+            colorScheme="whiteAlpha"
+            isDisabled={!account && chain !== 'Goerli'}
+          />
           <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
             Use the above inputs to replace the current block number and current randomness in the smart contract.
             <br/><br/>

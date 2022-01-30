@@ -279,7 +279,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
 
   const { account } = useContext(PayloadContext);
 
-  const is_doping = (fighter.is_doping || fighter.power === 84);
+  const is_doping = (fighter.is_doping || fighter.power >= 79);
 
   return (
     <VStack>
@@ -349,6 +349,20 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
           </>
         )}
       </Box>
+      {fighter.bracket && (
+        <Text
+          fontSize={{ base: 10, md: 12 }}
+          opacity={0.5}
+          onClick={() => {navigate(`/season/0/tournament/${fighter.bracket}?match=${fighter.next_match}`)}}
+          _hover={{
+            cursor: 'pointer',
+            opacity: 1,
+            textDecoration: "underline"
+          }}
+        >
+          👑 {parseInt(fighter.seed, 10) + 1} ({fighter.bracket})
+        </Text>
+      )}
       <Box
         width={{ base: "100px", md: 150 }}
         height="32px"

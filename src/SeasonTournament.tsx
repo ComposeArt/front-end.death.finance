@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef, createRef } from "react";
 import _ from "lodash";
 import moment from "moment";
 import {
@@ -24,14 +24,17 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import logoSmall from './images/logo-small.png';
+import { useQueryParam, StringParam } from 'use-query-params';
 
-import { NavLink } from "./NavLink";
+import logoSmall from './images/logo-small.png';
 import { PayloadContext, getBracketMatches } from "./utils/firebase";
 import { SeasonHeader } from "./SeasonHeader";
 
 export const SeasonTournament = (props: any) => {
   const toast = useToast();
+
+  const elRefs: any = useRef({});
+  const [match, setMatch]: any = useQueryParam('match', StringParam);
 
   const [loading, setLoading]: any = useState(true);
   const [errorLoading, setErrorLoading]: any = useState(false);
@@ -84,6 +87,8 @@ export const SeasonTournament = (props: any) => {
               best_of: v[0].best_of,
             },
             seeds: v.map((m: any) => {
+              elRefs.current[m.id] = createRef();
+
               return {
                 id: m.id,
                 bracket: m.bracket,
@@ -120,6 +125,14 @@ export const SeasonTournament = (props: any) => {
       });
     }
   }, [errorLoading, toast]);
+
+  useEffect(() => {
+    if (!_.isEmpty(matches) && match) {
+      if (elRefs.current && elRefs.current[match] && elRefs.current[match].current) {
+        elRefs.current[match].current.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }
+    }
+  }, [matches, match]);
 
   const rounds = _.times(matches.length, String);
 
@@ -377,17 +390,19 @@ export const SeasonTournament = (props: any) => {
                 );
               }
 
+              const shouldHighlight = match === seed.id;
+
               return (
-                <Wrapper mobileBreakpoint={breakpoint}>
+                <Wrapper mobileBreakpoint={breakpoint} ref={elRefs.current[seed.id]}>
                   <VStack>
-                    <Text opacity={0.5} fontSize={12} color={"white"}>
+                    <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12} color={"white"}>
                       {seed.rank1 ? `${seed.rank1} vs ${seed.rank2}` : '-'}
                     </Text>
                     <Tooltip label={label}>
                       <HStack
                         padding={2}
                         borderWidth={2}
-                        borderColor={LineColor}
+                        borderColor={shouldHighlight ? winnerColor : LineColor}
                         borderRadius={100}
                         onClick={() => {nextMatch.block && navigate(`/season/0/tournament/${seed.bracket}/${seed.id}`)}}
                         _hover={{
@@ -405,7 +420,7 @@ export const SeasonTournament = (props: any) => {
                           />
                         </Box>
                         <Box padding={2}>
-                          <Text opacity={0.5}>
+                          <Text opacity={shouldHighlight ? 1 : 0.5}>
                             {seed.score1} - {seed.score2}
                           </Text>
                         </Box>
@@ -420,7 +435,7 @@ export const SeasonTournament = (props: any) => {
                         </Box>
                       </HStack>
                     </Tooltip>
-                    <Text opacity={0.5} fontSize={12} color={seed.log ? "white" : "red.500"}>
+                    <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12} color={seed.log ? "white" : "red.500"}>
                       {nextMatch.block ? `block ${nextMatch.block}` : '-'}
                     </Text>
                   </VStack>
