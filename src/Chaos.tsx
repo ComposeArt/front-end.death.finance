@@ -24,9 +24,9 @@ import { RouteComponentProps } from "@reach/router";
 
 import { NavLink } from "./NavLink";
 import { PayloadContext, RemoteChainPayloadContext } from "./utils/firebase";
-import contractAbi from "./utils/fightClub.json";
+import { abi } from "./utils/abi";
 
-const simpleContractInterface = new ethers.utils.Interface(contractAbi);
+const simpleContractInterface = new ethers.utils.Interface(abi);
 const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
 const contract = new Contract(contractAddress, simpleContractInterface);
 
@@ -49,8 +49,6 @@ export const Chaos = (props: RouteComponentProps) => {
 
   const { state, send } = useContractFunction(contract, "addRandomness", {});
 
-  console.log(state);
-
   useEffect(() => {
     if (state.errorMessage) {
       toast({
@@ -65,6 +63,7 @@ export const Chaos = (props: RouteComponentProps) => {
 
     if (state.status === "Success") {
       setLoading(false);
+      setUserRandomness('');
       // TODO update server to update user stats and get how many times.
     }
   }, [state]);
@@ -146,9 +145,9 @@ export const Chaos = (props: RouteComponentProps) => {
         <Text textAlign="left" fontSize={12} marginTop={8} marginBottom={4}>
           Chaos allows the matches to use unique randomness to prevent parties knowing the outcome of the fight.
           <br/><br/>
-          By adding chaos to the fights, you can and earn super rare prop drops for the future Grim personas!
+          By adding chaos to the fights, you can earn super rare prop drops for the future Grim personas!
         </Text>
-        <NavLink to='/grims'>Find out how you can get even more rewards!</NavLink>
+        <NavLink to='/grims'>More rewards await!</NavLink>
       </Box>
       <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
         Can only run on blocks that have an even 2 digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.

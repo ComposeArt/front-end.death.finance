@@ -62,6 +62,7 @@ export const SeasonFighter = (props: any) => {
   const fighterId = props.id;
 
   const stateFighter = _.get(props, 'location.state.fighter', {});
+  const noState = _.isEmpty(stateFighter);
 
   const [fighter, setFighter]: any = useState({});
   const [errorLoading, setErrorLoading]: any = useState(false);
@@ -71,7 +72,7 @@ export const SeasonFighter = (props: any) => {
   useEffect(() => {
     (async function getInitialData() {
       try {
-        if (fighterId && _.isEmpty(stateFighter)) {
+        if (fighterId && noState) {
           const result = await getFighter(fighterId);
 
           if (result) {
@@ -85,7 +86,7 @@ export const SeasonFighter = (props: any) => {
         setErrorLoading(true);
       }
     })();
-  }, [fighterId, stateFighter]);
+  }, [fighterId, noState]);
 
   useEffect(() => {
     if (errorLoading) {
@@ -270,6 +271,8 @@ export const SeasonFighterMatches = (props: any) => {
   const [matches, setMatches]: any = useState([]);
 
   const { account } = useContext(PayloadContext);
+
+  console.log(fighter);
 
   useEffect(() => {
     (async function getInitialData() {

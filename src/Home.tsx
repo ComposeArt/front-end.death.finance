@@ -39,35 +39,37 @@ export const Home = (props: RouteComponentProps) => {
   }, []);
 
   useEffect(() => {
+    let interval: any;
+
     (async function getInitialData() {
       try {
-        const randomPlayer1 = await getRandomPlayer(collections);
-        const randomPlayer2 = await getRandomPlayer(collections);
-        const latestFighters = await getLatestFighters();
+        if (!_.isEmpty(collections)) {
+          interval = setInterval(async () => {
+            const randomPlayer1 = await getRandomPlayer(collections);
+            const randomPlayer2 = await getRandomPlayer(collections);
 
-        const filterInvalid = _.filter(latestFighters, (f: any) => !f.is_invalid);
+            setRandomPlayers({
+              player1: randomPlayer1,
+              player2: randomPlayer2,
+            });
+          }, 3000);
 
-        setPlayers(filterInvalid);
-        setRandomPlayers({
-          player1: randomPlayer1,
-          player2: randomPlayer2,
-        });
+          const randomPlayer1 = await getRandomPlayer(collections);
+          const randomPlayer2 = await getRandomPlayer(collections);
+          const latestFighters = await getLatestFighters();
+
+          const filterInvalid = _.filter(latestFighters, (f: any) => !f.is_invalid);
+
+          setPlayers(filterInvalid);
+          setRandomPlayers({
+            player1: randomPlayer1,
+            player2: randomPlayer2,
+          });
+        }
       } catch (error) {
         console.log(error);
       }
     })();
-  }, [collections]);
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const randomPlayer1 = await getRandomPlayer(collections);
-      const randomPlayer2 = await getRandomPlayer(collections);
-
-      setRandomPlayers({
-        player1: randomPlayer1,
-        player2: randomPlayer2,
-      });
-    }, 3000);
 
     return () => clearInterval(interval);
   }, [collections]);

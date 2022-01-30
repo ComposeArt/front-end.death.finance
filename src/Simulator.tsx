@@ -33,12 +33,12 @@ import {
   getCollectionPlayers,
   remoteSimulateFight,
 } from "./utils/firebase";
-import contractAbi from "./utils/fightClub.json";
+import { abi } from "./utils/abi";
 
 let prevCollection1: any;
 let prevCollection2: any;
 
-const contractInterface = new ethers.utils.Interface(contractAbi);
+const contractInterface = new ethers.utils.Interface(abi);
 const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
 
 const LocalSimulator = (props: any) => {
@@ -113,28 +113,31 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const { isOpen, onToggle } = useDisclosure();
 
+  const simulateLocalFight = async () => {
+    setSimulating(true);
+
+    toast({
+      title: 'simulating contract call',
+      status: 'info',
+      isClosable: true,
+      duration: 3000,
+    });
+
+    setSimulatingLocal(true);
+  }
+
   const simulateFight = async () => {
     setSimulating(true);
 
     try {
-      if (!account || chain !== 'Goerli') {
-        const result: any = await remoteSimulateFight({
-          f1: fighter1,
-          f2: fighter2,
-          randomness: userRandomness,
-          blocknumber: userBlocknumber,
-        });
+      const result: any = await remoteSimulateFight({
+        f1: fighter1,
+        f2: fighter2,
+        randomness: userRandomness,
+        blocknumber: userBlocknumber,
+      });
 
-        navigate(`/simulator/${result.simulation}`);
-      } else {
-        toast({
-          title: 'simulating contract call',
-          status: 'info',
-          isClosable: true,
-          duration: 3000,
-        });
-        setSimulatingLocal(true);
-      }
+      navigate(`/simulator/${result.simulation}`);
     } catch (error) {
       toast({
         title: 'failed to simulate fight',
@@ -158,6 +161,7 @@ export const Simulator = (props: RouteComponentProps) => {
         } else {
           setFighter1(_.sample(players1));
           setPlayer1('');
+          setP1(undefined)
         }
       } else {
         const result = await getRandomPlayer(collections);
@@ -187,6 +191,7 @@ export const Simulator = (props: RouteComponentProps) => {
         } else {
           setFighter2(_.sample(players2));
           setPlayer2('');
+          setP2(undefined)
         }
       } else {
         const result = await getRandomPlayer(collections);
@@ -242,45 +247,71 @@ export const Simulator = (props: RouteComponentProps) => {
   useEffect(() => {
     (async function getInitialData() {
       if (collection1 && collection1 !== prevCollection1) {
-        prevCollection1 = collection1;
-        setLoading1(true);
-        setPlayer1('');
+        if (collection1 === collection2 && !_.isEmpty(players2)) {
+          setLoading1(true);
+          setPlayers1(players2);
 
-        const players = await getCollectionPlayers(collection1);
+          const found = _.find(players2, (p) => p.token_id === p1);
 
-        const found = _.find(players, (p) => p.token_id === p1);
+          if (found) {
+            setPlayer1(found.token_id);
+          }
+          setFighter1(found || _.sample(players2));
+          setLoading1(false);
+        } else {
+          prevCollection1 = collection1;
+          setLoading1(true);
+          setPlayer1('');
 
-        setPlayers1(players);
-        if (found) {
-          setPlayer1(found.token_id);
+          const players = await getCollectionPlayers(collection1);
+
+          const found = _.find(players, (p) => p.token_id === p1);
+
+          setPlayers1(players);
+          if (found) {
+            setPlayer1(found.token_id);
+          }
+          setFighter1(found || _.sample(players));
+          setLoading1(false);
         }
-        setFighter1(found || _.sample(players));
-        setLoading1(false);
       }
     })();
-  }, [collection1, p1]);
+  }, [collection1, collection2, players2, p1]);
 
   useEffect(() => {
     (async function getInitialData() {
       if (collection2 && collection2 !== prevCollection2) {
-        prevCollection2 = collection2;
-        setLoading2(true);
-        setPlayer2('');
+        if (collection2 === collection1 && !_.isEmpty(players1)) {
+          setLoading2(true);
+          setPlayers2(players1);
 
-        const players = await getCollectionPlayers(collection2);
+          const found = _.find(players1, (p) => p.token_id === p2);
 
-        const found = _.find(players, (p) => p.token_id === p2);
+          if (found) {
+            setPlayer2(found.token_id);
+          }
+          setFighter2(found || _.sample(players1));
+          setLoading2(false);
+        } else {
+          prevCollection2 = collection2;
+          setLoading2(true);
+          setPlayer2('');
 
-        if (found) {
-          setPlayer2(found.token_id);
+          const players = await getCollectionPlayers(collection2);
+
+          const found = _.find(players, (p) => p.token_id === p2);
+
+          if (found) {
+            setPlayer2(found.token_id);
+          }
+
+          setPlayers2(players);
+          setFighter2(found || _.sample(players));
+          setLoading2(false);
         }
-
-        setPlayers2(players);
-        setFighter2(found || _.sample(players));
-        setLoading2(false);
       }
     })();
-  }, [collection2, p2]);
+  }, [collection2, collection1, players1, p2]);
 
   return (
     <Container maxW='container.md' centerContent>
@@ -302,7 +333,7 @@ export const Simulator = (props: RouteComponentProps) => {
         <br/>
         they will happen during preseason and the main tournament
       </Text>
-      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
         Current Block
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
@@ -468,25 +499,49 @@ export const Simulator = (props: RouteComponentProps) => {
         </Box>
         <FighterPortrait fighter={fighter2} />
       </HStack>
-      <Button
-        isLoading={simulating}
-        loadingText='Simulating'
-        leftIcon={<RiSwordFill />}
-        onClick={() => {simulateFight()}}
-        marginTop={12}
-        isDisabled={
-          (userRandomness && parseInt(userRandomness, 10) < 0) ||
-          (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
-          (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
-          (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
-          (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
-          (userRandomness && !userBlocknumber) ||
-          (!userRandomness && userBlocknumber) ||
-          (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0))
-        }
-      >
-        FIGHT
-      </Button>
+      <HStack marginTop={12} spacing={8} justify="center" align="center">
+        {account && chain === 'Goerli' && (
+          <Button
+            isLoading={simulating}
+            loadingText='Simulating'
+            leftIcon={<RiSwordFill />}
+            onClick={() => {simulateLocalFight()}}
+            isDisabled={
+              (userRandomness && parseInt(userRandomness, 10) < 0) ||
+              (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
+              (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
+              (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
+              (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
+              (userRandomness && !userBlocknumber) ||
+              (!userRandomness && userBlocknumber) ||
+              (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0)) ||
+              loading1 || loading2
+            }
+          >
+            LOCAL
+          </Button>
+        )}
+        <Button
+          isLoading={simulating}
+          loadingText='Simulating'
+          leftIcon={<RiSwordFill />}
+          onClick={() => {simulateFight()}}
+          isDisabled={
+            (userRandomness && parseInt(userRandomness, 10) < 0) ||
+            (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
+            (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
+            (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
+            (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
+            (userRandomness && !userBlocknumber) ||
+            (!userRandomness && userBlocknumber) ||
+            (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0)) ||
+            loading1 || loading2
+          }
+        >
+          ORACLE
+        </Button>
+      </HStack>
+
       <Button
         onClick={() => {
           if (isOpen) {

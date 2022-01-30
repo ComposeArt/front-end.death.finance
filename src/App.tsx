@@ -25,6 +25,7 @@ import { SeasonCollections } from "./SeasonCollections";
 import { SeasonMatches } from "./SeasonMatches";
 import { SeasonRules } from "./SeasonRules";
 import { SeasonTournament } from "./SeasonTournament";
+import { SeasonTournamentMatch } from "./SeasonTournamentMatch";
 import { SeasonCollection, SeasonCollectionFighters, SeasonCollectionMatches } from "./SeasonCollection";
 import { SeasonFighter, SeasonFighterMatches } from "./SeasonFighter";
 import { SeasonMatch } from "./SeasonMatch";
@@ -67,14 +68,14 @@ const Nav = (props: any) => {
 
     (async function getInitialData() {
       const collectionsData = await getCollections();
-      const seasonDta = await getSeason();
+      const seasonData = await getSeason();
 
       chainListener = streamChain((data: any) => {
         setRemoteChain(data);
       });
 
       setCollections(collectionsData);
-      setSeason(seasonDta);
+      setSeason(seasonData);
     })();
 
     if (chainListener) {
@@ -134,6 +135,7 @@ export const App = () => (
           <SeasonCollectionMatches path="/season/0/collections/:id/matches" />
           <SeasonTournament path="/season/0/tournament" />
           <SeasonTournament path="/season/0/tournament/:id" />
+          <SeasonTournamentMatch path="/season/0/tournament/:id/:matchId" />
         </Nav>
       </ScrollToTop>
     </QueryParamProvider>

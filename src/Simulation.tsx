@@ -112,15 +112,18 @@ export const Simulation = (props: any) => {
         Simulated Results
       </Heading>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        Block {blockNumber}
+        Block
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {blockNumber}
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Randomness {randomness}
+        Randomness
       </Text>
-      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Winner {fighter1Winner ? name1 : (fighter2Winner ? name2 : '-')}
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {randomness}
       </Text>
-      <HStack marginTop={12} align="flex-start" spacing={8}>
+      <HStack marginTop={16} align="flex-start" spacing={8}>
         <FighterPortrait fighter={fighter1} winner={fighter1Winner} />
         <Box
           display='flex'

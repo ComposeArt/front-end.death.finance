@@ -86,13 +86,15 @@ export const SeasonTournament = (props: any) => {
             seeds: v.map((m: any) => {
               return {
                 id: m.id,
-                player1: m.player1,
-                player2: m.player2,
+                bracket: m.bracket,
+                fighter1: m.fighter1,
+                fighter2: m.fighter2,
                 score1: 0,
                 score2: 0,
                 rank1: m.rank1 + 1,
                 rank2: m.rank2 + 1,
                 best_of: m.best_of,
+                matches: m.matches,
               }
             }),
           }
@@ -120,8 +122,6 @@ export const SeasonTournament = (props: any) => {
   }, [errorLoading, toast]);
 
   const rounds = _.times(matches.length, String);
-
-  console.log(isMobile, rounds)
 
   return (
     <Container maxW='container.lg' centerContent overflowX="hidden">
@@ -364,55 +364,64 @@ export const SeasonTournament = (props: any) => {
             renderSeedComponent={({seed, breakpoint, roundIndex, seedIndex}: RenderSeedProps) => {
               const Wrapper = roundIndex === 2 ? SingleLineSeed : Seed;
 
+              const nextMatch = _.find(seed.matches, (m: any) => m.block) || {};
+              let label: any = '';
+
+              if (!_.isEmpty(seed.fighter1)) {
+                label = (
+                  <Text textAlign="center" fontSize={10}>
+                    {`${seed.fighter1.collection} #${_.truncate(seed.fighter1.player.token_id, { length: 7 })}`}
+                    <br/>
+                    {`${seed.fighter2.collection} #${_.truncate(seed.fighter2.player.token_id, { length: 7 })}`}
+                  </Text>
+                );
+              }
+
               return (
                 <Wrapper mobileBreakpoint={breakpoint}>
                   <VStack>
                     <Text opacity={0.5} fontSize={12} color={"white"}>
                       {seed.rank1 ? `${seed.rank1} vs ${seed.rank2}` : '-'}
                     </Text>
-                    <Tooltip label={seed.label}>
+                    <Tooltip label={label}>
                       <HStack
                         padding={2}
                         borderWidth={2}
                         borderColor={LineColor}
                         borderRadius={100}
-                        onClick={() => {seed.block && navigate(`/season/0/matches/${seed.matchId}`)}}
+                        onClick={() => {nextMatch.block && navigate(`/season/0/tournament/${seed.bracket}/${seed.id}`)}}
                         _hover={{
-                          cursor: seed.block ? 'pointer' : 'default',
-                          borderColor: seed.block ? winnerColor : LineColor,
+                          cursor: nextMatch.block ? 'pointer' : 'default',
+                          borderColor: nextMatch.block ? winnerColor : LineColor,
                         }}
                       >
                         <Box
                           borderRadius="40px"
-                          borderColor={LineColor}
-                          borderWidth={2}
                         >
                           <Image
                             boxSize="40px"
                             borderRadius="40px"
-                            src={seed.player1.image_thumbnail_url || logoSmall}
+                            src={_.isEmpty(seed.fighter1) ? logoSmall : seed.fighter1.player.image_thumbnail_url}
                           />
                         </Box>
-                        <Box>
+                        <Box padding={2}>
                           <Text opacity={0.5}>
                             {seed.score1} - {seed.score2}
                           </Text>
                         </Box>
                         <Box
                           borderRadius="40px"
-                          borderColor={LineColor}
-                          borderWidth={2}
                         >
                           <Image
                             boxSize="40px"
                             borderRadius="40px"
-                            src={seed.player2.image_thumbnail_url || logoSmall}
+                            src={_.isEmpty(seed.fighter2) ? logoSmall : seed.fighter2.player.image_thumbnail_url}
                           />
                         </Box>
                       </HStack>
                     </Tooltip>
                     <Text opacity={0.5} fontSize={12} color={seed.log ? "white" : "red.500"}>
-                      {seed.block ? `block #${seed.block}` : '-'}
+                      {nextMatch.block ? `block ${nextMatch.block}` : '-'}
                     </Text>
                   </VStack>
                 </Wrapper>
