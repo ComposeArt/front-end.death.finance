@@ -106,13 +106,16 @@ export const SeasonMatch = (props: any) => {
         {!match.log ? 'Waiting Match Results' : 'Match Results'}
       </Heading>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        Block {match.block}
+        Block
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {match.block}
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Randomness {match.randomness || '-'}
+        Randomness
       </Text>
-      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Winner {fighter1Winner ? name1 : (fighter2Winner ? name2 : '-')}
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {match.randomness || '-'}
       </Text>
       <HStack marginTop={12} align="flex-start" spacing={8}>
         <VStack>

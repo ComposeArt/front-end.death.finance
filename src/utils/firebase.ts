@@ -328,13 +328,18 @@ export const getLatestFighters = async () => {
   return fighters;
 };
 
+export const getTournamentMatch = async (bracket: string, id: string) => {
+  const docRef = doc(db, `nft-death-games/season_0/tournament/${bracket}/matches`, id);
+  const docSnap = await getDoc(docRef);
+
+  return docSnap.data();
+};
+
 export const getFighter = async (id: string) => {
   const docRef = doc(db, `nft-death-games/season_0/fighters`, id);
   const docSnap = await getDoc(docRef);
 
-  const fighter = docSnap.data();
-
-  return fighter;
+  return docSnap.data();
 };
 
 export const getAllFighters = async () => {
