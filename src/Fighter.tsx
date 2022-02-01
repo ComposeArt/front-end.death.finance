@@ -360,7 +360,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
             textDecoration: "underline"
           }}
         >
-          👑 {parseInt(fighter.seed, 10) + 1} ({fighter.bracket})
+          👑 {parseInt(fighter.rank, 10) + 1} ({fighter.bracket})
         </Text>
       )}
       <Box

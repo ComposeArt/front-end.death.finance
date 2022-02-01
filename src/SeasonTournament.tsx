@@ -47,7 +47,8 @@ export const SeasonTournament = (props: any) => {
 
   const [matches, setMatches]: any = useState([]);
 
-  const bracket = props.id || 'alpha';
+  // TODO should be dynamic
+  const bracket = props.id || 'zeta';
 
   const { account } = useContext(PayloadContext);
 
@@ -136,6 +137,8 @@ export const SeasonTournament = (props: any) => {
 
   const rounds = _.times(matches.length, String);
 
+  // TODO make the bracket nav dynamic
+
   return (
     <Container maxW='container.lg' centerContent overflowX="hidden">
       <SeasonHeader />
@@ -146,94 +149,6 @@ export const SeasonTournament = (props: any) => {
         spacing={8}
         marginTop={8}
       >
-        <WrapItem>
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={bracket === 'alpha'  ? winnerColor : LineColor}
-            borderRadius={100}
-            onClick={() => {
-              navigate(`/season/0/tournament/alpha`);
-              setSlide(0);
-            }}
-            opacity={bracket === 'alpha' ? 1 : 0.5}
-            _hover={{
-              borderColor: winnerColor,
-              cursor: 'pointer',
-              opacity: 1,
-            }}
-          >
-            <Text fontSize={14}>
-              alpha
-            </Text>
-          </Box>
-        </WrapItem>
-        <WrapItem>
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={bracket === 'beta'  ? winnerColor : LineColor}
-            borderRadius={100}
-            onClick={() => {
-              navigate(`/season/0/tournament/beta`);
-              setSlide(0);
-            }}
-            opacity={bracket === 'beta' ? 1 : 0.5}
-            _hover={{
-              borderColor: winnerColor,
-              cursor: 'pointer',
-              opacity: 1,
-            }}
-          >
-            <Text fontSize={14}>
-              beta
-            </Text>
-          </Box>
-        </WrapItem>
-        <WrapItem>
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={bracket === 'gamma'  ? winnerColor : LineColor}
-            borderRadius={100}
-            onClick={() => {
-              navigate(`/season/0/tournament/gamma`);
-              setSlide(0);
-            }}
-            opacity={bracket === 'gamma' ? 1 : 0.5}
-            _hover={{
-              borderColor: winnerColor,
-              cursor: 'pointer',
-              opacity: 1,
-            }}
-          >
-            <Text fontSize={14}>
-              gamma
-            </Text>
-          </Box>
-        </WrapItem>
-        <WrapItem>
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={bracket === 'delta'  ? winnerColor : LineColor}
-            borderRadius={100}
-            onClick={() => {
-              navigate(`/season/0/tournament/delta`);
-              setSlide(0);
-            }}
-            opacity={bracket === 'delta' ? 1 : 0.5}
-            _hover={{
-              borderColor: winnerColor,
-              cursor: 'pointer',
-              opacity: 1,
-            }}
-          >
-            <Text fontSize={14}>
-              delta
-            </Text>
-          </Box>
-        </WrapItem>
         <WrapItem>
           <Box
             padding={2}

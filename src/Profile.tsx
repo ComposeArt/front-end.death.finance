@@ -235,7 +235,7 @@ export const ProfileFighters = (props: any) => {
         ...p,
       };
     })
-    .sortBy([(p: any) => _.get(p, 'fighter.seed'), (p: any) => _.get(p, 'fighter.timestamp')])
+    .sortBy([(p: any) => _.get(p, 'fighter.rank'), (p: any) => _.get(p, 'fighter.timestamp')])
     .value();
 
   const transferredFighters = _.reduce(fighters, (result: any, f: any, i: any): any => {
@@ -327,7 +327,7 @@ export const ProfileFighters = (props: any) => {
                       textDecoration: "underline"
                     }}
                   >
-                    👑 {parseInt(fighter.seed, 10) + 1} ({fighter.bracket})
+                    👑 {parseInt(fighter.rank, 10) + 1} ({fighter.bracket})
                   </Text>
                 )}
                 <Box

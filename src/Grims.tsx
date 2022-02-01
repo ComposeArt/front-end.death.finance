@@ -50,19 +50,12 @@ export const Grims = (props: RouteComponentProps) => {
         </Text>
       </Box>
       <VStack marginTop={12}>
-        <Text>
+        <Text
+          marginBottom={8}
+          marginTop={4}
+        >
           Fighters Registered
         </Text>
-        <Box >
-          <Progress
-            value={((user.register_count || 0) / 8) * 100}
-            colorScheme="green"
-            width="300px"
-            borderRadius={100}
-            marginBottom={8}
-            marginTop={4}
-          />
-        </Box>
         <Wrap justify='center' spacing={12}>
           <WrapItem margin={4}>
             <VStack>
@@ -172,19 +165,12 @@ export const Grims = (props: RouteComponentProps) => {
         </Wrap>
       </VStack>
       <VStack marginTop={12}>
-        <Text>
+        <Text
+          marginBottom={8}
+          marginTop={4}
+        >
           Chaos Added
         </Text>
-        <Box >
-          <Progress
-            value={((user.chaos_count || 0) / 8) * 100}
-            colorScheme="green"
-            width="300px"
-            borderRadius={100}
-            marginBottom={8}
-            marginTop={4}
-          />
-        </Box>
         <Wrap justify='center' spacing={12}>
           <WrapItem margin={4}>
             <VStack>
@@ -294,83 +280,13 @@ export const Grims = (props: RouteComponentProps) => {
         </Wrap>
       </VStack>
       <VStack marginTop={12}>
-        <Text>
-          Tournament Round Achieved
+        <Text
+          marginBottom={8}
+          marginTop={4}
+        >
+          Tournament Results Achieved
         </Text>
-        <Box >
-          <Progress
-            value={((user.tournament_round || 0) / 8) * 100}
-            colorScheme="green"
-            width="300px"
-            borderRadius={100}
-            marginBottom={8}
-            marginTop={4}
-          />
-        </Box>
         <Wrap justify='center' spacing={12}>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 1024
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 512
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 256
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
           <WrapItem margin={4}>
             <VStack>
               <Center
@@ -476,6 +392,9 @@ export const Grims = (props: RouteComponentProps) => {
               </Text>
             </VStack>
           </WrapItem>
+        </Wrap>
+        <Box height={4} />
+        <Wrap justify='center' spacing={12}>
           <WrapItem margin={4}>
             <VStack>
               <Center
@@ -491,7 +410,7 @@ export const Grims = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 4
+                3rd Place
                 <br/>
                 ??????
               </Text>
@@ -512,7 +431,7 @@ export const Grims = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 2
+                2nd Place
                 <br/>
                 ??????
               </Text>
@@ -533,7 +452,7 @@ export const Grims = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                WINNER!
+                1st Place!
                 <br/>
                 ??????
               </Text>
@@ -617,7 +536,7 @@ export const Grims = (props: RouteComponentProps) => {
                 </Text>
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
-                WINNER!
+                1st Place!
                 <br/>
                 ??????
               </Text>

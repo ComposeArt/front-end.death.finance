@@ -66,7 +66,7 @@ export const Chaos = (props: RouteComponentProps) => {
       setUserRandomness('');
       // TODO update server to update user stats and get how many times.
     }
-  }, [state]);
+  }, [state, toast]);
 
   const addChaos = async () => {
     setLoading(true);
@@ -155,19 +155,12 @@ export const Chaos = (props: RouteComponentProps) => {
         {`Only positive whole numbers > 2`}
       </Text>
       <VStack marginTop={12}>
-        <Text>
+        <Text
+          marginBottom={8}
+          marginTop={4}
+        >
           Chaos Added
         </Text>
-        <Box >
-          <Progress
-            value={(userCount / 8) * 100}
-            colorScheme="green"
-            width="300px"
-            borderRadius={100}
-            marginBottom={8}
-            marginTop={4}
-          />
-        </Box>
         <Wrap justify='center' spacing={12}>
           <WrapItem margin={4}>
             <VStack>

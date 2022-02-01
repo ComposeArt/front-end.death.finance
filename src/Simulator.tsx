@@ -86,6 +86,8 @@ export const Simulator = (props: RouteComponentProps) => {
   const [c2, setC2] = useQueryParam('c2', StringParam);
   const [p1, setP1] = useQueryParam('p1', StringParam);
   const [p2, setP2] = useQueryParam('p2', StringParam);
+  const [urlBlock, setUrlBlock]: any = useQueryParam('b', StringParam);
+  const [urlRandomness, setUrlRandomness]: any = useQueryParam('r', StringParam);
 
   const [mounted, setMounted]: any = useState(false);
 
@@ -217,6 +219,19 @@ export const Simulator = (props: RouteComponentProps) => {
   }, []);
 
   useEffect(() => {
+    if ((urlBlock || urlRandomness) && !isOpen) {
+      onToggle();
+      setUserBlocknumber(parseInt(urlBlock, 10));
+
+      if (!urlRandomness) {
+        setUserRandomness(randomness);
+      } else {
+        setUserRandomness(urlRandomness);
+      }
+    }
+  }, [urlBlock, urlRandomness, randomness, onToggle, isOpen]);
+
+  useEffect(() => {
     if (c1 && _.indexOf(collections, c1) >= -1) {
       setCollection1(c1);
     }
@@ -273,7 +288,7 @@ export const Simulator = (props: RouteComponentProps) => {
         }
       }
     })();
-  }, [players1, p1]);
+  }, [players1, p1, setP1]);
 
   useEffect(() => {
     (async function getInitialData() {
@@ -302,7 +317,7 @@ export const Simulator = (props: RouteComponentProps) => {
         }
       }
     })();
-  }, [players2, p2]);
+  }, [players2, p2, setP2]);
 
   const runLocally = useLocal && account && chain === 'Goerli';
 
@@ -327,16 +342,16 @@ export const Simulator = (props: RouteComponentProps) => {
         they will happen during preseason and the main tournament
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Current Block
-      </Text>
-      <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
-        {blockNumber}
-      </Text>
-      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
         Current Randomness
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center">
         {randomness}
+      </Text>
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+        Current Block
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
+        {blockNumber}
       </Text>
       {(!account || chain !== 'Goerli') && (
         <Text marginTop={4} textAlign="center" color="red.500" fontSize={12}>
@@ -549,16 +564,12 @@ export const Simulator = (props: RouteComponentProps) => {
               borderRadius={100}
               fontSize={12}
               type='number'
-              placeholder='blocknumber'
+              placeholder='randomness'
               errorBorderColor='red.500'
-              value={userBlocknumber}
-              isInvalid={
-                parseInt(userBlocknumber, 10) < 9 ||
-                _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0 ||
-                _.indexOf(userBlocknumber, '.') > -1
-              }
+              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
+              value={userRandomness}
               onChange={(event) => {
-                setUserBlocknumber(event.target.value);
+                setUserRandomness(event.target.value);
               }}
               isDisabled={simulating}
             />
@@ -576,12 +587,16 @@ export const Simulator = (props: RouteComponentProps) => {
               borderRadius={100}
               fontSize={12}
               type='number'
-              placeholder='randomness'
+              placeholder='blocknumber'
               errorBorderColor='red.500'
-              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
-              value={userRandomness}
+              value={userBlocknumber}
+              isInvalid={
+                parseInt(userBlocknumber, 10) < 9 ||
+                _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0 ||
+                _.indexOf(userBlocknumber, '.') > -1
+              }
               onChange={(event) => {
-                setUserRandomness(event.target.value);
+                setUserBlocknumber(event.target.value);
               }}
               isDisabled={simulating}
             />

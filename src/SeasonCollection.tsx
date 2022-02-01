@@ -364,7 +364,7 @@ export const SeasonCollectionFighters = (props: any) => {
             timestamp: item.timestamp,
             is_invalid: item.is_invalid,
             is_doping: item.is_doping,
-            seed: item.seed,
+            rank: item.rank,
             bracket: item.bracket,
             next_match: item.next_match,
           };

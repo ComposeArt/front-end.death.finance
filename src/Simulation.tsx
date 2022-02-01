@@ -111,17 +111,17 @@ export const Simulation = (props: any) => {
       <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5}>
         Simulated Results
       </Heading>
-      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        Block
-      </Text>
-      <Text marginTop={2} fontSize={12} textAlign="center">
-        {blockNumber}
-      </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
         Randomness
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center">
         {randomness}
+      </Text>
+      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
+        Block
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center">
+        {blockNumber}
       </Text>
       <HStack marginTop={16} align="flex-start" spacing={8}>
         <FighterPortrait fighter={fighter1} winner={fighter1Winner} />

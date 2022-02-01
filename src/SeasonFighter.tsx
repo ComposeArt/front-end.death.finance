@@ -114,7 +114,7 @@ export const SeasonFighter = (props: any) => {
     timestamp: fighter.timestamp,
     is_invalid: fighter.is_invalid,
     is_doping: fighter.is_doping,
-    seed: fighter.seed,
+    rank: fighter.rank,
     bracket: fighter.bracket,
     next_match: fighter.next_match,
     ...stateFighter,

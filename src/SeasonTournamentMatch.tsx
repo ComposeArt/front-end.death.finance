@@ -16,12 +16,15 @@ import {
   VStack,
   useBreakpointValue,
   Tooltip,
+  Button,
+
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
+import { FaRandom } from "react-icons/fa";
 
 import { FighterPortrait, FighterStats } from './Fighter';
-
+import { matchReporter } from "./utils/fighting";
 import { PayloadContext, getTournamentMatch } from "./utils/firebase";
 
 export const SeasonTournamentMatch = (props: any) => {
@@ -37,14 +40,16 @@ export const SeasonTournamentMatch = (props: any) => {
   const [match, setMatch]: any = useState({});
   const [activeMatch, setActiveMatch]: any = useState(0);
 
-  const bracket = props.id || 'alpha';
+  const [report, setReport]: any = useState([]);
+
+  const bracket = props.id;
   const matchId = props.matchId;
 
   const { account } = useContext(PayloadContext);
 
   useEffect(() => {
-    document.title = `Match ${bracket} ${matchId} | Tournament | Season 0 | NFT Fight Club`;
-  }, [bracket]);
+    document.title = `${bracket} ${matchId} | Tournament | Season 0 | NFT Fight Club`;
+  }, [bracket, matchId]);
 
   useEffect(() => {
     (async function getInitialData() {
@@ -77,11 +82,38 @@ export const SeasonTournamentMatch = (props: any) => {
     }
   }, [errorLoading, toast]);
 
-  console.log(match);
+
+  useEffect(() => {
+    (async function getInitialData() {
+      if (!_.isEmpty(match)) {
+        const onMatch = _.find(match.matches, (m, i) => i === activeMatch) || {};
+
+        if (onMatch.log) {
+          const result = matchReporter({
+            match: onMatch.log,
+            fighter1: match.fighter1.player,
+            fighter2: match.fighter2.player,
+          });
+
+          setReport(result);
+        } else {
+          setReport([]);
+        }
+      }
+    })();
+  }, [match, activeMatch]);
 
   const title = `${bracket} round ${parseInt(match.round, 10) + 1}`;
-  const fighter1Winner = false;
-  const fighter2Winner = false;
+  let fighter1Winner = false;
+  let fighter2Winner = false;
+
+  if (!_.isEmpty(report)) {
+    if (report[report.length - 1].winner === '0') {
+      fighter1Winner = true;
+    } else {
+      fighter2Winner = true;
+    }
+  }
 
   const fighter1 = {
     ..._.omit(match.fighter1, 'player'),
@@ -95,16 +127,13 @@ export const SeasonTournamentMatch = (props: any) => {
 
   const onMatch = _.find(match.matches, (m, i) => i === activeMatch) || {};
 
-  console.log(onMatch);
+  console.log(report);
 
   return (
     <Container maxW='container.md' centerContent>
       <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5}>
         {title}
       </Heading>
-      <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-        seed {match.rank1 + 1} vs  seed {match.rank2 + 1}
-      </Text>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
         best of {match.best_of}
       </Text>
@@ -113,7 +142,8 @@ export const SeasonTournamentMatch = (props: any) => {
         align="center"
         justify="center"
         spacing={8}
-        marginTop={8}
+        marginTop={6}
+        marginBottom={4}
       >
         {!_.isEmpty(match) && match.matches.map((m: any, i: any) => {
           return (
@@ -136,23 +166,25 @@ export const SeasonTournamentMatch = (props: any) => {
           );
         })}
       </Wrap>
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+        Randomness
+      </Text>
+      {onMatch.log && (
+        <Text marginTop={2} fontSize={12} textAlign="center">
+          {onMatch.randomness || '-'}
+        </Text>
+      )}
+      {!onMatch.log && (
+        <Text color="red" opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+          waiting match results
+        </Text>
+      )}
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
         Block
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center">
-        {onMatch.block}
+        {onMatch.block || '-'}
       </Text>
-      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Randomness
-      </Text>
-      <Text marginTop={2} fontSize={12} textAlign="center">
-        {onMatch.randomness || '-'}
-      </Text>
-      {!onMatch.log && (
-        <Text color="red" opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
-          waiting match results
-        </Text>
-      )}
       <HStack marginTop={12} align="flex-start" spacing={8}>
         <VStack>
           <FighterPortrait fighter={fighter1} winner={fighter1Winner} />
@@ -172,6 +204,95 @@ export const SeasonTournamentMatch = (props: any) => {
           <FighterStats fighter={fighter2} />
         </VStack>
       </HStack>
+      {onMatch.log && (
+        <>
+          <Heading size='md' marginTop={12} textAlign="center" lineHeight={1.5} marginBottom={8}>
+            Match Log
+          </Heading>
+          <VStack width="100%" justify="center" align="center" spacing={4}>
+            {report.map((r: any, key: number) => {
+              const player = r.turn === '0' ? fighter1 : fighter2;
+
+              if (r.turn === '0') {
+                return (
+                  <HStack
+                    key={key}
+                    width="100%"
+                    justify="flex-start"
+                    align="center"
+                    borderColor={LineColor}
+                    padding={6}
+                    spacing={8}
+                  >
+                    <Center width="40px">
+                      <Image
+                        boxSize={{ base: "32px" }}
+                        borderRadius={{ base: "32px" }}
+                        minWidth="32px"
+                        src={player.image_thumbnail_url}
+                      />
+                    </Center>
+                    <Center textAlign="left">
+                      <Text fontSize={12} fontWeight={400} color="blue.500">
+                        {_.split(r.log, '|').map((w: any, i: number) => {
+                          return i % 2 ? <span style={{ fontWeight: 900 }} key={i}>{w}</span> : <span key={i}>{w}</span>
+                        })}
+                      </Text>
+                    </Center>
+                  </HStack>
+                );
+              } else {
+                return (
+                  <HStack
+                    key={key}
+                    width="100%"
+                    justify="flex-end"
+                    align="center"
+                    borderColor={LineColor}
+                    padding={6}
+                    spacing={8}
+                  >
+                    <Center textAlign="right">
+                      <Text fontSize={12} fontWeight={400} color="red.500">
+                        {_.split(r.log, '|').map((w: any, i: number) => {
+                          return i % 2 ? <span style={{ fontWeight: 900 }} key={i}>{w}</span> : <span key={i}>{w}</span>
+                        })}
+                      </Text>
+                    </Center>
+                    <Center width="40px">
+                      <Image
+                        boxSize={{ base: "32px" }}
+                        borderRadius={{ base: "32px" }}
+                        src={player.image_thumbnail_url}
+                        minWidth="32px"
+                      />
+                    </Center>
+                  </HStack>
+                );
+              }
+            })}
+          </VStack>
+        </>
+      )}
+      <Button
+        marginTop={16}
+        leftIcon={<FaRandom />}
+        onClick={() => {
+          let route = `/simulator?c1=${fighter1.collection}&p1=${fighter1.token_id}&c2=${fighter2.collection}&p2=${fighter2.token_id}`;
+
+          if (onMatch.block) {
+            route = `${route}&b=${onMatch.block}`;
+          }
+
+          if (onMatch.randomness) {
+            route = `${route}&r=${onMatch.randomness}`;
+          }
+
+          navigate(route);
+        }}
+      >
+        simulate
+      </Button>
     </Container>
   );
 };

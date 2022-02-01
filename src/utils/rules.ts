@@ -121,14 +121,11 @@ The top 1024 registered fighters will be drafted into a month-long elimination t
 
 ### Structure
 
-**Initial Brackets (Best of One)**
-The tournament will consist of 4 256-fighter 'initial brackets' (alpha, beta, gamma, delta), which will each advance until there are 32 fighters left in each. Each pair within the bracket will play a single game to decide who advances and who is eliminated.
-
-**Secondary Brackets (Best of Three)**
-The 32 winners from each of the 'initial brackets' will advance to the two 64-fighter 'secondary brackets' (kappa, psi) which will each advance until there are 16 fighters left in each. Each pair within the bracket will play three games to decide who advances and who is eliminated.
+**Initial Brackets (Best of Three)**
+The tournament will consist of 2 64-fighter 'initial brackets' (zeta & theta) which will each advance until there are 8 fighters left in each. Each pair within the bracket will play a best of three to decide who advances and who is eliminated.
 
 **Final Bracket (Best of Five)**
-The 16 winners from each of the 'secondary brackets' will advance to the 32-fighter 'final bracket' (omega) which will yield the final two fighters for the tournament. Each pair within the bracket will play five games to decide who advances and who is eliminated.
+The 8 winners from each of the 'initial brackets' will advance to the 16-fighter 'final bracket' (sigma) which will yield the final two fighters for the tournament. Each pair within the bracket will play a best of five to decide who advances and who is eliminated.
 
 **Final Match (Best of Seven)**
 The final pair will play best of seven to decide who wins the tournament; the winner will take home 5% of the total pooled ETH staked on fighters throughout the tournament's progression.
