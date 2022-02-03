@@ -26,6 +26,7 @@ const db = getFirestore(app);
 const functions = getFunctions(app);
 const simulateFight = httpsCallable(functions, 'simulateFight');
 const registerFighter = httpsCallable(functions, 'registerFighter');
+const getAddressNFTs = httpsCallable(functions, 'getAddressNFTs');
 
 interface PayloadTypes {
   collections: [];
@@ -96,36 +97,12 @@ export const useLocalStorage = (key: string, initialValue: any) => {
   return [storedValue, setValue];
 };
 
-const getAssets = async ({
-  results,
-  address,
-  offset,
-}: any): Promise<any> => {
-  const response = await fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&limit=50&offset=${offset}`);
-
-  const data = await response.json();
-
-  results = [...results, ...data.assets];
-
-  if (data.assets && data.assets.length > 0) {
-    await delay(300);
-
-    return getAssets({
-      results,
-      address,
-      offset: offset + 50,
-    });
-  } else {
-    return results;
-  }
-};
-
 export const fetchAssets = async (address: any) => {
-  return await getAssets({
-    results: [],
-    address,
-    offset: 0,
+  const result = await getAddressNFTs({
+    ownerAddress: address,
   });
+
+  return result.data;
 };
 
 export const remoteSimulateFight = async ({

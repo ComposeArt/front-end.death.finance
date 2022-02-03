@@ -172,10 +172,11 @@ export const ProfileFighters = (props: any) => {
 
         try {
           const assets = await fetchAssets(address);
-          const filtered = _.filter(assets, (a: any) => _.find(collections, (c: any) => c.id === a.collection.slug));
 
-          setOwner(_.get(filtered, '[0].owner.user.username', '-'));
-          setPlayers(filtered);
+          console.log(assets);
+
+          setOwner(_.get(assets, '[0].owner.user.username', '-'));
+          setPlayers(assets);
         } catch (error) {
           console.log(error);
           setErrorLoading(true);
