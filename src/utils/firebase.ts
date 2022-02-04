@@ -113,6 +113,10 @@ export const remoteSimulateFight = async ({
 }: any) => {
   const result = await simulateFight({
     isSimulated: randomness && blocknumber ? true : false,
+    player1Id: f1.id,
+    player1Collection: f1.collection,
+    player2Id: f2.id,
+    player2Collection: f2.collection,
     f1,
     f2,
     random: randomness || '0',
