@@ -27,7 +27,7 @@ import { navigate } from "@reach/router";
 import { useQueryParam, StringParam } from 'use-query-params';
 
 import logoSmall from './images/logo-small.png';
-import { PayloadContext, getBracketMatches } from "./utils/firebase";
+import { PayloadContext, getBracketMatches, getBracketFights } from "./utils/firebase";
 import { SeasonHeader } from "./SeasonHeader";
 
 export const SeasonTournament = (props: any) => {
@@ -47,7 +47,6 @@ export const SeasonTournament = (props: any) => {
 
   const [matches, setMatches]: any = useState([]);
 
-  // TODO should be dynamic
   const bracket = props.id || 'zeta';
 
   const { account } = useContext(PayloadContext);
@@ -61,6 +60,8 @@ export const SeasonTournament = (props: any) => {
       setLoading(true);
       try {
         const allMatches = await getBracketMatches(bracket);
+        const bracketFights = await getBracketFights(bracket);
+
         const roundMatches = _.chain(allMatches).groupBy((m: any) => {
           return m.round;
         }).map((v: any, k: any) => {
@@ -100,7 +101,7 @@ export const SeasonTournament = (props: any) => {
                 rank1: m.rank1 + 1,
                 rank2: m.rank2 + 1,
                 best_of: m.best_of,
-                matches: m.matches,
+                fights: _.filter(bracketFights, (f: any) => f.match_id === m.id),
               }
             }),
           }
@@ -136,8 +137,6 @@ export const SeasonTournament = (props: any) => {
   }, [matches, match]);
 
   const rounds = _.times(matches.length, String);
-
-  // TODO make the bracket nav dynamic
 
   return (
     <Container maxW='container.lg' centerContent overflowX="hidden">
@@ -292,7 +291,7 @@ export const SeasonTournament = (props: any) => {
             renderSeedComponent={({seed, breakpoint, roundIndex, seedIndex}: RenderSeedProps) => {
               const Wrapper = roundIndex === 2 ? SingleLineSeed : Seed;
 
-              const nextMatch = _.find(seed.matches, (m: any) => m.block) || {};
+              const nextMatch = _.find(seed.fights, (m: any) => m.block) || {};
               let label: any = '';
 
               if (!_.isEmpty(seed.fighter1)) {

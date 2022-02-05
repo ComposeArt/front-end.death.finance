@@ -27,7 +27,7 @@ import { PayloadContext, RemoteChainPayloadContext } from "./utils/firebase";
 import { abi } from "./utils/abi";
 
 const simpleContractInterface = new ethers.utils.Interface(abi);
-const contractAddress = '0xc16e8A86E3834E04AfFADC3bFDFD3FA502190c1B';
+const contractAddress = '0x463146588e0c6E6899A9140D9DB488B2354E3775';
 const contract = new Contract(contractAddress, simpleContractInterface);
 
 export const Chaos = (props: RouteComponentProps) => {

@@ -414,6 +414,42 @@ export const getOwnerFighters = async (address: any) => {
   return fighters;
 };
 
+export const getBracketFights = async (bracket: any) => {
+  const fights: any = [];
+
+  const ref1 = collection(db, `nft-death-games/season_0/fights`);
+  const query1 = query(ref1, where("bracket", "==", bracket));
+
+  const snapshot1 = await getDocs(query1);
+
+  snapshot1.forEach((docSnap) => {
+    fights.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  return fights;
+};
+
+export const getMatchFights = async (bracket: any, matchId: any) => {
+  const fights: any = [];
+
+  const ref1 = collection(db, `nft-death-games/season_0/fights`);
+  const query1 = query(ref1, where("bracket", "==", bracket), where("match_id", "==", matchId));
+
+  const snapshot1 = await getDocs(query1);
+
+  snapshot1.forEach((docSnap) => {
+    fights.push({
+      id: docSnap.id,
+      ...docSnap.data(),
+    });
+  });
+
+  return fights;
+};
+
 export const streamOwnerFighters = ({
   address
 }: any, callback: any) => {

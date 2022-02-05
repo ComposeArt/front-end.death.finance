@@ -25,7 +25,7 @@ import { FaRandom } from "react-icons/fa";
 
 import { FighterPortrait, FighterStats } from './Fighter';
 import { matchReporter } from "./utils/fighting";
-import { PayloadContext, getTournamentMatch } from "./utils/firebase";
+import { PayloadContext, getTournamentMatch, getMatchFights } from "./utils/firebase";
 
 export const SeasonTournamentMatch = (props: any) => {
   const toast = useToast();
@@ -45,7 +45,9 @@ export const SeasonTournamentMatch = (props: any) => {
   const bracket = props.id;
   const matchId = props.matchId;
 
-  const { account } = useContext(PayloadContext);
+  const { account, season } = useContext(PayloadContext);
+
+  console.log(season);
 
   useEffect(() => {
     document.title = `${bracket} ${matchId} | Tournament | Season 0 | NFT Fight Club`;
@@ -58,6 +60,9 @@ export const SeasonTournamentMatch = (props: any) => {
         const result = await getTournamentMatch(bracket, matchId);
 
         if (result) {
+          const fights = await getMatchFights(bracket, matchId);
+
+          result.fights = fights;
           setMatch(result);
         }else {
           navigate('/season/0/tournament');
@@ -86,7 +91,7 @@ export const SeasonTournamentMatch = (props: any) => {
   useEffect(() => {
     (async function getInitialData() {
       if (!_.isEmpty(match)) {
-        const onMatch = _.find(match.matches, (m, i) => i === activeMatch) || {};
+        const onMatch = _.find(match.fights, (m, i) => i === activeMatch) || {};
 
         if (onMatch.log) {
           const result = matchReporter({
@@ -118,16 +123,16 @@ export const SeasonTournamentMatch = (props: any) => {
   const fighter1 = {
     ..._.omit(match.fighter1, 'player'),
     ..._.get(match.fighter1, 'player', {}),
+    betting: match.betting1 || '0.0',
   };
 
   const fighter2 = {
     ..._.omit(match.fighter2, 'player'),
     ..._.get(match.fighter2, 'player', {}),
+    betting: match.betting2 || '0.0',
   };
 
-  const onMatch = _.find(match.matches, (m, i) => i === activeMatch) || {};
-
-  console.log(report);
+  const onMatch = _.find(match.fights, (m, i) => i === activeMatch) || {};
 
   return (
     <Container maxW='container.md' centerContent>
@@ -145,7 +150,7 @@ export const SeasonTournamentMatch = (props: any) => {
         marginTop={6}
         marginBottom={4}
       >
-        {!_.isEmpty(match) && match.matches.map((m: any, i: any) => {
+        {!_.isEmpty(match) && match.fights.map((m: any, i: any) => {
           return (
             <WrapItem key={i}>
               <Box
@@ -188,6 +193,19 @@ export const SeasonTournamentMatch = (props: any) => {
       <HStack marginTop={12} align="flex-start" spacing={8}>
         <VStack>
           <FighterPortrait fighter={fighter1} winner={fighter1Winner} />
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={winnerColor}
+            borderRadius={100}
+          >
+            <Text
+              fontSize={{ base: 10, md: 12 }}
+              opacity={1}
+            >
+              {fighter1.betting} Ξ
+            </Text>
+          </Box>
           <FighterStats fighter={fighter1} />
         </VStack>
         <Box
@@ -201,6 +219,19 @@ export const SeasonTournamentMatch = (props: any) => {
         </Box>
         <VStack>
           <FighterPortrait fighter={fighter2} winner={fighter2Winner} />
+          <Box
+            padding={2}
+            borderWidth={1}
+            borderColor={winnerColor}
+            borderRadius={100}
+          >
+            <Text
+              fontSize={{ base: 10, md: 12 }}
+              opacity={1}
+            >
+              {fighter2.betting} Ξ
+            </Text>
+          </Box>
           <FighterStats fighter={fighter2} />
         </VStack>
       </HStack>
