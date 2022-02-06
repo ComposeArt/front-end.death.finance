@@ -15,11 +15,13 @@ import {
 } from 'firebase/firestore';
 import _ from 'lodash';
 
+const projectId = process.env.REACT_APP_ENVIRONMENT === 'dev' ? 'deathfinance' : 'composeart-f9a7a';
+
 const app = initializeApp({
-  apiKey: 'AIzaSyBK-EdRy8HJWm9LiMeLPr-q_kBTfSfTcVY',
-  authDomain: 'composeart-f9a7a.firebaseapp.com',
-  projectId: 'composeart-f9a7a',
-  databaseURL: 'https://composeart-f9a7a.firebaseio.com',
+  apiKey: process.env.REACT_APP_ENVIRONMENT === 'dev' ? 'AIzaSyA9-uYwBORSpwtOZyavuDEtGFT6HPR8hoc' : 'AIzaSyBK-EdRy8HJWm9LiMeLPr-q_kBTfSfTcVY',
+  authDomain: `${projectId}.firebaseapp.com`,
+  projectId,
+  databaseURL: `https://${projectId}.firebaseio.com`,
 });
 
 const db = getFirestore(app);

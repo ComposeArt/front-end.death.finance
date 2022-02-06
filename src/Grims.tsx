@@ -49,6 +49,93 @@ export const Grims = (props: RouteComponentProps) => {
           {' '}to learn more about composable and customizable NFTs!
         </Text>
       </Box>
+      <Text
+        marginBottom={2}
+        marginTop={8}
+      >
+        Special ETHDenver 2022 Drops
+      </Text>
+      <Box width="80%">
+        <Text textAlign="center" fontSize={12} marginBottom={4}>
+          By participating in the{' '}
+          <Link
+            fontWeight={900}
+            color='teal.500'
+            href='https://dev.death.finance'
+            isExternal
+          >
+            Bufficorn Fight Club
+          </Link>
+          {' '}you earn these unique drops.
+        </Text>
+      </Box>
+      <VStack marginTop={4}>
+        <Wrap justify='center' spacing={12}>
+          <WrapItem margin={4}>
+            <VStack>
+              <Center
+                width="80px"
+                height="80px"
+                borderWidth={2}
+                borderRadius={100}
+                borderColor={lineColor}
+                marginBottom={4}
+              >
+                <Text fontSize={32} opacity={0.5}>
+                  ?
+                </Text>
+              </Center>
+              <Text fontSize={12} textAlign="center" opacity={0.5}>
+                Registered
+                <br/>
+                ??????
+              </Text>
+            </VStack>
+          </WrapItem>
+          <WrapItem margin={4}>
+            <VStack>
+              <Center
+                width="80px"
+                height="80px"
+                borderWidth={2}
+                borderRadius={100}
+                borderColor={lineColor}
+                marginBottom={4}
+              >
+                <Text fontSize={32} opacity={0.5}>
+                  ?
+                </Text>
+              </Center>
+              <Text fontSize={12} textAlign="center" opacity={0.5}>
+                Top 128
+                <br/>
+                ??????
+              </Text>
+            </VStack>
+          </WrapItem>
+          <WrapItem margin={4}>
+            <VStack>
+              <Center
+                width="80px"
+                height="80px"
+                borderWidth={2}
+                borderRadius={100}
+                borderColor={lineColor}
+                marginBottom={4}
+              >
+                <Text fontSize={32} opacity={0.5}>
+                  ?
+                </Text>
+              </Center>
+              <Text fontSize={12} textAlign="center" opacity={0.5}>
+                1st Place!
+                <br/>
+                ??????
+              </Text>
+            </VStack>
+          </WrapItem>
+        </Wrap>
+      </VStack>
       <VStack marginTop={12}>
         <Text
           marginBottom={8}
@@ -432,90 +519,6 @@ export const Grims = (props: RouteComponentProps) => {
               </Center>
               <Text fontSize={12} textAlign="center" opacity={0.5}>
                 2nd Place
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                1st Place!
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-        </Wrap>
-      </VStack>
-      <Heading size='md' marginTop={12} textAlign="center">
-        Special ETHDenver 2020 Drops
-      </Heading>
-      <Box width="80%">
-        <Text textAlign="left" fontSize={12} marginTop={8} marginBottom={4}>
-          By participating in the{' '}
-          <Link
-            fontWeight={900}
-            color='teal.500'
-            href='https://bufficorn.death.finance'
-            isExternal
-          >
-            ETHDenver Bufficorn Fight Club
-          </Link>
-          {' '}you earn these unique drops.
-        </Text>
-      </Box>
-      <VStack marginTop={12}>
-        <Wrap justify='center' spacing={12}>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Registered
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                Top 128
                 <br/>
                 ??????
               </Text>

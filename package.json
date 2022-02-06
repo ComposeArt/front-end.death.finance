@@ -22,6 +22,7 @@
     "@usedapp/core": "^0.9.1",
     "chakra-ui-markdown-renderer": "^4.0.0",
     "chart.js": "^3.7.0",
+    "env-cmd": "^10.1.0",
     "firebase": "^9.6.2",
     "framer-motion": "^4.0.0",
     "fuse.js": "^6.5.3",
@@ -47,10 +48,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:dev": "REACT_APP_ENVIRONMENT=dev yarn start",
     "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && cp build/index.html functions/web/index.html && rm build/index.html",
+    "build:dev": "REACT_APP_ENVIRONMENT=dev INLINE_RUNTIME_CHUNK=false react-scripts build && cp build/index.html functions/web/index.html && rm build/index.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "firebase deploy --only hosting,functions:preRender --project composeart-f9a7a"
+    "deploy": "firebase deploy --only hosting,functions:preRender --project composeart-f9a7a",
+    "deploy:dev": "firebase deploy --only hosting,functions:preRender --project deathfinance"
   },
   "eslintConfig": {
     "extends": "react-app"

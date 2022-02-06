@@ -19,6 +19,7 @@ import {
   WrapItem,
   Center,
   useToast,
+  Link,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 
@@ -123,6 +124,11 @@ export const Chaos = (props: RouteComponentProps) => {
             }}
           />
         </InputGroup>
+        <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
+          Can only run on blocks that have an even 2 digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.
+          <br/><br/>
+          {`Only positive whole numbers > 2`}
+        </Text>
         <Button
           isLoading={loading}
           loadingText='Adding Chaos...'
@@ -146,129 +152,16 @@ export const Chaos = (props: RouteComponentProps) => {
           Chaos allows the matches to use unique randomness to prevent parties knowing the outcome of the fight.
           <br/><br/>
           By adding chaos to the fights, you can earn super rare prop drops for the future Grim personas!
+          <br/><br/>
+          <Link
+            fontWeight={900}
+            color='teal.500'
+            href='/grims'
+          >
+            More rewards await!
+          </Link>
         </Text>
-        <NavLink to='/grims'>More rewards await!</NavLink>
       </Box>
-      <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
-        Can only run on blocks that have an even 2 digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.
-        <br/><br/>
-        {`Only positive whole numbers > 2`}
-      </Text>
-      <VStack marginTop={12}>
-        <Text
-          marginBottom={8}
-          marginTop={4}
-        >
-          Chaos Added
-        </Text>
-        <Wrap justify='center' spacing={12}>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                1x Chaos
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                2x Chaos
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                3x Chaos
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                5x Chaos
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-          <WrapItem margin={4}>
-            <VStack>
-              <Center
-                width="80px"
-                height="80px"
-                borderWidth={2}
-                borderRadius={100}
-                borderColor={lineColor}
-                marginBottom={4}
-              >
-                <Text fontSize={32} opacity={0.5}>
-                  ?
-                </Text>
-              </Center>
-              <Text fontSize={12} textAlign="center" opacity={0.5}>
-                8x Chaos
-                <br/>
-                ??????
-              </Text>
-            </VStack>
-          </WrapItem>
-        </Wrap>
-      </VStack>
     </Container>
   );
 };

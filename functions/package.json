@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "deploy": "firebase deploy --only functions:preRender --project composeart-f9a7a"
+    "deploy": "firebase deploy --only functions:preRender --project composeart-f9a7a",
+    "deploy:dev": "firebase deploy --only functions:preRender --project deathfinance"
   },
   "engines": {
     "node": "14"

@@ -547,9 +547,9 @@ export const Simulator = (props: RouteComponentProps) => {
         }}
         isDisabled={simulating}
       >
-          Advanced Inputs
+        Advanced Inputs
       </Button>
-      <Box display="flex" height="200px" align="center">
+      <Box display="flex" height="200px" align="center" marginBottom={32}>
         <Fade in={isOpen} unmountOnExit={true}>
           <InputGroup
             size="sm"
