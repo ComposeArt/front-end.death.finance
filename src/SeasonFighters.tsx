@@ -10,6 +10,7 @@ import {
   InputLeftAddon,
   Input,
   Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { FaSearch } from "react-icons/fa";
 import { FighterPortrait } from './Fighter';
@@ -87,6 +88,11 @@ export const SeasonFighters = (props: any) => {
           onChange={(e) => search(e.target.value)}
         />
       </InputGroup>
+      {!result.length && !loading && (
+        <Text marginTop={8} color="red.500" fontSize={12}>
+          no fighters registered yet
+        </Text>
+      )}
       <Wrap marginTop={12} justify='center' spacing={12}>
         {result.map((r: any) => {
           let item = r.item || r;

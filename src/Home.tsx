@@ -11,6 +11,7 @@ import {
   useColorModeValue,
   Wrap,
   WrapItem,
+  Link,
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
@@ -27,7 +28,7 @@ export const Home = (props: RouteComponentProps) => {
   const opacityColor = useColorModeValue('gray.800', 'white');
   const logoType = useColorModeValue(fcDark, fcLight);
 
-  const { account, collections } = useContext(PayloadContext);
+  const { account, collections, season } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
   const [randomPlayers, setRandomPlayers]: any = useState({
     player1: {},
@@ -90,23 +91,51 @@ export const Home = (props: RouteComponentProps) => {
         paddingRight={8}
         marginTop={8}
       >
-        <Text fontWeight={900}>
-          Welcome to the NFT Fight Club!
-        </Text>
-        <Text>
-          <br/>
-          My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
-          <br/><br/>
-          You bring your hard earned NFTs and I let them fight each other for pride and reputation.
-          <br/><br/>
-          Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
-          <br/><br/>
-          Enjoy the inaugural season of death.finance!
-          <br/><br/>
-        </Text>
-        <Text fontSize={12} color={"green.500"}>
-          P.S. secret drops await those who have what it takes to participate
-        </Text>
+        {season.isDev ? (
+          <>
+            <Text fontWeight={900} color="red">
+              Welcome to the ETHDenver NFT Fight Club!
+            </Text>
+            <Text>
+              <br/>
+              My name is Monsieur Grim, and I welcome all Bufficorn owners to participate in the Metaverse's first NFT battle royale.
+              <br/><br/>
+              What are you waiting for?{' '}
+              <Link
+                fontWeight={900}
+                color='teal.500'
+                href='/profile'
+              >
+                Register
+              </Link>
+              {' '}your Bufficorn, today.
+              <br/><br/>
+            </Text>
+            <Text fontSize={12} color={"green.500"}>
+              P.S. secret drops await those who participate
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text fontWeight={900}>
+              Welcome to the NFT Fight Club!
+            </Text>
+            <Text>
+              <br/>
+              My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
+              <br/><br/>
+              You bring your hard earned NFTs and I let them fight each other for pride and reputation.
+              <br/><br/>
+              Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
+              <br/><br/>
+              Enjoy the inaugural season of death.finance!
+              <br/><br/>
+            </Text>
+            <Text fontSize={12} color={"green.500"}>
+              P.S. secret drops await those who have what it takes to participate
+            </Text>
+          </>
+        )}
         <HStack justify="flex-end">
           <Text
             fontFamily="Rock Salt"
