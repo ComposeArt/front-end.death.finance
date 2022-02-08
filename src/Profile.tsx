@@ -62,7 +62,7 @@ const ProfileHeader = (props: any) => {
         marginBottom={4}
         textAlign="center"
       >
-        {props.owner || props.loadingText}
+        {props.loading ? props.loadingText : (props.owner || props.address)}
       </Heading>
       <HStack
         w="100%"
@@ -104,7 +104,7 @@ export const ProfileFighters = (props: any) => {
 
   const [registering, setRegistering]: any = useState('');
 
-  const address = props.address;
+  const address = props.address.toLowerCase();
 
   const { account, collections } = useContext(PayloadContext);
 
@@ -113,7 +113,7 @@ export const ProfileFighters = (props: any) => {
       setRegistering(p.id);
 
       await remoteRegisterFighter({
-        owner: address,
+        owner: account,
         collection: p.collection.slug,
         contract: p.asset_contract.address,
         token_id: p.token_id,
@@ -173,9 +173,7 @@ export const ProfileFighters = (props: any) => {
         try {
           const assets = await fetchAssets(address);
 
-          console.log(assets);
-
-          setOwner(_.get(assets, '[0].owner.user.username', '-'));
+          setOwner(_.get(assets, '[0].owner.user.username', address));
           setPlayers(assets);
         } catch (error) {
           console.log(error);
@@ -265,10 +263,21 @@ export const ProfileFighters = (props: any) => {
         {combinedPlayers.map((p: any) => {
           const fighter = p.fighter || {};
 
+          if (!p.image_preview_url) {
+            fighter.not_ready = true;
+          }
+
+          console.log(p);
+
           return (
             <WrapItem key={p.id} margin={4}>
               <VStack>
                 <Box position="relative" marginBottom={4}>
+                  {fighter.not_ready && (
+                    <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
+                      NOT READY
+                    </Text>
+                  )}
                   {fighter.is_invalid && (
                     <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       REFUSING TO FIGHT
@@ -291,17 +300,17 @@ export const ProfileFighters = (props: any) => {
                     onClick={() => {!_.isEmpty(fighter) && !fighter.is_invalid && navigate(`/season/0/fighters/${p.id}`)}}
                     _hover={{
                       borderColor: (!_.isEmpty(fighter) && !fighter.is_invalid) ? brightColor : lineColor,
-                      cursor: (!_.isEmpty(fighter)&& !fighter.is_invalid) ? 'pointer' : 'default',
+                      cursor: (!_.isEmpty(fighter) && !fighter.is_invalid) ? 'pointer' : 'default',
                     }}
                   >
                     <Image
                       boxSize="150px"
                       borderRadius="150px"
-                      src={p.image_preview_url}
-                      opacity={fighter.is_doping || fighter.is_invalid || p.is_traded ? 0.3 : 1}
+                      src={p.image_preview_url || p.collection.image_url}
+                      opacity={fighter.not_ready || fighter.is_doping || fighter.is_invalid || p.is_traded ? 0.3 : 1}
                     />
                   </Box>
-                  {!_.isEmpty(fighter) && !fighter.is_doping && !fighter.is_invalid && (
+                  {!_.isEmpty(fighter) && !fighter.is_doping && !fighter.is_invalid && !fighter.not_ready && (
                     <Box color={fighter.owner === account ? 'green.500' : 'current'} position="absolute" right="10px" bottom="0px">
                       <FaCheckCircle fontSize={32} />
                     </Box>
@@ -311,7 +320,7 @@ export const ProfileFighters = (props: any) => {
                       <FaExclamationCircle fontSize={32} />
                     </Box>
                   )}
-                  {fighter.is_invalid && (
+                  {(fighter.is_invalid || fighter.not_ready) && (
                     <Box color={'red.500'} position="absolute" right="10px" bottom="0px">
                       <FaTimesCircle fontSize={32} />
                     </Box>

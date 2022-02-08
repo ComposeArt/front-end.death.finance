@@ -25,9 +25,11 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
   const db = admin.firestore();
 
   const baseUrl = functions.config().app.id === 'deathfinance' ? 'https://dev.death.finance' : 'https://death.finance';
+  const storageBaseUrl = `https://storage.googleapis.com/${functions.config().app.id}.appspot.com`;
 
-  console.log(path)
+  console.log(path);
   console.log(query);
+  console.log(storageBaseUrl)
 
   try {
     let index = fs.readFileSync('./web/index.html').toString();
@@ -73,7 +75,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       index = setMetas(index, {
         title: 'Profile | NFT Fight Club',
         description: path[2] ? `Checkout ${path[2]}'s fighter posse. Do they have what it takes to win the tournament?` : 'Welcome to the NFT fight club, a competition between NFT personas in order to prove which ones are the best NFTs money can buy.',
-        image: `${baseUrl}/meta-logo.png`,
+        image: path[2] ? `${storageBaseUrl}/profiles/${path[2]}.png` : `${baseUrl}/meta-logo.png`,
       });
 
       response.status(200).send(index);
@@ -85,6 +87,49 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       });
 
       response.status(200).send(index);
+    } else if (path[1] === 'season') {
+      if (path[3] === 'collections') {
+        index = setMetas(index, {
+          title: path[4] ? path[4] : 'Collections | NFT Fight Club',
+          description: path[4] ? `Is ${path[4]} the best collection of the bunch?! Will one of their fighters win the tournament?` : 'Checkout the collections participating in the NFT Fight Club',
+          image: path[4] ? `${storageBaseUrl}/collections/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
+        });
+
+        response.status(200).send(index);
+      } else if (path[3] === 'fighters') {
+        index = setMetas(index, {
+          title: path[4] ? path[4] : 'Fighters | NFT Fight Club',
+          description: path[4] ? `Is ${path[4]} the best fighter?! Will they win the tournament?` : 'Checkout the fighters participating in the NFT Fight Club',
+          image: path[4] ? `${storageBaseUrl}/fighters/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
+        });
+
+        response.status(200).send(index);
+      } else if (path[3] === 'matches' && path[4]) {
+        const matchDoc = await db.collection('nft-death-games')
+          .doc('season_0')
+          .collection('matches')
+          .doc(path[4])
+          .get();
+
+        if (matchDoc.exists) {
+          const match = matchDoc.data();
+          const fighter1 = match.player1;
+          const fighter2 = match.player2;
+
+          const name1 = `${fighter1.collection} #${_.truncate(fighter1.token_id, { length: 7 })}`;
+          const name2 = `${fighter2.collection} #${_.truncate(fighter2.token_id, { length: 7 })}`;
+
+          index = setMetas(index, {
+            title: `${name1} vs ${name2}`,
+            description: `We have a great matchup today folks. It's ${name1} versus ${name2}! This match was run on block ${match.block} with ${match.randomness} randomness.`,
+            image: `${storageBaseUrl}/matches/${path[4]}.png`,
+          });
+
+          response.status(200).send(index);
+        } else {
+          response.redirect(`${baseUrl}/matches`);
+        }
+      }
     } else {
       index = setMetas(index, {
         title: 'NFT Fight Club',

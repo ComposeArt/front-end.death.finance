@@ -138,6 +138,8 @@ export const SeasonCollection = (props: any) => {
     document.title = `${collectionId}`;
   }, [collectionId]);
 
+  const stats = collection.stats || {};
+
   return (
     <Container maxW='container.lg' centerContent>
       <CollectionHeader collection={collection} />
@@ -153,7 +155,7 @@ export const SeasonCollection = (props: any) => {
                 Matches:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.matches || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -161,7 +163,7 @@ export const SeasonCollection = (props: any) => {
                 Wins:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.won || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -169,7 +171,7 @@ export const SeasonCollection = (props: any) => {
                 KOs:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.knockedOutOpponent || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -177,7 +179,7 @@ export const SeasonCollection = (props: any) => {
                 Perfects:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.perfectedOpponent || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -185,7 +187,7 @@ export const SeasonCollection = (props: any) => {
                 uninjured:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.uninjured || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -193,7 +195,7 @@ export const SeasonCollection = (props: any) => {
               untouched:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.untouched || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -201,7 +203,7 @@ export const SeasonCollection = (props: any) => {
                 paddy cakes:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.pattyCaked || 0}
               </Text>
             </HStack>
           </VStack>
@@ -213,7 +215,7 @@ export const SeasonCollection = (props: any) => {
                 Bouts:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.boutsFought || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -221,7 +223,7 @@ export const SeasonCollection = (props: any) => {
                 Dodges:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.dodges || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -229,7 +231,7 @@ export const SeasonCollection = (props: any) => {
                 Criticals:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.criticals || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -237,7 +239,7 @@ export const SeasonCollection = (props: any) => {
                 Counters:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.counterAttacks || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -245,7 +247,7 @@ export const SeasonCollection = (props: any) => {
                 Misses:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.misses || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -253,7 +255,7 @@ export const SeasonCollection = (props: any) => {
                 dmg dealt:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.damageDealt || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -261,7 +263,7 @@ export const SeasonCollection = (props: any) => {
                 dmg received:
               </Text>
               <Text fontSize={12}>
-                0
+                {stats.damageReceived || 0}
               </Text>
             </HStack>
           </VStack>

@@ -110,6 +110,7 @@ export const SeasonFighter = (props: any) => {
 
   const formatFighter = {
     ...fighter.player,
+    stats: fighter.stats || {},
     owner: fighter.owner,
     timestamp: fighter.timestamp,
     is_invalid: fighter.is_invalid,
@@ -137,7 +138,7 @@ export const SeasonFighter = (props: any) => {
                 Matches:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.matches || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -145,7 +146,7 @@ export const SeasonFighter = (props: any) => {
                 Wins:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.won || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -153,7 +154,7 @@ export const SeasonFighter = (props: any) => {
                 KOs:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.knockedOutOpponent || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -161,7 +162,7 @@ export const SeasonFighter = (props: any) => {
                 Perfects:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.perfectedOpponent || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -169,7 +170,7 @@ export const SeasonFighter = (props: any) => {
                 uninjured:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.uninjured || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -177,7 +178,7 @@ export const SeasonFighter = (props: any) => {
               untouched:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.untouched || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -185,7 +186,7 @@ export const SeasonFighter = (props: any) => {
                 paddy cakes:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.pattyCaked || 0}
               </Text>
             </HStack>
           </VStack>
@@ -197,7 +198,7 @@ export const SeasonFighter = (props: any) => {
                 Bouts:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.boutsFought || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -205,7 +206,7 @@ export const SeasonFighter = (props: any) => {
                 Dodges:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.dodges || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -213,7 +214,7 @@ export const SeasonFighter = (props: any) => {
                 Criticals:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.criticals || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -221,7 +222,7 @@ export const SeasonFighter = (props: any) => {
                 Counters:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.counterAttacks || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -229,7 +230,7 @@ export const SeasonFighter = (props: any) => {
                 Misses:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.misses || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -237,7 +238,7 @@ export const SeasonFighter = (props: any) => {
                 dmg dealt:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.damageDealt || 0}
               </Text>
             </HStack>
             <HStack marginTop={8}>
@@ -245,7 +246,7 @@ export const SeasonFighter = (props: any) => {
                 dmg received:
               </Text>
               <Text fontSize={12}>
-                0
+                {formatFighter.stats.damageReceived || 0}
               </Text>
             </HStack>
           </VStack>

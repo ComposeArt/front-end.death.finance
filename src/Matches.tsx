@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import _ from "lodash";
 import {
   Box,
@@ -19,9 +19,13 @@ import { navigate } from "@reach/router";
 import { FaSearch } from "react-icons/fa";
 import { useFuzzy } from 'react-use-fuzzy';
 
+import { RemoteChainPayloadContext } from "./utils/firebase";
+
 export const Matches = (props: any) => {
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const winnerColor = useColorModeValue('gray.800', 'white');
+
+  const { blockNumber } = useContext(RemoteChainPayloadContext);
 
   const { result, keyword, search } = useFuzzy(props.matches, {
     keys: ['collection1', 'collection2', 'player1.token_id', 'player2.token_id'],
@@ -73,6 +77,8 @@ export const Matches = (props: any) => {
             </Text>
           );
 
+          const inBlocks = item.block ? parseInt(item.block, 10) - parseInt(blockNumber, 10) : 0;
+
           return (
             <WrapItem key={item.id}>
               <VStack>
@@ -118,7 +124,7 @@ export const Matches = (props: any) => {
                   </HStack>
                 </Tooltip>
                 <Text opacity={0.5} fontSize={12} color={item.log ? "green.500" : "red.500"}>
-                  block {item.block}
+                  block {item.block} {inBlocks > 0 ? `(${inBlocks})` : ''}
                 </Text>
               </VStack>
             </WrapItem>
