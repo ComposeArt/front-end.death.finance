@@ -404,7 +404,7 @@ export const SeasonCollectionMatches = (props: any) => {
         setLoading(true);
         try {
           const allMatches = await getCollectionMatches(collectionId);
-          const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
+          const orderedMatches = _.orderBy(allMatches, ['block'], ['desc']);
 
           setMatches(orderedMatches);
         } catch (error) {

@@ -3,6 +3,14 @@
     "public": "build",
     "rewrites": [
       {
+        "source": "/api/login",
+        "function": "api"
+      },
+      {
+        "source": "/api/auth",
+        "function": "api"
+      },
+      {
         "source": "**",
         "function": "preRender"
       }

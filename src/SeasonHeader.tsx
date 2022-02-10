@@ -20,7 +20,7 @@ export const SeasonHeader = (props: any) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment('2022-02-17', 'YYYY-MM-DD'))}
       </Text>
         <Wrap
           width="100%"

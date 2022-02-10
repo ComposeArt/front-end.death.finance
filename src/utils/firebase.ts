@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { getAuth } from 'firebase/auth';
 import {
   getFirestore,
   collection,
@@ -24,8 +25,12 @@ const app = initializeApp({
   databaseURL: `https://${projectId}.firebaseio.com`,
 });
 
-const db = getFirestore(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
 const functions = getFunctions(app);
+const createUser = httpsCallable(functions, 'createUser');
+const connectDiscordUser = httpsCallable(functions, 'connectDiscordUser');
 const simulateFight = httpsCallable(functions, 'simulateFight');
 const registerFighter = httpsCallable(functions, 'registerFighter');
 const getAddressNFTs = httpsCallable(functions, 'getAddressNFTs');
@@ -33,6 +38,7 @@ const getAddressNFTs = httpsCallable(functions, 'getAddressNFTs');
 interface PayloadTypes {
   collections: [];
   season: any,
+  user: any,
   account: string | null | undefined;
   chain: string | null | undefined;
 }
@@ -48,6 +54,7 @@ const defaultPayload: PayloadTypes = {
   season: {},
   account: '',
   chain: '',
+  user: {},
 };
 
 const defaultRemoteChainPayload: RemotePayloadTypes = {
@@ -107,6 +114,19 @@ export const fetchAssets = async (address: any) => {
   return result.data;
 };
 
+export const remoteCreateUser = async (address: any) => {
+  await createUser({
+    address,
+  });
+};
+
+export const remoteConnectDiscordUser = async (token: any, address: any) => {
+  await connectDiscordUser({
+    token,
+    address,
+  });
+};
+
 export const remoteSimulateFight = async ({
   f1,
   f2,
@@ -148,6 +168,13 @@ export const remoteRegisterFighter = async ({
 
 export const getSeason = async () => {
   const docRef = doc(db, `nft-death-games`, 'season_0');
+  const docSnap = await getDoc(docRef);
+
+  return docSnap.data();
+};
+
+export const getUser = async (address: any) => {
+  const docRef = doc(db, `nft-death-games/season_0/users`, address);
   const docSnap = await getDoc(docRef);
 
   return docSnap.data();
@@ -452,22 +479,6 @@ export const getMatchFights = async (bracket: any, matchId: any) => {
   return fights;
 };
 
-export const streamOwnerFighters = ({
-  address
-}: any, callback: any) => {
-  const q = query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
-  return onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added" || change.type === "modified") {
-        callback({
-          id: change.doc.id,
-          ...change.doc.data(),
-        });
-      }
-    });
-  });
-};
-
 export const streamChain = (callback: any) => {
   return onSnapshot(doc(db, "chains", "goerli"), (d) => {
     callback({
@@ -476,6 +487,10 @@ export const streamChain = (callback: any) => {
     });
   });
 };
+
+export const ownerFightersQuery = (address: string) => query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
+export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
+export const allFightersQuery = query(collection(db, `nft-death-games/season_0/fighters`));
 
 
 

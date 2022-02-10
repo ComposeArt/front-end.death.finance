@@ -18,11 +18,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
-import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle, FaCrown } from "react-icons/fa";
+import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle, FaDiscord } from "react-icons/fa";
+import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
 import { NavLink } from "./NavLink";
 import { ListCollections } from "./ListCollections";
-import { PayloadContext, fetchAssets, streamOwnerFighters, remoteRegisterFighter, getOwnerMatches } from "./utils/firebase";
+import { PayloadContext, fetchAssets, remoteRegisterFighter, getOwnerMatches, ownerFightersQuery, userQuery } from "./utils/firebase";
 import { Matches } from './Matches';
 
 const spin = keyframes`
@@ -34,8 +35,11 @@ const ProfileHeader = (props: any) => {
   const lineColor = useColorModeValue('gray.500', 'white.500');
   const backgroundColor = useColorModeValue('white', '#1A202C');
   const spinAnimation = `${spin} infinite 3s linear`;
+  const [userDoc, userLoading, userError] = useDocument(userQuery(props.address || 'missing'));
+  const user = userDoc?.data() || {};
 
   const formatAddress = props.address ? `${props.address.slice(0, 6)}...${props.address.slice(props.address.length - 4, props.address.length)}` : '-';
+  const username = user.discord ? user.discord.username : (props.owner || props.address);
 
   return (
     <>
@@ -56,14 +60,20 @@ const ProfileHeader = (props: any) => {
           spotColor={backgroundColor}
         />
       </Center>
-      <Heading
-        size='sm'
+      <HStack
+        align="center"
+        justify="center"
         marginTop={8}
         marginBottom={4}
-        textAlign="center"
       >
-        {props.loading ? props.loadingText : (props.owner || props.address)}
-      </Heading>
+        {!props.loading && user.discord && (<FaDiscord />)}
+        <Heading
+          size='sm'
+          textAlign="center"
+        >
+          {props.loading ? props.loadingText : username}
+        </Heading>
+      </HStack>
       <HStack
         w="100%"
         align="center"
@@ -85,6 +95,16 @@ const ProfileHeader = (props: any) => {
         </Text>
         <NavLink to={`/profile/${props.address}/matches`}>matches</NavLink>
       </HStack>
+      {!props.loading && !props.user.discord && props.account === props.address && (
+        <Button
+          leftIcon={<FaDiscord />}
+          onClick={() => {props.season.isDev ? window.location.href = `https://dev.death.finance/api/login` : window.location.href = `https://death.finance/api/login`}}
+          isDisabled={false}
+          marginTop={8}
+        >
+          CONNECT
+        </Button>
+      )}
     </>
   );
 };
@@ -98,15 +118,18 @@ export const ProfileFighters = (props: any) => {
   const [mounted, setMounted]: any = useState(false);
   const [loading, setLoading]: any = useState(true);
   const [players, setPlayers]: any = useState([]);
-  const [fighters, setFighters]: any = useState({});
   const [owner, setOwner]: any = useState('');
   const [errorLoading, setErrorLoading]: any = useState(false);
 
   const [registering, setRegistering]: any = useState('');
 
-  const address = props.address.toLowerCase();
+  const address = props.address ? props.address.toLowerCase() : '';
 
-  const { account, collections } = useContext(PayloadContext);
+  const { account, collections, user, season } = useContext(PayloadContext);
+
+  const [fighterDocs, fightersLoading, fightersError] = useCollection(ownerFightersQuery(address));
+
+  const fighters = fighterDocs?.docs.map((d: any) => d.data());
 
   const registerFighter = async (p: any) => {
     try {
@@ -139,32 +162,10 @@ export const ProfileFighters = (props: any) => {
   }, [account, address]);
 
   useEffect(() => {
-    if (address) {
-      document.title = address;
-
-      const fighterListener = streamOwnerFighters({ address }, (data: any) => {
-        setFighters((prevFighters: any) => {
-          const newFighters = {
-            ...prevFighters,
-          };
-
-          newFighters[data.id] = data;
-
-          return newFighters;
-        });
-      });
-
-      return () => {
-        fighterListener();
-      };
-    } else {
-      document.title = 'Profile';
-    }
-  }, [address]);
-
-  useEffect(() => {
     (async function getInitialData() {
       if (address && !_.isEmpty(collections)) {
+        document.title = `Fighters | ${address}`;
+
         setLoading(true);
         setMounted(false);
         setOwner('');
@@ -228,7 +229,7 @@ export const ProfileFighters = (props: any) => {
 
   const orderedPlayers = _.chain(players)
     .map((p: any) => {
-      const fighter = _.isEmpty(fighters) ? null : fighters[p.id.toString()];
+      const fighter = _.find(fighters, (f: any) => f.id === String(p.id)) || {};
       return {
         fighter,
         ...p,
@@ -237,19 +238,18 @@ export const ProfileFighters = (props: any) => {
     .sortBy([(p: any) => _.get(p, 'fighter.rank'), (p: any) => _.get(p, 'fighter.timestamp')])
     .value();
 
-  const transferredFighters = _.reduce(fighters, (result: any, f: any, i: any): any => {
-    if (!_.find(orderedPlayers, (p: any) => p.id.toString() === i)) {
-      result.push({
+  const transferredFighters = _.chain(fighters)
+    .filter((f: any) => !_.find(players, (p: any) => String(p.id) === f.id))
+    .map((f: any) => {
+      return {
         ...f,
         ...f.player,
         is_traded: true,
-      });
-    };
+      };
+    })
+    .value();
 
-    return result;
-  }, []);
-
-  const combinedPlayers = orderedPlayers.length ? [...orderedPlayers, ...transferredFighters] : [];
+  const combinedPlayers = [...orderedPlayers, ...transferredFighters];
 
   return (
     <Container maxW='container.lg' centerContent>
@@ -257,6 +257,9 @@ export const ProfileFighters = (props: any) => {
         address={address}
         owner={owner}
         loading={loading}
+        user={user}
+        account={account}
+        season={season}
         loadingText="Loading NFTs..."
       />
       <Wrap marginTop={12} justify='center' spacing={12}>
@@ -266,8 +269,6 @@ export const ProfileFighters = (props: any) => {
           if (!p.image_preview_url) {
             fighter.not_ready = true;
           }
-
-          console.log(p);
 
           return (
             <WrapItem key={p.id} margin={4}>
@@ -288,7 +289,7 @@ export const ProfileFighters = (props: any) => {
                       BANNED FOR DOPING
                     </Text>
                   )}
-                  {p.is_traded && (
+                  {!loading && p.is_traded && (
                     <Text textShadow="2px 2px #fff" fontWeight={900} width="150px" color="red" textAlign="center" position="absolute" top="50px" left="0px">
                       TRADED
                     </Text>
@@ -358,7 +359,7 @@ export const ProfileFighters = (props: any) => {
                     {`${p.collection.slug || p.collection} #${_.truncate(p.token_id, { length: 7 })}`}
                   </Text>
                 </Box>
-                {_.isEmpty(fighter) && isOwner && (
+                {_.isEmpty(fighter) && isOwner && !p.is_traded && (
                   <Button
                     isLoading={registering === p.id}
                     loadingText='Register'
@@ -398,7 +399,7 @@ export const ProfileFighters = (props: any) => {
 export const ProfileMatches = (props: any) => {
   const toast = useToast();
 
-  const { account } = useContext(PayloadContext);
+  const { account, user, season } = useContext(PayloadContext);
 
   const address = props.address;
 
@@ -414,7 +415,7 @@ export const ProfileMatches = (props: any) => {
         setLoading(true);
         try {
           const allMatches = await getOwnerMatches(address);
-          const orderedMatches = _.sortBy(allMatches, (m: any) => parseInt(m.block, 10));
+          const orderedMatches = _.orderBy(allMatches, ['block'], ['desc']);
 
           setMatches(orderedMatches);
         } catch (error) {
@@ -442,8 +443,11 @@ export const ProfileMatches = (props: any) => {
     <Container maxW='container.lg' centerContent>
       <ProfileHeader
         address={address}
-        owner={account}
+        owner={address}
         loading={loading}
+        account={account}
+        user={user}
+        season={season}
         loadingText="Loading matches..."
       />
       <Matches matches={matches} loading={loading} />

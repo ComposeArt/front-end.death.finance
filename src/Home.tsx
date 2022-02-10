@@ -15,18 +15,21 @@ import {
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri"
+import { useQueryParam, StringParam } from 'use-query-params';
 
 import { LinkButton } from "./LinkButton";
 import { ListCollections } from "./ListCollections";
 import grim from './images/mgrim-flip.png';
 import fcDark from './images/fight-club-logo-dark.png';
 import fcLight from './images/fight-club-logo-light.png';
-import { PayloadContext, getRandomPlayer, getLatestFighters } from "./utils/firebase";
+import { PayloadContext, getRandomPlayer, getLatestFighters, remoteConnectDiscordUser } from "./utils/firebase";
 
 export const Home = (props: RouteComponentProps) => {
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.800', 'white');
   const logoType = useColorModeValue(fcDark, fcLight);
+  const [mounted, setMounted]: any = useState(false);
+  const [token, setToken] = useQueryParam('token', StringParam);
 
   const { account, collections, season } = useContext(PayloadContext);
   const [players, setPlayers]: any = useState([]);
@@ -38,6 +41,18 @@ export const Home = (props: RouteComponentProps) => {
   useEffect(() => {
     document.title = 'NFT Fight Club';
   }, []);
+
+  useEffect(() => {
+    if (!mounted && !_.isEmpty(season)) {
+      setMounted(true);
+    }
+  }, [season, mounted]);
+
+  useEffect(() => {
+    if (token && account) {
+      remoteConnectDiscordUser(token, account);
+    }
+  }, [token, account]);
 
   useEffect(() => {
     let interval: any;
@@ -91,7 +106,7 @@ export const Home = (props: RouteComponentProps) => {
         paddingRight={8}
         marginTop={8}
       >
-        {season.isDev ? (
+        {season.isDev && mounted && (
           <>
             <Text fontWeight={900} color="red">
               Welcome to the ETHDenver NFT Fight Club!
@@ -115,26 +130,27 @@ export const Home = (props: RouteComponentProps) => {
               P.S. secret drops await those who participate
             </Text>
           </>
-        ) : (
-          <>
-            <Text fontWeight={900}>
-              Welcome to the NFT Fight Club!
-            </Text>
-            <Text>
-              <br/>
-              My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
-              <br/><br/>
-              You bring your hard earned NFTs and I let them fight each other for pride and reputation.
-              <br/><br/>
-              Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
-              <br/><br/>
-              Enjoy the inaugural season of death.finance!
-              <br/><br/>
-            </Text>
-            <Text fontSize={12} color={"green.500"}>
-              P.S. secret drops await those who have what it takes to participate
-            </Text>
-          </>
+        )}
+        {!season.isDev && mounted && (
+            <>
+              <Text fontWeight={900}>
+                Welcome to the NFT Fight Club!
+              </Text>
+              <Text>
+                <br/>
+                My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
+                <br/><br/>
+                You bring your hard earned NFTs and I let them fight each other for pride and reputation.
+                <br/><br/>
+                Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
+                <br/><br/>
+                Enjoy the inaugural season of death.finance!
+                <br/><br/>
+              </Text>
+              <Text fontSize={12} color={"green.500"}>
+                P.S. secret drops await those who have what it takes to participate
+              </Text>
+            </>
         )}
         <HStack justify="flex-end">
           <Text
@@ -159,7 +175,7 @@ export const Home = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment('2022-02-17', 'YYYY-MM-DD'))}
       </Text>
       <HStack marginTop={8} justify="center" spacing={4}>
         <Box>

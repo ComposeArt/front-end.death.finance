@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import _ from "lodash";
 import {
   ChakraProvider,
   extendTheme,
@@ -6,6 +7,7 @@ import {
 import { Router, globalHistory } from "@reach/router";
 import { useEthers, ChainId } from "@usedapp/core";
 import { QueryParamProvider } from 'use-query-params';
+import { useDocument } from 'react-firebase-hooks/firestore';
 import "@fontsource/fira-mono";
 import "@fontsource/rock-salt";
 
@@ -30,7 +32,16 @@ import { SeasonCollection, SeasonCollectionFighters, SeasonCollectionMatches } f
 import { SeasonFighter, SeasonFighterMatches } from "./SeasonFighter";
 import { SeasonMatch } from "./SeasonMatch";
 
-import { PayloadContext, RemoteChainPayloadContext, getCollections, getSeason, streamChain } from "./utils/firebase";
+import {
+  PayloadContext,
+  RemoteChainPayloadContext,
+  getCollections,
+  getSeason,
+  getUser,
+  streamChain,
+  remoteCreateUser,
+  userQuery,
+} from "./utils/firebase";
 
 const theme = extendTheme({
   initialColorMode: 'dark',
@@ -58,10 +69,14 @@ const ScrollToTop = ({ children, location }: any) => {
 
 const Nav = (props: any) => {
   const [collections, setCollections]: any = useState([]);
-  const [season, setSeason]: any = useState([]);
+  const [season, setSeason]: any = useState({});
   const [remoteChain, setRemoteChain]: any = useState({});
+  const [userLocal, setUserLocal]: any = useState({});
   const { account, chainId } = useEthers();
   const chain = chainId && ChainId[chainId];
+
+  const [userDoc, userLoading, userError] = useDocument(userQuery(account ? account.toLowerCase() : 'missing'));
+  const user = userDoc?.data() || {};
 
   useEffect(() => {
     let chainListener: any;
@@ -85,6 +100,14 @@ const Nav = (props: any) => {
     }
   }, []);
 
+  useEffect(() => {
+    (async function getInitialData() {
+      if (account && _.isEmpty(user)) {
+        await remoteCreateUser(account.toLowerCase());
+      }
+    })();
+  }, [account, user]);
+
   return (
     <ChakraProvider theme={theme}>
       <PayloadContext.Provider
@@ -93,6 +116,7 @@ const Nav = (props: any) => {
           season,
           account: account ? account.toLowerCase() : null,
           chain,
+          user,
         }}
       >
         <RemoteChainPayloadContext.Provider

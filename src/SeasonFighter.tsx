@@ -286,7 +286,7 @@ export const SeasonFighterMatches = (props: any) => {
 
             if (result) {
               const fighterMatches = await getFighterMatches(fighterId);
-              const orderedMatches = _.sortBy(fighterMatches, (m: any) => parseInt(m.block, 10));
+              const orderedMatches = _.orderBy(fighterMatches, ['block'], ['desc']);
 
               setMatches(orderedMatches);
               setFighter(result);
@@ -295,7 +295,7 @@ export const SeasonFighterMatches = (props: any) => {
             }
           } else {
             const fighterMatches = await getFighterMatches(fighterId);
-            const orderedMatches = _.sortBy(fighterMatches, (m: any) => parseInt(m.block, 10));
+            const orderedMatches = _.orderBy(fighterMatches, ['block'], ['desc']);
             setMatches(orderedMatches);
           }
         }

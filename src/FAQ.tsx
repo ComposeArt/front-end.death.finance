@@ -72,7 +72,7 @@ export const FAQ = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        season_0 preseason starts {moment().to(moment('2022-02-10', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment('2022-02-17', 'YYYY-MM-DD'))}
       </Text>
       <Question
         question="Why did you make this?"

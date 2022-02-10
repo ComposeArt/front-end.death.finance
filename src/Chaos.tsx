@@ -153,13 +153,9 @@ export const Chaos = (props: RouteComponentProps) => {
           <br/><br/>
           By adding chaos to the fights, you can earn super rare prop drops for the future Grim personas!
           <br/><br/>
-          <Link
-            fontWeight={900}
-            color='teal.500'
-            href='/grims'
-          >
+          <NavLink to='/grims'>
             More rewards await!
-          </Link>
+          </NavLink>
         </Text>
       </Box>
     </Container>
