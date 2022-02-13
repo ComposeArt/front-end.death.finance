@@ -134,13 +134,11 @@ export const Home = (props: RouteComponentProps) => {
         {!season.isDev && mounted && (
             <>
               <Text fontWeight={900}>
-                Welcome to the NFT Fight Club!
+                Welcome to death.finance, the official NFT Fight Club. 
               </Text>
               <Text>
                 <br/>
-                My name is Monsieur Grim and I run this special fight club. I’m not here to sell you anything. I am here to offer you a competition between NFT personas in order to prove which ones are the best NFTs money can buy.
-                <br/><br/>
-                You bring your hard earned NFTs and I let them fight each other for pride and reputation.
+                Bring your NFTs and compete against your friends to fight for honor, glory, and a chance to participate in NFT Madness - a month-long battle royale of NFTs from the most popular collections.
                 <br/><br/>
                 Does a Bored Ape beat a Lazy Lion? Can a Cryptopunk put down a Doodle? These will all be known in good time.
                 <br/><br/>
