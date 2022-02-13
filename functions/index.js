@@ -54,7 +54,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
 
           index = setMetas(index, {
             title: `${name1} vs ${name2}`,
-            description: `We have a great matchup today folks. It's ${name1} versus ${name2}! This match was run on block ${simulation.block} with ${simulation.randomness} randomness.`,
+            description: `Who will be victorious? This match was run on block ${simulation.block} with a chaos value of ${simulation.randomness}.`,
             image: simulation.image_url,
           });
 
@@ -64,8 +64,8 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
         }
       } else {
         index = setMetas(index, {
-          title: 'NFT Fight Club Simulation',
-          description: 'Simulate fights between two NFTs using on-chain smart contract and on-chain randomness.',
+          title: 'Simulate Fights | NFT Fight Club',
+          description: 'Simulate fights between NFTs from your favorite collections.',
           image: `${baseUrl}/meta-logo.png`,
         });
 
@@ -74,7 +74,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
     } else if (path[1] === 'profile') {
       index = setMetas(index, {
         title: 'Profile | NFT Fight Club',
-        description: path[2] ? `Checkout ${path[2]}'s fighter posse. Do they have what it takes to win the tournament?` : 'Welcome to the NFT fight club, a competition between NFT personas in order to prove which ones are the best NFTs money can buy.',
+        description: path[2] ? `Checkout ${path[2]}'s fighters. Do they have what it takes to win NFT Madness?` : 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
         image: path[2] ? `${storageBaseUrl}/profiles/${path[2]}.png` : `${baseUrl}/meta-logo.png`,
       });
 
@@ -82,7 +82,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
     } else if (path[1] === 'faq') {
       index = setMetas(index, {
         title: 'FAQ | NFT Fight Club',
-        description: 'Answering all your questions regarding the NFT Fight Club.',
+        description: 'Answering all your questions regarding NFT Fight Club.',
         image: `${baseUrl}/meta-logo.png`,
       });
 
@@ -91,7 +91,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       if (path[3] === 'collections') {
         index = setMetas(index, {
           title: path[4] ? path[4] : 'Collections | NFT Fight Club',
-          description: path[4] ? `Is ${path[4]} the best collection of the bunch?! Will one of their fighters win the tournament?` : 'Checkout the collections participating in the NFT Fight Club',
+          description: path[4] ? `Checkout ${path[4]} collection's stats and fighters on death.finance` : 'Checkout the collections participating in NFT Fight Club',
           image: path[4] ? `${storageBaseUrl}/collections/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
         });
 
@@ -99,7 +99,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       } else if (path[3] === 'fighters') {
         index = setMetas(index, {
           title: path[4] ? path[4] : 'Fighters | NFT Fight Club',
-          description: path[4] ? `Is ${path[4]} the best fighter?! Will they win the tournament?` : 'Checkout the fighters participating in the NFT Fight Club',
+          description: path[4] ? `Checkout ${path[4]}'s stats on death.finance` : 'Checkout the fighters participating in NFT Fight Club',
           image: path[4] ? `${storageBaseUrl}/fighters/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
         });
 
@@ -121,7 +121,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
 
           index = setMetas(index, {
             title: `${name1} vs ${name2}`,
-            description: `We have a great matchup today folks. It's ${name1} versus ${name2}! This match was run on block ${match.block} with ${match.randomness} randomness.`,
+            description: `Checkout match results at death.finance. This match was run on block ${match.block} with a chaos value of ${match.randomness}.`,
             image: `${storageBaseUrl}/matches/${path[4]}.png`,
           });
 
@@ -133,7 +133,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
     } else {
       index = setMetas(index, {
         title: 'NFT Fight Club',
-        description: 'Welcome to the NFT fight club, a competition between NFT personas in order to prove which ones are the best NFTs money can buy.',
+        description: 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
         image: `${baseUrl}/meta-logo.png`,
       });
 
