@@ -194,6 +194,12 @@ In the case that both fighters are standing and their leftover health is the sam
 **The top 128 registered fighters will be drafted into an elimination tournament.**
 
 &nbsp;
+### Ranking
+
+Each fighter will play every other fighter twice. Rankings are done by most wins, then most KOs, then most perfect wins, then lowest fighter power, then most damage dealt and least damage received.
+
+
+&nbsp;
 ### Structure
 
 &nbsp;

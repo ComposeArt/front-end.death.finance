@@ -41,8 +41,21 @@ import { SeasonHeader } from "./SeasonHeader";
 import { NavLink } from "./NavLink";
 
 const compareFighters = (fighter1: any, fighter2: any) => {
-  const stats1 = fighter1.stats;
-  const stats2 = fighter2.stats;
+  const stats1 = fighter1.stats || {
+    won: 0,
+    knockedOutOpponent: 0,
+    perfectedOpponent: 0,
+    damageDealt: 0,
+    damageReceived: 0,
+  };
+
+  const stats2 = fighter2.stats || {
+    won: 0,
+    knockedOutOpponent: 0,
+    perfectedOpponent: 0,
+    damageDealt: 0,
+    damageReceived: 0,
+  };
 
   if (stats1.won > stats2.won) {
     return -1;
@@ -118,8 +131,6 @@ export const SeasonTournament = (props: any) => {
 
   const [fighterDocs, fightersLoading, fightersError] = useCollection(allFightersQuery);
   const fighters = fighterDocs?.docs.map((d: any) => d.data()).sort(compareFighters);
-
-  console.log(fighters);
 
   useEffect(() => {
     document.title = `${bracket} | Tournament | Season 0 | NFT Fight Club`;
@@ -483,6 +494,11 @@ export const SeasonTournament = (props: any) => {
               {fighters?.map((f: any, i: any) => {
                 const name = `${f.collection} #${_.truncate(f.player.token_id, { length: 7 })}`;
                 const owner = `${f.owner.slice(0, 6)}...${f.owner.slice(f.owner.length - 4, f.owner.length)}`;
+                const stats = f.stats || {
+                  matches: 0,
+                  won: 0,
+                  knockedOutOpponent: 0,
+                };
 
                 return (
                   <Tr key={f.id}>
@@ -504,9 +520,9 @@ export const SeasonTournament = (props: any) => {
                         {owner}
                       </NavLink>
                     </Td>
-                    <Td isNumeric>{f.stats.won}</Td>
-                    <Td isNumeric>{f.stats.matches - f.stats.won}</Td>
-                    <Td isNumeric>{f.stats.knockedOutOpponent}</Td>
+                    <Td isNumeric>{stats.won}</Td>
+                    <Td isNumeric>{stats.matches - stats.won}</Td>
+                    <Td isNumeric>{stats.knockedOutOpponent}</Td>
                   </Tr>
                 );
               })}

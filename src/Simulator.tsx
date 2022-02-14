@@ -20,6 +20,7 @@ import {
   useDisclosure,
   Fade,
   Switch,
+  Tooltip
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
 import { RiSwordFill } from "react-icons/ri";
@@ -321,6 +322,16 @@ export const Simulator = (props: RouteComponentProps) => {
 
   const runLocally = useLocal && account && chain === 'Goerli';
 
+  const disableFight = (userRandomness && parseInt(userRandomness, 10) < 0) ||
+    (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
+    (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
+    (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
+    (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
+    (userRandomness && !userBlocknumber) ||
+    (!userRandomness && userBlocknumber) ||
+    (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0)) ||
+    loading1 || loading2;
+
   return (
     <Container maxW='container.md' centerContent>
       {simulating && simulatingLocal && (
@@ -352,6 +363,9 @@ export const Simulator = (props: RouteComponentProps) => {
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
         {blockNumber}
+      </Text>
+      <Text width="320px" textAlign="center" marginTop={2} fontSize={10} color="red.500">
+        Can only run on blocks that have an odd 2 digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
       </Text>
       {(!account || chain !== 'Goerli') && (
         <Text marginTop={4} textAlign="center" color="red.500" fontSize={12}>
@@ -507,124 +521,101 @@ export const Simulator = (props: RouteComponentProps) => {
         </Box>
         <FighterPortrait fighter={fighter2} />
       </HStack>
-      <HStack marginTop={12} spacing={8} justify="center" align="center">
-        <Button
-          isLoading={simulating}
-          loadingText='Simulating'
-          leftIcon={<RiSwordFill />}
-          onClick={() => {runLocally ? simulateLocalFight() : simulateFight()}}
-          isDisabled={
-            (userRandomness && parseInt(userRandomness, 10) < 0) ||
-            (userRandomness && _.indexOf(userRandomness, '.') > -1) ||
-            (userBlocknumber && parseInt(userBlocknumber, 10) < 9) ||
-            (userBlocknumber && _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0) ||
-            (userBlocknumber && _.indexOf(userBlocknumber, '.') > -1) ||
-            (userRandomness && !userBlocknumber) ||
-            (!userRandomness && userBlocknumber) ||
-            (!userBlocknumber && (_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0)) ||
-            loading1 || loading2
-          }
-        >
-          FIGHT
-        </Button>
-      </HStack>
-      <Button
-        onClick={() => {
-          if (isOpen) {
-            setUserRandomness('');
-            setUserBlocknumber('');
-          }
-
-          onToggle();
-        }}
+      <Tooltip label={disableFight ? 'Invalid Block' : ''}>
+        <HStack marginTop={12} spacing={8} justify="center" align="center">
+          <Button
+            isLoading={simulating}
+            loadingText='Simulating'
+            leftIcon={<RiSwordFill />}
+            onClick={() => {runLocally ? simulateLocalFight() : simulateFight()}}
+            isDisabled={disableFight}
+          >
+            FIGHT
+          </Button>
+        </HStack>
+      </Tooltip>
+      <Text
         variant="link"
         fontSize={12}
         marginTop={8}
-        opacity={isOpen ? 1 : 0.5}
-        _hover={{
-          opacity: 1,
-          textDecoration: 'underline',
-        }}
         isDisabled={simulating}
       >
         Advanced Inputs
-      </Button>
-      <Box display="flex" height="200px" align="center" marginBottom={32}>
-        <Fade in={isOpen} unmountOnExit={true}>
-          <InputGroup
-            size="sm"
-            width={{ base: "160px", md: 200 }}
-            marginTop={4}
-          >
-            <InputLeftAddon
-              children='#'
-              borderRadius={100}
-            />
-            <Input
-              borderRadius={100}
-              fontSize={12}
-              type='number'
-              placeholder='randomness'
-              errorBorderColor='red.500'
-              isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
-              value={userRandomness}
-              onChange={(event) => {
-                setUserRandomness(event.target.value);
-              }}
-              isDisabled={simulating}
-            />
-          </InputGroup>
-          <InputGroup
-            size="sm"
-            width={{ base: "160px", md: 200 }}
-            marginTop={4}
-          >
-            <InputLeftAddon
-              children='#'
-              borderRadius={100}
-            />
-            <Input
-              borderRadius={100}
-              fontSize={12}
-              type='number'
-              placeholder='blocknumber'
-              errorBorderColor='red.500'
-              value={userBlocknumber}
-              isInvalid={
-                parseInt(userBlocknumber, 10) < 9 ||
-                _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0 ||
-                _.indexOf(userBlocknumber, '.') > -1
-              }
-              onChange={(event) => {
-                setUserBlocknumber(event.target.value);
-              }}
-              isDisabled={simulating}
-            />
-          </InputGroup>
-          <Text
-            fontSize={12}
-            opacity={0.5}
-            marginTop={4}
-            marginBottom={2}
-          >
-            oracle | local
-          </Text>
-          <Switch
-            size='md'
-            isChecked={runLocally}
-            onChange={() => {setUseLocal(!useLocal)}}
-            colorScheme="whiteAlpha"
-            isDisabled={!account && chain !== 'Goerli'}
+      </Text>
+      <VStack display="flex" height="200px" align="center" marginBottom={32}>
+        <InputGroup
+          size="sm"
+          width={{ base: "160px", md: 200 }}
+          marginTop={4}
+        >
+          <InputLeftAddon
+            children='#'
+            borderRadius={100}
           />
-          <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
-            Use the above inputs to replace the current block number and current randomness in the smart contract.
-            <br/><br/>
-            Can only run on blocks that have an odd 2 digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
-            <br/><br/>
-            Only positive whole numbers for both fields.
-          </Text>
-        </Fade>
-      </Box>
+          <Input
+            borderRadius={100}
+            fontSize={12}
+            type='number'
+            placeholder='randomness'
+            errorBorderColor='red.500'
+            isInvalid={parseInt(userRandomness, 10) < 0 || _.indexOf(userRandomness, '.') > -1}
+            value={userRandomness}
+            onChange={(event) => {
+              setUserRandomness(event.target.value);
+            }}
+            isDisabled={simulating}
+          />
+        </InputGroup>
+        <InputGroup
+          size="sm"
+          width={{ base: "160px", md: 200 }}
+          marginTop={4}
+        >
+          <InputLeftAddon
+            children='#'
+            borderRadius={100}
+          />
+          <Input
+            borderRadius={100}
+            fontSize={12}
+            type='number'
+            placeholder='blocknumber'
+            errorBorderColor='red.500'
+            value={userBlocknumber}
+            isInvalid={
+              parseInt(userBlocknumber, 10) < 9 ||
+              _.floor(parseInt(userBlocknumber, 10) / 10 % 2) === 0 ||
+              _.indexOf(userBlocknumber, '.') > -1
+            }
+            onChange={(event) => {
+              setUserBlocknumber(event.target.value);
+            }}
+            isDisabled={simulating}
+          />
+        </InputGroup>
+        <Text
+          fontSize={12}
+          opacity={0.5}
+          marginTop={4}
+          marginBottom={2}
+        >
+          oracle | local
+        </Text>
+        <Switch
+          size='md'
+          isChecked={runLocally}
+          onChange={() => {setUseLocal(!useLocal)}}
+          colorScheme="whiteAlpha"
+          isDisabled={!account && chain !== 'Goerli'}
+        />
+        <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
+          Use the above inputs to replace the current block number and current randomness in the smart contract.
+          <br/><br/>
+          Can only run on blocks that have an odd 2 digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
+          <br/><br/>
+          Only positive whole numbers for both fields.
+        </Text>
+      </VStack>
     </Container>
   );
 };
