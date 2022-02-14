@@ -39,6 +39,7 @@
     "react-markdown": "^8.0.0",
     "react-scripts": "4.0.3",
     "react-use-fuzzy": "^1.0.4",
+    "remark-gfm": "^3.0.1",
     "typescript": "^3.9.5",
     "use-query-params": "^1.2.3",
     "web-vitals": "^0.2.2"

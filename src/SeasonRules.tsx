@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import remarkGfm from 'remark-gfm';
 import ReactMarkdown from "react-markdown";
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import {
@@ -18,7 +19,7 @@ export const SeasonRules = (props: any) => {
     <Container maxW='container.md' centerContent>
       <SeasonHeader />
       <Box marginTop={12}>
-        <ReactMarkdown components={ChakraUIRenderer()} children={rules} />
+        <ReactMarkdown components={ChakraUIRenderer()} children={rules} remarkPlugins={[remarkGfm]} />
       </Box>
     </Container>
   );
