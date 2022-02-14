@@ -190,7 +190,62 @@ export const Grims = (props: RouteComponentProps) => {
                   </Text>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4} width="120px">
+            </Wrap>
+            <br/>
+            <Wrap justify='center' spacing={8}>
+            <WrapItem margin={4}>
+                <VStack>
+                  <Center
+                    width="80px"
+                    height="80px"
+                    borderWidth={2}
+                    borderRadius={100}
+                    borderColor={lineColor}
+                    marginBottom={4}
+                  >
+                    <Image
+                      boxSize="80px"
+                      borderRadius="80px"
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-bronze-horn-prop.png'}
+                      opacity={0.5}
+                    />
+                  </Center>
+                  <Text fontSize={12} textAlign="center" opacity={0.5}>
+                    3rd Place
+                    <br/>Tournament
+                  </Text>
+                  <Text fontSize={10} textAlign="center" opacity={0.5}>
+                    Bronze Horn
+                  </Text>
+                </VStack>
+              </WrapItem>
+              <WrapItem margin={4}>
+                <VStack>
+                  <Center
+                    width="80px"
+                    height="80px"
+                    borderWidth={2}
+                    borderRadius={100}
+                    borderColor={lineColor}
+                    marginBottom={4}
+                  >
+                    <Image
+                      boxSize="80px"
+                      borderRadius="80px"
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-silver-horn-prop.png'}
+                      opacity={0.5}
+                    />
+                  </Center>
+                  <Text fontSize={12} textAlign="center" opacity={0.5}>
+                    2nd Place
+                    <br/>Tournament
+                  </Text>
+                  <Text fontSize={10} textAlign="center" opacity={0.5}>
+                    Silver Horn
+                  </Text>
+                </VStack>
+              </WrapItem>
+              <WrapItem margin={4}>
                 <VStack>
                   <Center
                     width="80px"
