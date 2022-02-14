@@ -34,7 +34,7 @@ const Question = (props: any) => {
           cursor: 'pointer',
         }}
       >
-        <Text fontSize="sm">
+        <Text fontSize="md">
           {props.question}
         </Text>
         <IconButton
@@ -48,7 +48,7 @@ const Question = (props: any) => {
         />
       </HStack>
       <Fade in={props.openQuestion === props.type} unmountOnExit={true}>
-        <Text fontSize={12} opacity={0.5} marginBottom={4}>
+        <Text fontSize="md" opacity={0.5} marginBottom={4}>
           {props.answer}
         </Text>
       </Fade>
@@ -72,18 +72,18 @@ export const FAQ = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        registration ends {moment().to(moment('2022-02-17', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment('2022-02-19', 'YYYY-MM-DD'))}
       </Text>
       <Question
         question="Why did you make this?"
-        answer="Because, while plenty of people are launching new NFT collections, almost none of them allow you to do anything with the NFT aside from own or trade it. We wanted to create a project that made peoples’ existing NFTs more fun and gave them more utility."
+        answer="Because, while plenty of people are launching new NFT collections, almost none of them allow you to do anything with the NFT aside from own or trade it. We wanted to create a project that made peoples' existing NFTs more fun and gave them more utility."
         setOpenQuestion={setOpenQuestion}
         openQuestion={openQuestion}
         type="1"
       />
       <Question
         question="What chains do you support?"
-        answer="Ethereum; this is obviously migratable to any EVM-compatible chain, but we’re a small team and aren’t about to ruin the project trying to make everyone happy. That said, if you pay us, we’ll consider :)"
+        answer="Ethereum; this is obviously migratable to any EVM-compatible chain, but we're a small team and aren't about to ruin the project trying to make everyone happy. That said, if you pay us, we'll consider :)"
         setOpenQuestion={setOpenQuestion}
         openQuestion={openQuestion}
         type="2"
@@ -96,7 +96,7 @@ export const FAQ = (props: RouteComponentProps) => {
         type="3"
       />
       <Question
-        question="What is ‘season_0’?"
+        question="What is 'season_0'?"
         answer="This is just the first season of the fight club, there will be more seasons to come with rule updates made by community members who have received their Grim for participating."
         setOpenQuestion={setOpenQuestion}
         openQuestion={openQuestion}
@@ -111,7 +111,7 @@ export const FAQ = (props: RouteComponentProps) => {
       />
       <Question
         question="What are Grims?"
-        answer="Grims are special trainers for the NFT fight Club and are composable/customizable NFTs created using compose.art!"
+        answer="Grims are special trainers for the NFT fight Club and are composable NFTs created using compose.art!"
         setOpenQuestion={setOpenQuestion}
         openQuestion={openQuestion}
         type="6"
