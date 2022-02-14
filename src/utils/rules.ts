@@ -1,17 +1,17 @@
 export const rules = `
 
 ## Registration
-In order to participate in the fight club, users must register their NFTs from [**any of the collections supported by the fight club**](https://death.finance/season/0/collections). The collections supported by the fight club are subject to change, each subsequent season, based on input from the community.  
-&nbsp;  
-&nbsp;  
+In order to participate in the fight club, users must register their NFTs from [**any of the collections supported by the fight club**](https://death.finance/season/0/collections). The collections supported by the fight club are subject to change, each subsequent season, based on input from the community.
+&nbsp;
+&nbsp;
 
 ## Fighters
 
-&nbsp;  
+&nbsp;
 ### Stats
 
-Every fighter has six stats that they use to do battle with their enemy.  
-&nbsp;  
+Every fighter has six stats that they use to do battle with their enemy.
+&nbsp;
 
 | Name | Range | Purpose |
 | ----------- | ----------- |  ----------- |
@@ -26,10 +26,10 @@ Every fighter has six stats that they use to do battle with their enemy.
 ### Elements
 
 Fighters have two elements - those which are strong against opponent elements give fighters a boost.
-&nbsp;  
+&nbsp;
 
-| Id | Element | Strengths | Weaknesses | 
-| ----------- | ----------- |  ----------- |  ----------- |  
+| Id | Element | Strengths | Weaknesses |
+| ----------- | ----------- |  ----------- |  ----------- |
 | 0 | None | - | - |
 | 1 | Earth | Water | Fire, Light, Moon, Flower |
 | 2 | Fire | Earth | Water, Time, Shadow, Ice |
@@ -49,7 +49,7 @@ Fighters have two elements - those which are strong against opponent elements gi
 Fighter stats are deterministic and based on the rarity of their traits relative to their collection's traits.
 
     1. Each collection trait receives a score between 0001 - 9999 based on how many NFTs have that trait. The higher the value the rarer the trait.
-    
+
     2. NFT traits are ordered from highest to lowest.
 
     3. These scores are used to extract each fighter’s stats.
@@ -66,11 +66,11 @@ Fighter stats are deterministic and based on the rarity of their traits relative
 
        f. Element: Third rarest Trait (second two digits)
 
-&nbsp;  
-#### Example  
+&nbsp;
+#### Example
 
 Imagine an NFT with the following traits:
-    
+
     1. Earmuffs (0.5%)
 
     2. Sunglasses (55.25%)
@@ -79,11 +79,11 @@ Imagine an NFT with the following traits:
 
     4. Bowtie (70.4%)
 
-  
-&nbsp;  
+
+&nbsp;
 _Note: Each % is based on how many NFTs in the collection for this trait type have this specific trait._
 
-&nbsp;  
+&nbsp;
 This would translate into the following rareness scores:
 
     1. Earmuffs - 9950
@@ -94,8 +94,8 @@ This would translate into the following rareness scores:
 
     4. Bowtie - 2960
 
-  
-&nbsp;  
+
+&nbsp;
 Which would give the NFT the following stats:
 
     1. Special Attack: 99 (first two digits of rarest trait)
@@ -110,7 +110,7 @@ Which would give the NFT the following stats:
 
     6. Element: 75 (second two digits of third rarest trait)
 
-&nbsp;  
+&nbsp;
 After being normalized within the stats value ranges, the final stats would be:
 
     1. S-Attack: 15
@@ -125,37 +125,37 @@ After being normalized within the stats value ranges, the final stats would be:
 
     6. Element: 9
 
-&nbsp;  
+&nbsp;
 ## Matches
 
 Matches consist of a maximum of 10 bouts where the last fighter standing / fighter with the most health remaining is declared the winner.
 
-    - Each bout is an attempt by either fighter to deplete their opponent's defense or health.  
+    - Each bout is an attempt by either fighter to deplete their opponent's defense or health.
 
-    - The fighter with the lowest aggregate value for their special attack, defense, attack, and health attacks first.  
-    
-    - Fighters start off using their special attack to deplete their opponent's defense.  
+    - The fighter with the lowest aggregate value for their special attack, defense, attack, and health attacks first.
+
+    - Fighters start off using their special attack to deplete their opponent's defense.
     - After an opponent's defense is depleted, fighters use their attack to deplete their opponent's health.
 
-    - The amount of damage dealt by a fighter's special attack / attack is determined by a pseudorandom process that selects a number between 1 and that stat's value. 
+    - The amount of damage dealt by a fighter's special attack / attack is determined by a pseudorandom process that selects a number between 1 and that stat's value.
 
     - Elements / special elements can improve chances of doing more damage to opponents.
 
-&nbsp;  
-_Note: The pseudorandom process mentioned above is driven by crowdsourced randomness variable stored on the fight club smart contract._  
+&nbsp;
+_Note: The pseudorandom process mentioned above is driven by crowdsourced randomness variable stored on the fight club smart contract._
 
-&nbsp;  
+&nbsp;
 ### Counters
 
-Counters allow fighters to dodge and potentially deal damage to the attacking fighter.  
+Counters allow fighters to dodge and potentially deal damage to the attacking fighter.
 
-    When a fighter attacks using their special attack, it will either be:  
+    When a fighter attacks using their special attack, it will either be:
 
     - Strengthened by their special element and deal between 1 and 2x their special attack's value (with a maximum of 15 damage).
 
     - Weakened by their special element and allow the opponent to counter with up to the same amount of damage as their max special attack.
 
-&nbsp;  
+&nbsp;
 Consider the following bout:
 
     Fighter A has 15 Special Attack, 13 Defense, 15 Attack, 12 Health, Fire Special Element, No Element
@@ -170,64 +170,64 @@ Consider the following bout:
 
     - If B rolls 14, they receive no damage, but instead deal 1 damage (14-13) to A's defense, leaving A with 12 defense.
 
-&nbsp;  
-If A were to have no defense left in the previous scenario, then B would only have been able to dodge as **counters can only attack the same stat that they are countering**.  
-&nbsp;  
-_Note: The above applies in the same way for attack and health. As a result, elements can play a very important role in the outcome of games._  
+&nbsp;
+If A were to have no defense left in the previous scenario, then B would only have been able to dodge as **counters can only attack the same stat that they are countering**.
+&nbsp;
+_Note: The above applies in the same way for attack and health. As a result, elements can play a very important role in the outcome of games._
 
-&nbsp;  
+&nbsp;
 ### Critical Hits
 
-When a fighter hits a random number which is at the top of their range for their stat (or 2x in the case that their special element / element is strong against the opponent's), they stun their opponent so that their opponent gets skipped and they get to take another turn.  
+When a fighter hits a random number which is at the top of their range for their stat (or 2x in the case that their special element / element is strong against the opponent's), they stun their opponent so that their opponent gets skipped and they get to take another turn.
 
-&nbsp;  
+&nbsp;
 ### Ties
 
 In the case that after 10 bouts, both fighters are still standing, the one with more health left will be deemed the victor. So, if both fighters continuously dodged one-another for all 10 bouts, the one with the greater health stat would win by default.
 
-&nbsp;  
-In the case that both fighters are standing and their leftover health is the same, the outcome will be determined by random coin flip.  
+&nbsp;
+In the case that both fighters are standing and their leftover health is the same, the outcome will be determined by random coin flip.
 
-&nbsp;  
+&nbsp;
 ## Tournament
 
-**The top registered fighters will be drafted into a month-long elimination tournament.**
+**The top 128 registered fighters will be drafted into an elimination tournament.**
 
-&nbsp;  
+&nbsp;
 ### Structure
 
-&nbsp;  
+&nbsp;
 **Initial Brackets (Best of Three)**
 
 The tournament will consist of 2 64-fighter 'initial brackets' (zeta & theta) which will each advance until there are 8 fighters left in each. Each pair within the bracket will play a best of three to decide who advances and who is eliminated.
 
-&nbsp;  
+&nbsp;
 **Final Bracket (Best of Five)**
 
-The 8 winners from each of the 'initial brackets' will advance to the 16-fighter 'final bracket' (sigma) which will yield the final two fighters for the tournament. Each pair within the bracket will play a best of five to decide who advances and who is eliminated.  
+The 8 winners from each of the 'initial brackets' will advance to the 16-fighter 'final bracket' (sigma) which will yield the final two fighters for the tournament. Each pair within the bracket will play a best of five to decide who advances and who is eliminated.
 
-&nbsp;  
+&nbsp;
 **Final Match (Best of Seven)**
 
 The final pair will play best of seven to decide who wins the tournament; the winner will take home 5% of the total pooled ETH staked on fighters throughout the tournament's progression.
 
-&nbsp;  
+&nbsp;
 ### Schedule
 
 Before the tournament kicks off, the power levels for all participating fighters as well as the block numbers at which all matches occur will be decided and locked into the on-chain smart contract with a provenance hash. The smart contract will also provide a verification function for individuals to independently verify the outcomes of all tournament matches.
 
-&nbsp;  
-Every bracket will progress simultaneously with what are known as 'rounds' (e.g. going from 256 to 128 fighters or 128 to 64 fighters). Between rounds, there will be a verification period where observers are allowed to challenge the results of any tournament fight for the previous round followed by a staking period (explained below).
+&nbsp;
+Every bracket will progress simultaneously with what are known as 'rounds' (e.g. going from 128 to 64 fighters). Between rounds, there will be a verification period where observers are allowed to challenge the results of any tournament fight for the previous round followed by a staking period (explained below).
 
-&nbsp;  
+&nbsp;
 ### Chaos
 
 Every block with an even tens digit (e.g. 14194969), observers will be able to 'Add Chaos' to the smart contract to alter the outcome of subsequent fights. To ensure that there is no contention relating to when chaos was added and when a match occurred, we are barring matches from occurring on every block with an even tens digit. In this way, our source of randomness is locked in and past fights are able to be easily replayed and verified without worry of transaction ordering.
 
-&nbsp;  
+&nbsp;
 _Note: Contributors to contract chaos will receive tiered rewards for their participation at the end of the tournament_
 
-&nbsp;  
+&nbsp;
 ### Banned Fighters
 
 Fighters exhibiting exceptional power levels will be cited as doping and banned from participation in the tournament.
@@ -235,7 +235,7 @@ Fighters exhibiting exceptional power levels will be cited as doping and banned 
 
 const stakingRules = `
 
-&nbsp;  
+&nbsp;
 ### Staking
 
 Throughout the tournament, observers will be able to stake ETH on fighters to earn yield on their outcomes; staking occurs at the beginning of brackets as well as between bracket rounds. Observers may only stake ETH for one fighter at a time.

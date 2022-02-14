@@ -134,7 +134,7 @@ export const Home = (props: RouteComponentProps) => {
         {!season.isDev && mounted && (
             <>
               <Text fontWeight={900}>
-                Welcome to death.finance, the official NFT Fight Club. 
+                Welcome to death.finance, the official NFT Fight Club.
               </Text>
               <Text>
                 <br/>
@@ -173,7 +173,7 @@ export const Home = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        registration ends {moment().to(moment('2022-02-19', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment('2022-02-18', 'YYYY-MM-DD'))}
       </Text>
       <HStack marginTop={8} justify="center" spacing={4}>
         <Box>

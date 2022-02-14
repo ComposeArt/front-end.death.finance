@@ -17,12 +17,6 @@ import {
 import { RouteComponentProps } from "@reach/router";
 import { FaCheckCircle } from "react-icons/fa";
 
-import snowBeard from './images/eth-denver-snow-beard-prop.png';
-import denverMountains from './images/eth-denver-mountains.png';
-import skiHeadgear from './images/eth-denver-cap-goggles-prop.png';
-import skiCap from './images/eth-denver-cap-prop.png';
-import skiGoggles from './images/eth-denver-goggles-prop.png';
-
 import { PayloadContext } from "./utils/firebase";
 
 export const Grims = (props: RouteComponentProps) => {
@@ -88,7 +82,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={snowBeard}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/mouth/eth-denver-snow-beard-prop.png'}
                       opacity={user.discord ? 1 : 0.5}
                     />
                     {user.discord && (
@@ -120,7 +114,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={denverMountains}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/backgrounds/eth-denver-mountains.png'}
                       opacity={user.registered > 0 ? 1 : 0.5}
                     />
                     {user.registered > 0 && (
@@ -152,7 +146,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={skiCap}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-cap-prop.png'}
                       opacity={user.chaos > 0 ? 1 : 0.5}
                     />
                     {user.chaos > 0 && (
@@ -183,7 +177,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={skiGoggles}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/eyes/eth-denver-goggles-prop.png'}
                       opacity={0.5}
                     />
                   </Center>
@@ -206,16 +200,19 @@ export const Grims = (props: RouteComponentProps) => {
                     borderColor={lineColor}
                     marginBottom={4}
                   >
-                    <Text fontSize={32} opacity={0.5}>
-                      ?
-                    </Text>
+                    <Image
+                      boxSize="80px"
+                      borderRadius="80px"
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-winner-horn-prop.png'}
+                      opacity={0.5}
+                    />
                   </Center>
                   <Text fontSize={12} textAlign="center" opacity={0.5}>
                     1st Place
                     <br/>Tournament
                   </Text>
                   <Text fontSize={10} textAlign="center" opacity={0.5}>
-                    ??????
+                    Gold Horn
                   </Text>
                 </VStack>
               </WrapItem>
