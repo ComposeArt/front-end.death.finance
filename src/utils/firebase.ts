@@ -490,7 +490,7 @@ export const streamChain = (callback: any) => {
 
 export const ownerFightersQuery = (address: string) => query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
 export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
-export const allFightersQuery = query(collection(db, `nft-death-games/season_0/fighters`));
+export const allFightersQuery = query(collection(db, `nft-death-games/season_0/fighters`), where("is_invalid", "==", false), where("is_doping", "==", false));
 
 
 
