@@ -52,7 +52,7 @@ export const Matches = (props: any) => {
           onChange={(e) => search(e.target.value)}
         />
       </InputGroup>
-      {!props.matches.length && (
+      {!props.matches.length && !props.loading && (
         <Text marginTop={8} fontSize={12} color="red.500">
           no matches currently scheduled
         </Text>

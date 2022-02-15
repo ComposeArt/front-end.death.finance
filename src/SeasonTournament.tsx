@@ -488,6 +488,7 @@ export const SeasonTournament = (props: any) => {
                 <Th isNumeric>wins</Th>
                 <Th isNumeric>losses</Th>
                 <Th isNumeric>kos</Th>
+                <Th isNumeric>perfect</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -498,6 +499,7 @@ export const SeasonTournament = (props: any) => {
                   matches: 0,
                   won: 0,
                   knockedOutOpponent: 0,
+                  perfectedOpponent: 0,
                 };
 
                 return (
@@ -523,6 +525,7 @@ export const SeasonTournament = (props: any) => {
                     <Td isNumeric>{stats.won}</Td>
                     <Td isNumeric>{stats.matches - stats.won}</Td>
                     <Td isNumeric>{stats.knockedOutOpponent}</Td>
+                    <Td isNumeric>{stats.perfectedOpponent}</Td>
                   </Tr>
                 );
               })}
