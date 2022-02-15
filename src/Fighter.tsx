@@ -349,18 +349,18 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
           </>
         )}
       </Box>
-      {fighter.bracket && (
+      {!_.isNil(fighter.ranking) && (
         <Text
           fontSize={{ base: 10, md: 12 }}
           opacity={0.5}
-          onClick={() => {navigate(`/season/0/tournament/${fighter.bracket}?match=${fighter.next_match}`)}}
+          onClick={() => {navigate(`/season/0/tournament/preseason`)}}
           _hover={{
             cursor: 'pointer',
             opacity: 1,
             textDecoration: "underline"
           }}
         >
-          👑 {parseInt(fighter.rank, 10) + 1} ({fighter.bracket})
+          Ranked #{fighter.ranking + 1}
         </Text>
       )}
       <Box

@@ -235,7 +235,7 @@ export const ProfileFighters = (props: any) => {
         ...p,
       };
     })
-    .sortBy([(p: any) => _.get(p, 'fighter.rank'), (p: any) => _.get(p, 'fighter.timestamp')])
+    .sortBy([(p: any) => _.get(p, 'fighter.ranking'), (p: any) => _.get(p, 'fighter.timestamp')])
     .value();
 
   const transferredFighters = _.chain(fighters)
@@ -327,18 +327,18 @@ export const ProfileFighters = (props: any) => {
                     </Box>
                   )}
                 </Box>
-                {fighter.bracket && (
+                {!_.isNil(fighter.ranking) && (
                   <Text
                     fontSize={{ base: 10, md: 12 }}
                     opacity={0.5}
-                    onClick={() => {navigate(`/season/0/tournament/${fighter.bracket}?match=${fighter.next_match}`)}}
+                    onClick={() => {navigate(`/season/0/tournament/preseason`)}}
                     _hover={{
                       cursor: 'pointer',
                       opacity: 1,
                       textDecoration: "underline"
                     }}
                   >
-                    👑 {parseInt(fighter.rank, 10) + 1} ({fighter.bracket})
+                    Ranked #{fighter.ranking + 1}
                   </Text>
                 )}
                 <Box
