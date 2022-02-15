@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import _ from "lodash";
 import moment from "moment";
 import {
@@ -12,9 +12,12 @@ import {
   Wrap,
   WrapItem,
   Link,
+  useToast,
+  IconButton,
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
-import { RiSwordFill } from "react-icons/ri"
+import { RiSwordFill, RiCloseFill } from "react-icons/ri";
+import { FaDiscord } from "react-icons/fa";
 import { useQueryParam, StringParam } from 'use-query-params';
 
 import { LinkButton } from "./LinkButton";
@@ -25,6 +28,8 @@ import fcLight from './images/fight-club-logo-light.png';
 import { PayloadContext, getRandomPlayer, getLatestFighters, remoteConnectDiscordUser } from "./utils/firebase";
 
 export const Home = (props: RouteComponentProps) => {
+  const toast = useToast();
+
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const opacityColor = useColorModeValue('gray.800', 'white');
   const logoType = useColorModeValue(fcDark, fcLight);
@@ -51,6 +56,52 @@ export const Home = (props: RouteComponentProps) => {
   useEffect(() => {
     if (token && account) {
       remoteConnectDiscordUser(token, account);
+
+      toast({
+        position: 'top-right',
+        render: () => {
+          return (
+            <Box p={3} bg='green.500' justify="center" align="center" borderRadius={8}>
+              <HStack>
+                <IconButton
+                  size="md"
+                  fontSize="lg"
+                  variant="ghost"
+                  color="current"
+                  onClick={()=> window.open("https://discord.gg/mTZAV2cwnY", "_blank")}
+                  icon={<FaDiscord />}
+                  aria-label={`Discord`}
+                />
+                <Text fontSize={12}>
+                  Discord Connection Successful!
+                  <br/>
+                  <Link
+                    fontWeight={900}
+                    color='white.500'
+                    href='https://discord.gg/mTZAV2cwnY'
+                    isExternal
+                    textDecoration={"underline"}
+                  >
+                    Remember to Join The Discord Server
+                  </Link>
+                </Text>
+                <IconButton
+                  size="md"
+                  fontSize="lg"
+                  variant="ghost"
+                  color="current"
+                  onClick={() => { toast.closeAll() }}
+                  icon={<RiCloseFill />}
+                  aria-label={`Close`}
+                />
+              </HStack>
+            </Box>
+          )
+        },
+        status: 'success',
+        isClosable: true,
+        duration: null,
+      });
     }
   }, [token, account]);
 
