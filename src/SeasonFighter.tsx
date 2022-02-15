@@ -14,10 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
 import { FaRandom } from "react-icons/fa";
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { NavLink } from "./NavLink";
 import { FighterPortrait, FighterStats } from './Fighter';
-import { PayloadContext, getFighter, getFighterMatches } from "./utils/firebase";
+import { PayloadContext, getFighter, fighter1MatchesQuery, fighter2MatchesQuery } from "./utils/firebase";
 import { PowerDistribution } from "./PowerDistribution";
 import { Matches } from './Matches';
 
@@ -272,9 +273,14 @@ export const SeasonFighterMatches = (props: any) => {
   const [loading, setLoading]: any = useState(true);
   const [fighter, setFighter]: any = useState({});
   const [errorLoading, setErrorLoading]: any = useState(false);
-  const [matches, setMatches]: any = useState([]);
 
   const { account } = useContext(PayloadContext);
+
+  const [match1Docs, matches1Loading, matches1Error] = useCollection(fighter1MatchesQuery(fighterId));
+  const matches1 = match1Docs ? match1Docs?.docs.map((d: any) => d.data()) : [];
+
+  const [match2Docs, matches2Loading, matches2Error] = useCollection(fighter2MatchesQuery(fighterId));
+  const matches2 = match2Docs ? match2Docs?.docs.map((d: any) => d.data()) : [];
 
   useEffect(() => {
     (async function getInitialData() {
@@ -285,18 +291,10 @@ export const SeasonFighterMatches = (props: any) => {
             const result = await getFighter(fighterId);
 
             if (result) {
-              const fighterMatches = await getFighterMatches(fighterId);
-              const orderedMatches = _.orderBy(fighterMatches, ['block'], ['desc']);
-
-              setMatches(orderedMatches);
               setFighter(result);
             } else {
               navigate('/season/0/fighters');
             }
-          } else {
-            const fighterMatches = await getFighterMatches(fighterId);
-            const orderedMatches = _.orderBy(fighterMatches, ['block'], ['desc']);
-            setMatches(orderedMatches);
           }
         }
       } catch (error) {
@@ -308,16 +306,17 @@ export const SeasonFighterMatches = (props: any) => {
   }, [fighterId, stateFighter]);
 
   useEffect(() => {
-    if (errorLoading) {
+    if (errorLoading || matches1Error || matches2Error) {
+      console.log(matches1Error, matches2Error);
       setErrorLoading(false);
       toast({
-        title: 'failed to load fighter',
+        title: 'failed to load fighter matches',
         status: 'error',
         isClosable: true,
         duration: 3000,
       });
     }
-  }, [errorLoading, toast]);
+  }, [errorLoading, matches1Error, matches2Error, toast]);
 
   useEffect(() => {
     if (_.isEmpty(stateFighter)) {
@@ -334,10 +333,12 @@ export const SeasonFighterMatches = (props: any) => {
     ...stateFighter,
   };
 
+  const matches = _.orderBy([...matches1, ...matches2], ["block"], ["desc"]);
+
   return (
     <Container maxW='container.lg' centerContent>
       <FighterHeader fighter={formatFighter} account={account} />
-      <Matches matches={matches} loading={loading} />
+      <Matches matches={matches} loading={matches1Loading || matches2Loading} />
     </Container>
   )
 };

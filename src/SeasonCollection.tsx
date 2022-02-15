@@ -20,8 +20,9 @@ import {
 } from "@chakra-ui/react";
 import { navigate } from "@reach/router";
 import { FaSearch } from "react-icons/fa";
+import { useCollection } from 'react-firebase-hooks/firestore';
 
-import { PayloadContext, getCollectionFighters, getCollectionMatches } from "./utils/firebase";
+import { PayloadContext, getCollectionFighters, collection1MatchesQuery, collection2MatchesQuery } from "./utils/firebase";
 import { NavLink } from "./NavLink";
 import { PowerDistribution } from "./PowerDistribution";
 import { FighterPortrait } from './Fighter';
@@ -387,40 +388,22 @@ export const SeasonCollectionMatches = (props: any) => {
 
   const { collections } = useContext(PayloadContext);
 
-  const [loading, setLoading]: any = useState(true);
-  const [matches, setMatches]: any = useState([]);
-  const [errorLoading, setErrorLoading]: any = useState(false);
-
   const collectionId = props.id;
   const collection = _.find(collections, (c:any) => c.id === collectionId) || {};
+
+  const [match1Docs, matches1Loading, matches1Error] = useCollection(collection1MatchesQuery(collectionId));
+  const matches1 = match1Docs ? match1Docs?.docs.map((d: any) => d.data()) : [];
+
+  const [match2Docs, matches2Loading, matches2Error] = useCollection(collection2MatchesQuery(collectionId));
+  const matches2 = match2Docs ? match2Docs?.docs.map((d: any) => d.data()) : [];
 
   useEffect(() => {
     document.title = `Matches | ${collectionId}`;
   }, [collectionId]);
 
   useEffect(() => {
-    (async function getInitialData() {
-      if (!_.isEmpty(collections) && _.find(collections, (c:any) => c.id === collectionId)) {
-        setLoading(true);
-        try {
-          const allMatches = await getCollectionMatches(collectionId);
-          const orderedMatches = _.orderBy(allMatches, ['block'], ['desc']);
-
-          setMatches(orderedMatches);
-        } catch (error) {
-          console.log(error);
-          setErrorLoading(true);
-        }
-        setLoading(false);
-      } else if (!_.isEmpty(collections)) {
-        navigate('/season/0/collections');
-      }
-    })();
-  }, [collectionId, collections]);
-
-  useEffect(() => {
-    if (errorLoading) {
-      setErrorLoading(false);
+    if (matches1Error || matches2Error) {
+      console.log(matches1Error, matches2Error);
       toast({
         title: 'failed to load matches',
         status: 'error',
@@ -428,12 +411,14 @@ export const SeasonCollectionMatches = (props: any) => {
         duration: 3000,
       });
     }
-  }, [errorLoading, toast]);
+  }, [matches1Error, matches2Error, toast]);
+
+  const matches = _.orderBy([...matches1, ...matches2], ["block"], ["desc"]);
 
   return (
     <Container maxW='container.lg' centerContent>
       <CollectionHeader collection={collection} />
-      <Matches matches={matches} loading={loading} />
+      <Matches matches={matches} loading={matches1Loading || matches2Loading} />
     </Container>
   );
 };

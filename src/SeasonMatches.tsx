@@ -4,42 +4,26 @@ import {
   Container,
   useToast,
 } from "@chakra-ui/react";
+import { useCollection } from 'react-firebase-hooks/firestore';
 
 import { SeasonHeader } from "./SeasonHeader";
 
-import { getAllMatches } from "./utils/firebase";
+import { allMatchesQuery } from "./utils/firebase";
 import { Matches } from './Matches';
 
 export const SeasonMatches = (props: any) => {
   const toast = useToast();
 
-  const [loading, setLoading]: any = useState(true);
-  const [matches, setMatches]: any = useState([]);
-  const [errorLoading, setErrorLoading]: any = useState(false);
+  const [matchDocs, matchesLoading, matchesError] = useCollection(allMatchesQuery);
+  const matches = matchDocs ? matchDocs?.docs.map((d: any) => d.data()) : [];
 
   useEffect(() => {
     document.title = 'Matches | Season 0 | NFT Fight Club';
   }, []);
 
   useEffect(() => {
-    (async function getInitialData() {
-      setLoading(true);
-      try {
-        const allMatches = await getAllMatches();
-        const orderedMatches = _.orderBy(allMatches, ['block'], ['desc']);
-
-        setMatches(orderedMatches);
-      } catch (error) {
-        console.log(error);
-        setErrorLoading(true);
-      }
-      setLoading(false);
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (errorLoading) {
-      setErrorLoading(false);
+    if (matchesError) {
+      console.log(matchesError);
       toast({
         title: 'failed to load matches',
         status: 'error',
@@ -47,12 +31,12 @@ export const SeasonMatches = (props: any) => {
         duration: 3000,
       });
     }
-  }, [errorLoading, toast]);
+  }, [matchesError, toast]);
 
   return (
     <Container maxW='container.lg' centerContent>
       <SeasonHeader />
-      <Matches matches={matches} loading={loading} />
+      <Matches matches={matches} loading={matchesLoading} />
     </Container>
   );
 };

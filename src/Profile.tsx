@@ -23,7 +23,7 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
 import { NavLink } from "./NavLink";
 import { ListCollections } from "./ListCollections";
-import { PayloadContext, fetchAssets, remoteRegisterFighter, getOwnerMatches, ownerFightersQuery, userQuery } from "./utils/firebase";
+import { PayloadContext, fetchAssets, remoteRegisterFighter, owner1MatchesQuery, owner2MatchesQuery, ownerFightersQuery, userQuery } from "./utils/firebase";
 import { Matches } from './Matches';
 
 const spin = keyframes`
@@ -403,33 +403,16 @@ export const ProfileMatches = (props: any) => {
 
   const address = props.address;
 
-  const [loading, setLoading]: any = useState(true);
-  const [matches, setMatches]: any = useState([]);
-  const [errorLoading, setErrorLoading]: any = useState(false);
+  const [match1Docs, matches1Loading, matches1Error] = useCollection(owner1MatchesQuery(address));
+  const matches1 = match1Docs ? match1Docs?.docs.map((d: any) => d.data()) : [];
+
+  const [match2Docs, matches2Loading, matches2Error] = useCollection(owner2MatchesQuery(address));
+  const matches2 = match2Docs ? match2Docs?.docs.map((d: any) => d.data()) : [];
 
   useEffect(() => {
-    (async function getInitialData() {
-      if (address) {
-        document.title = `Matches | ${address}`;
+    if (matches2Error || matches1Error) {
+      console.log(matches1Error, matches2Error);
 
-        setLoading(true);
-        try {
-          const allMatches = await getOwnerMatches(address);
-          const orderedMatches = _.orderBy(allMatches, ['block'], ['desc']);
-
-          setMatches(orderedMatches);
-        } catch (error) {
-          console.log(error);
-          setErrorLoading(true);
-        }
-        setLoading(false);
-      }
-    })();
-  }, [address]);
-
-  useEffect(() => {
-    if (errorLoading) {
-      setErrorLoading(false);
       toast({
         title: 'failed to load matches',
         status: 'error',
@@ -437,20 +420,22 @@ export const ProfileMatches = (props: any) => {
         duration: 3000,
       });
     }
-  }, [errorLoading, toast]);
+  }, [matches1Error, matches2Error, toast]);
+
+  const matches = _.orderBy([...matches1, ...matches2], ["block"], ["desc"]);
 
   return (
     <Container maxW='container.lg' centerContent>
       <ProfileHeader
         address={address}
         owner={address}
-        loading={loading}
+        loading={matches1Loading || matches2Loading}
         account={account}
         user={user}
         season={season}
         loadingText="Loading matches..."
       />
-      <Matches matches={matches} loading={loading} />
+      <Matches matches={matches} loading={matches1Loading || matches2Loading} />
     </Container>
   );
 };

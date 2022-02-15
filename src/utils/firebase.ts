@@ -488,9 +488,17 @@ export const streamChain = (callback: any) => {
   });
 };
 
-export const ownerFightersQuery = (address: string) => query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
-export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
 export const allFightersQuery = query(collection(db, `nft-death-games/season_0/fighters`), where("is_invalid", "==", false), where("is_doping", "==", false));
+export const ownerFightersQuery = (address: string) => query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
+export const collectionFightersQuery = (collectionId: string) =>  query(collection(db, `nft-death-games/season_0/fighters`), where("is_invalid", "==", false), where("is_doping", "==", false), where("collection", "==", collectionId));
 
+export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
 
+export const allMatchesQuery = query(collection(db, `nft-death-games/season_0/matches`), orderBy("block", "desc"), limit(100));
+export const collection1MatchesQuery = (collectionId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("collection1", "==", collectionId), orderBy("block", "desc"), limit(50));
+export const collection2MatchesQuery = (collectionId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("collection2", "==", collectionId), orderBy("block", "desc"), limit(50));
+export const fighter1MatchesQuery = (fighterId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("fighter1", "==", fighterId), orderBy("block", "desc"), limit(50));
+export const fighter2MatchesQuery = (fighterId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("fighter2", "==", fighterId), orderBy("block", "desc"), limit(50));
+export const owner1MatchesQuery = (ownerId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("owner1", "==", ownerId), orderBy("block", "desc"), limit(50));
+export const owner2MatchesQuery = (ownerId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("owner2", "==", ownerId), orderBy("block", "desc"), limit(50));
 
