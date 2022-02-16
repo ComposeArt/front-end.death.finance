@@ -137,6 +137,14 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
         });
 
         response.status(200).send(index);
+      } else {
+        index = setMetas(index, {
+          title: 'NFT Fight Club',
+          description: 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
+          image: `${baseUrl}/meta-logo.png`,
+        });
+
+        response.status(200).send(index);
       }
     } else {
       index = setMetas(index, {

@@ -224,62 +224,6 @@ export const getAllMatches = async () => {
   return matches;
 };
 
-export const getFighterMatches = async (id: any) => {
-  const matches: any = [];
-
-  const ref = collection(db, "nft-death-games/season_0/matches");
-  const query1 = query(ref, where("fighter1", "==", id))
-  const query2 = query(ref, where("fighter2", "==", id))
-
-  const snapshot1 = await getDocs(query1);
-  const snapshot2 = await getDocs(query2);
-
-  snapshot1.forEach((docSnap) => {
-    matches.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  snapshot2.forEach((docSnap) => {
-    matches.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  return matches;
-};
-
-export const getOwnerMatches = async (id: any) => {
-  const matches: any = [];
-
-  const ref = collection(db, "nft-death-games/season_0/matches");
-  const query1 = query(ref, where("owner1", "==", id))
-  const query2 = query(ref, where("owner2", "==", id))
-
-  const snapshot1 = await getDocs(query1);
-  const snapshot2 = await getDocs(query2);
-
-  snapshot1.forEach((docSnap) => {
-    matches.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  snapshot2.forEach((docSnap) => {
-    if (!_.find(matches, (f) => f.id === docSnap.id)) {
-      matches.push({
-        id: docSnap.id,
-        ...docSnap.data(),
-      });
-    }
-  });
-
-  return matches;
-};
-
 export const getBracketMatches = async (id: any) => {
   const ref1 = collection(db, `nft-death-games/season_0/tournament/${id}/matches`);
 
