@@ -1,14 +1,10 @@
 export const rules = `
-
+&nbsp;
 ## Registration
 In order to participate in the fight club, users must register their NFTs from [**any of the collections supported by the fight club**](https://death.finance/season/0/collections). The collections supported by the fight club are subject to change, each subsequent season, based on input from the community.
 &nbsp;
-&nbsp;
 
-## Fighters
-
-&nbsp;
-### Stats
+### Fighter Stats
 
 Every fighter has six stats that they use to do battle with their enemy.
 &nbsp;

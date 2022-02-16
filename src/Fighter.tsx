@@ -276,6 +276,7 @@ export const FighterStats = ({ fighter, color, big }: any) => {
 export const FighterPortrait = ({ fighter, winner, big }: any) => {
   const LineColor = useColorModeValue('gray.500', 'white.500');
   const winnerColor = useColorModeValue('gray.800', 'white');
+  const useCrownSize = useBreakpointValue({ base: 34, md: 59 });
 
   const { account } = useContext(PayloadContext);
 
@@ -285,7 +286,7 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
     <VStack>
       <Box position="relative" marginBottom={4}>
         {winner && (
-          <Box position="absolute" left="59px" top="-42px">
+          <Box position="absolute" left={useCrownSize} top="-42px">
             <FaCrown fontSize={32} />
           </Box>
         )}
@@ -386,11 +387,13 @@ export const FighterPortrait = ({ fighter, winner, big }: any) => {
 };
 
 export const Fighter = ({ fighter, color = 'blue', winner = false }: any) => {
+  const useCrownSize = useBreakpointValue({ base: 28, md: 32 });
+
   return (
     <VStack>
       {winner && (
         <Box position="absolute" marginTop={-10}>
-          <FaCrown fontSize={32} />
+          <FaCrown fontSize={useCrownSize} />
         </Box>
       )}
       <VStack spacing={2}>

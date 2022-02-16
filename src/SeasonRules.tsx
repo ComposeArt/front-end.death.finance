@@ -5,6 +5,7 @@ import ChakraUIRenderer from 'chakra-ui-markdown-renderer';
 import {
   Container,
   Box,
+  VStack,
 } from "@chakra-ui/react";
 
 import { rules } from './utils/rules';
@@ -16,11 +17,13 @@ export const SeasonRules = (props: any) => {
   }, []);
 
   return (
-    <Container maxW='container.md' centerContent>
+    <Container maxW='container.md' centerContent padding={4}>
       <SeasonHeader />
-      <Box marginTop={12}>
-        <ReactMarkdown components={ChakraUIRenderer()} children={rules} remarkPlugins={[remarkGfm]} />
-      </Box>
+      <ReactMarkdown
+        components={ChakraUIRenderer()}
+        children={rules}
+        remarkPlugins={[remarkGfm]}
+      />
     </Container>
   );
 };
