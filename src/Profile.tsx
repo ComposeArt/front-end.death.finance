@@ -39,7 +39,7 @@ const ProfileHeader = (props: any) => {
   const user = userDoc?.data() || {};
 
   const formatAddress = props.address ? `${props.address.slice(0, 6)}...${props.address.slice(props.address.length - 4, props.address.length)}` : '-';
-  const username = user.discord ? user.discord.username : (props.owner || props.address);
+  const username = user.discord ? user.discord.username : (user.username || props.owner || props.address);
 
   return (
     <>

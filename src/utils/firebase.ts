@@ -209,21 +209,6 @@ export const getCollections = async () => {
   return collections;
 };
 
-export const getAllMatches = async () => {
-  const matches: any = [];
-
-  const querySnapshot = await getDocs(collection(db, "nft-death-games/season_0/matches"));
-
-  querySnapshot.forEach((docSnap) => {
-    matches.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  return matches;
-};
-
 export const getBracketMatches = async (id: any) => {
   const ref1 = collection(db, `nft-death-games/season_0/tournament/${id}/matches`);
 
@@ -236,36 +221,6 @@ export const getBracketMatches = async (id: any) => {
 
   return matches;
 };
-
-export const getCollectionMatches = async (id: any) => {
-  const matches: any = [];
-
-  const ref = collection(db, "nft-death-games/season_0/matches");
-  const query1 = query(ref, where("collection1", "==", id))
-  const query2 = query(ref, where("collection2", "==", id))
-
-  const snapshot1 = await getDocs(query1);
-  const snapshot2 = await getDocs(query2);
-
-  snapshot1.forEach((docSnap) => {
-    matches.push({
-      id: docSnap.id,
-      ...docSnap.data(),
-    });
-  });
-
-  snapshot2.forEach((docSnap) => {
-    if (!_.find(matches, (f) => f.id === docSnap.id)) {
-      matches.push({
-        id: docSnap.id,
-        ...docSnap.data(),
-      });
-    }
-  });
-
-  return matches;
-};
-
 
 export const getLatestFighters = async () => {
   const fighters: any = [];
@@ -437,6 +392,7 @@ export const ownerFightersQuery = (address: string) => query(collection(db, `nft
 export const collectionFightersQuery = (collectionId: string) =>  query(collection(db, `nft-death-games/season_0/fighters`), where("is_invalid", "==", false), where("is_doping", "==", false), where("collection", "==", collectionId));
 
 export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
+export const allUsersQuery = query(collection(db, `nft-death-games/season_0/users`));
 
 export const allMatchesQuery = query(collection(db, `nft-death-games/season_0/matches`), orderBy("block", "desc"), limit(100));
 export const collection1MatchesQuery = (collectionId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("collection1", "==", collectionId), orderBy("block", "desc"), limit(50));

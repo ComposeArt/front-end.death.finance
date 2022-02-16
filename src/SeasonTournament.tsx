@@ -34,9 +34,10 @@ import {
 import { navigate } from "@reach/router";
 import { useQueryParam, StringParam } from 'use-query-params';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { FaDiscord } from "react-icons/fa";
 
 import logoSmall from './images/logo-small.png';
-import { PayloadContext, getBracketMatches, getBracketFights, allFightersQuery } from "./utils/firebase";
+import { PayloadContext, getBracketMatches, getBracketFights, allFightersQuery, allUsersQuery } from "./utils/firebase";
 import { SeasonHeader } from "./SeasonHeader";
 import { NavLink } from "./NavLink";
 
@@ -130,7 +131,20 @@ export const SeasonTournament = (props: any) => {
   const { account } = useContext(PayloadContext);
 
   const [fighterDocs, fightersLoading, fightersError] = useCollection(allFightersQuery);
-  const fighters = fighterDocs?.docs.map((d: any) => d.data()).sort(compareFighters);
+  const [userDocs, userLoading, userError] = useCollection(allUsersQuery);
+  const users = userDocs?.docs.map((d: any) => d.data()) || [];
+
+  const fighters = fighterDocs?.docs.map((d: any) => {
+    const data = d.data();
+    const user = _.find(users, (u: any) => u.address === data.owner) || {};
+    const username = _.get(user, 'discord.username') || _.get(user, 'username');
+
+    return {
+      ...data,
+      username: username || data.owner,
+      connected: !!user.discord,
+    };
+  }).sort(compareFighters);
 
   useEffect(() => {
     document.title = `${bracket} | Tournament | Season 0 | NFT Fight Club`;
@@ -494,7 +508,7 @@ export const SeasonTournament = (props: any) => {
             <Tbody>
               {fighters?.map((f: any, i: any) => {
                 const name = `${f.collection} #${_.truncate(f.player.token_id, { length: 7 })}`;
-                const owner = `${f.owner.slice(0, 6)}...${f.owner.slice(f.owner.length - 4, f.owner.length)}`;
+                const username = f.username.length > 16 ? `${f.username.slice(0, 6)}...${f.username.slice(f.username.length - 4, f.username.length)}` : f.username;
                 const stats = f.stats || {
                   matches: 0,
                   won: 0,
@@ -518,9 +532,12 @@ export const SeasonTournament = (props: any) => {
                       </HStack>
                     </Td>
                     <Td>
-                      <NavLink to={`/profile/${f.owner}`}>
-                        {owner}
-                      </NavLink>
+                      <HStack spacing={2}>
+                        {f.connected && (<FaDiscord />)}
+                        <NavLink to={`/profile/${f.owner}`}>
+                          {username}
+                        </NavLink>
+                      </HStack>
                     </Td>
                     <Td isNumeric>{stats.won}</Td>
                     <Td isNumeric>{stats.matches - stats.won}</Td>
