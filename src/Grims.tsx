@@ -42,20 +42,11 @@ export const Grims = (props: RouteComponentProps) => {
       </Heading>
       <Box width="80%">
         <Text textAlign="left" fontSize={12} marginTop={8} marginBottom={4}>
-          By participating in death.finance you will earn super rare prop drops for the future Grims NFT Personas!
+          By participating in death.finance you will earn super rare prop drops for the future Grim PFP NFTs!
           <br/><br/>
-          Don’t know what a prop drop or a persona is?
+          These NFTs allow holders to stake them in future seasons to help train their other NFT Fighters.
           <br/><br/>
-          Visit{' '}
-          <Link
-            fontWeight={900}
-            color='teal.500'
-            href='https://compose.art'
-            isExternal
-          >
-            compose.art
-          </Link>
-          {' '}to learn more about composable and customizable NFTs!
+          Holders will also be able to dictate which future collections are included in the Fight Club.
         </Text>
       </Box>
       {season.isDev && mounted && (
@@ -82,7 +73,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/mouth/eth-denver-snow-beard-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/mouth/eth-denver-snow-beard-small.png'}
                       opacity={user.discord ? 1 : 0.5}
                     />
                     {user.discord && (
@@ -114,7 +105,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/backgrounds/eth-denver-mountains.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/backgrounds/eth-denver-mountains-small.png'}
                       opacity={user.registered > 0 ? 1 : 0.5}
                     />
                     {user.registered > 0 && (
@@ -146,7 +137,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-cap-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-cap-small.png'}
                       opacity={user.chaos > 0 ? 1 : 0.5}
                     />
                     {user.chaos > 0 && (
@@ -177,7 +168,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/eyes/eth-denver-goggles-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/eyes/eth-denver-goggles-small.png'}
                       opacity={0.5}
                     />
                   </Center>
@@ -206,7 +197,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-bronze-horn-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-bronze-horn-small.png'}
                       opacity={0.5}
                     />
                   </Center>
@@ -232,7 +223,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-silver-horn-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-silver-horn-small.png'}
                       opacity={0.5}
                     />
                   </Center>
@@ -258,7 +249,7 @@ export const Grims = (props: RouteComponentProps) => {
                     <Image
                       boxSize="80px"
                       borderRadius="80px"
-                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-winner-horn-prop.png'}
+                      src={'https://storage.googleapis.com/composeart-f9a7a.appspot.com/demo/grims/head/eth-denver-winner-horn-small.png'}
                       opacity={0.5}
                     />
                   </Center>

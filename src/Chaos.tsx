@@ -7,19 +7,13 @@ import {
   Heading,
   Container,
   Text,
-  useColorModeValue,
   VStack,
   Button,
   Box,
   InputGroup,
   InputLeftAddon,
   Input,
-  Progress,
-  Wrap,
-  WrapItem,
-  Center,
   useToast,
-  Link,
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 
@@ -33,7 +27,6 @@ const contract = new Contract(contractAddress, simpleContractInterface);
 
 export const Chaos = (props: RouteComponentProps) => {
   const toast = useToast();
-  const lineColor = useColorModeValue('gray.500', 'white.500');
 
   useEffect(() => {
     document.title = 'Chaos | NFT Fight Club';
@@ -44,7 +37,6 @@ export const Chaos = (props: RouteComponentProps) => {
 
   const [loading, setLoading]: any = useState(false);
   const [userRandomness, setUserRandomness]: any = useState('');
-  const [userCount, setUserCount]: any = useState(1);
 
   const blockBad = _.floor(parseInt(blockNumber, 10) / 10 % 2) !== 0;
 
@@ -65,7 +57,6 @@ export const Chaos = (props: RouteComponentProps) => {
     if (state.status === "Success") {
       setLoading(false);
       setUserRandomness('');
-      // TODO update server to update user stats and get how many times.
     }
   }, [state, toast]);
 
@@ -125,7 +116,7 @@ export const Chaos = (props: RouteComponentProps) => {
           />
         </InputGroup>
         <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
-          Can only run on blocks that have an even 2 digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.
+          Can only run on blocks that have an even 2nd digit i.e. (0 - 9, 20 - 29, 40 - 49) etc.
           <br/><br/>
           {`Only positive whole numbers > 2`}
         </Text>
@@ -151,7 +142,7 @@ export const Chaos = (props: RouteComponentProps) => {
         <Text textAlign="left" fontSize={12} marginTop={8} marginBottom={4}>
           Chaos allows the matches to use unique randomness to prevent parties knowing the outcome of the fight.
           <br/><br/>
-          By adding chaos to the fights, you can earn super rare prop drops for the future Grim personas!
+          By adding chaos to the fights, you can earn super rare prop drops for the future Grim PFP NFTs.
           <br/><br/>
           <NavLink to='/grims'>
             More rewards await!

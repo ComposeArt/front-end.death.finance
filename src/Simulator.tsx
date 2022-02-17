@@ -365,7 +365,7 @@ export const Simulator = (props: RouteComponentProps) => {
         {blockNumber}
       </Text>
       <Text width="320px" textAlign="center" marginTop={2} fontSize={10} color="red.500">
-        Can only run on blocks that have an odd 2 digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
+        Can only run on blocks that have an odd 2nd digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
       </Text>
       {(!account || chain !== 'Goerli') && (
         <Text marginTop={4} textAlign="center" color="red.500" fontSize={12}>
