@@ -17,7 +17,7 @@ export const SeasonRules = (props: any) => {
   }, []);
 
   return (
-    <Container maxW='container.md' centerContent padding={4}>
+    <Container maxW='container.md' centerContent paddingLeft={4} paddingRight={4}>
       <SeasonHeader />
       <ReactMarkdown
         components={ChakraUIRenderer()}

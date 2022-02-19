@@ -18,7 +18,6 @@ import { Header } from "./Header";
 import { Home } from "./Home";
 import { FAQ } from "./FAQ";
 import { Chaos } from "./Chaos";
-import { Grims } from "./Grims";
 import { Rewards } from "./Rewards";
 import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
@@ -131,7 +130,7 @@ export const App = () => (
           <ProfileFighters path="/profile" />
           <ProfileFighters path="/profile/:address" />
           <ProfileMatches path="/profile/:address/matches" />
-          <SeasonRules path="/season/0" />
+          <SeasonRules path="/season/0/rules" />
           <SeasonFighters path="/season/0/fighters" />
           <SeasonCollections path="/season/0/collections" />
           <SeasonMatches path="/season/0/matches" />
@@ -141,6 +140,7 @@ export const App = () => (
           <SeasonCollection path="/season/0/collections/:id" />
           <SeasonCollectionFighters path="/season/0/collections/:id/fighters" />
           <SeasonCollectionMatches path="/season/0/collections/:id/matches" />
+          <SeasonTournament path="/season/0" />
           <SeasonTournament path="/season/0/tournament" />
           <SeasonTournament path="/season/0/tournament/:id" />
           <SeasonTournamentMatch path="/season/0/tournament/:id/:matchId" />

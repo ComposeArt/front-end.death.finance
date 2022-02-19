@@ -33,7 +33,7 @@ export const SeasonHeader = (props: any) => {
           marginTop={8}
         >
           <WrapItem>
-            <NavLink to={`/season/0`}>rules</NavLink>
+            <NavLink to={`/season/0/rules`}>rules</NavLink>
           </WrapItem>
           <WrapItem>
             <NavLink to={`/season/0/collections`}>collections</NavLink>

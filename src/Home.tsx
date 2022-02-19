@@ -230,7 +230,7 @@ export const Home = (props: RouteComponentProps) => {
         <Box>
           <LinkButton
             text="rules"
-            path="/season/0"
+            path="/season/0/rules"
           />
         </Box>
         <Box>

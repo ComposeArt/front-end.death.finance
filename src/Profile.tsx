@@ -21,8 +21,8 @@ import { navigate } from "@reach/router";
 import { FaCheckCircle, FaBookDead, FaTimesCircle, FaExclamationCircle, FaDiscord } from "react-icons/fa";
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
+import { LinkButton } from "./LinkButton";
 import { NavLink } from "./NavLink";
-import { ListCollections } from "./ListCollections";
 import { PayloadContext, fetchAssets, remoteRegisterFighter, owner1MatchesQuery, owner2MatchesQuery, ownerFightersQuery, userQuery } from "./utils/firebase";
 import { Matches } from './Matches';
 
@@ -125,7 +125,7 @@ export const ProfileFighters = (props: any) => {
 
   const address = props.address ? props.address.toLowerCase() : '';
 
-  const { account, collections, user, season } = useContext(PayloadContext);
+  const { account, user, season } = useContext(PayloadContext);
 
   const [fighterDocs, fightersLoading, fightersError] = useCollection(ownerFightersQuery(address));
 
@@ -163,7 +163,7 @@ export const ProfileFighters = (props: any) => {
 
   useEffect(() => {
     (async function getInitialData() {
-      if (address && !_.isEmpty(collections)) {
+      if (address) {
         document.title = `Fighters | ${address}`;
 
         setLoading(true);
@@ -184,7 +184,7 @@ export const ProfileFighters = (props: any) => {
         setMounted(true);
       }
     })();
-  }, [address, collections]);
+  }, [address]);
 
   useEffect(() => {
     if (mounted) {
@@ -385,11 +385,15 @@ export const ProfileFighters = (props: any) => {
             textAlign="center"
             color="red.500"
           >
-            Currently no NFTs owned are from the 100 collections in season_0.
+            Currently no NFTs owned are from the collections this season.
             <br/>
-            You can check out the collections below to find ones you like!
           </Text>
-          <ListCollections collections={collections} />
+          <Box marginTop={4}>
+            <LinkButton
+              text="view collections"
+              path="/season/0/collections"
+            />
+          </Box>
         </>
       )}
     </Container>
