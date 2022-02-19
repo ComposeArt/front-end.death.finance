@@ -87,6 +87,14 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       });
 
       response.status(200).send(index);
+    } else if (path[1] === 'rewards') {
+      index = setMetas(index, {
+        title: 'Rewards | NFT Fight Club',
+        description: 'By participating in death.finance you will earn Grim PFP NFTs!',
+        image: `${storageBaseUrl}/season_0/rewards.png`,
+      });
+
+      response.status(200).send(index);
     } else if (path[1] === 'season') {
       if (path[3] === 'collections') {
         index = setMetas(index, {

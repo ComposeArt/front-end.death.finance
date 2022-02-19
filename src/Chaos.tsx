@@ -144,7 +144,7 @@ export const Chaos = (props: RouteComponentProps) => {
           <br/><br/>
           By adding chaos to the fights, you can earn super rare prop drops for the future Grim PFP NFTs.
           <br/><br/>
-          <NavLink to='/grims'>
+          <NavLink to='/rewards'>
             More rewards await!
           </NavLink>
         </Text>

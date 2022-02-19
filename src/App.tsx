@@ -19,6 +19,7 @@ import { Home } from "./Home";
 import { FAQ } from "./FAQ";
 import { Chaos } from "./Chaos";
 import { Grims } from "./Grims";
+import { Rewards } from "./Rewards";
 import { Simulator } from "./Simulator";
 import { Simulation } from "./Simulation";
 import { ProfileFighters, ProfileMatches } from "./Profile";
@@ -124,7 +125,7 @@ export const App = () => (
           <Home path="/" />
           <FAQ path="/faq" />
           <Chaos path="/chaos" />
-          <Grims path="/grims" />
+          <Rewards path="/rewards" />
           <Simulator path="/simulator" />
           <Simulation path="/simulator/:simulation" />
           <ProfileFighters path="/profile" />
