@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import moment from "moment";
 import {
   Heading,
@@ -12,6 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { RouteComponentProps } from "@reach/router";
 import { IoMdArrowDown, IoMdArrowUp } from "react-icons/io";
+
+import { PayloadContext } from "./utils/firebase";
 
 const Question = (props: any) => {
   const LineColor = useColorModeValue('gray.500', 'white.500');
@@ -62,6 +64,7 @@ export const FAQ = (props: RouteComponentProps) => {
   }, []);
 
   const [openQuestion, setOpenQuestion]: any = useState('1');
+  const { season } = useContext(PayloadContext);
 
   return (
     <Container maxW='container.md' centerContent>
@@ -72,7 +75,7 @@ export const FAQ = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        registration ends {moment().to(moment('2022-02-21', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment(season.registration_ends, 'YYYY-MM-DD'))}
       </Text>
       <Question
         question="Why did you make this?"
@@ -111,7 +114,7 @@ export const FAQ = (props: RouteComponentProps) => {
       />
       <Question
         question="What are Grims?"
-        answer="Grims are special trainers for the NFT fight Club and are composable NFTs created using compose.art!"
+        answer="Grims are special trainers for the NFT fight Club and will be used to upgrade your fighters in the future!"
         setOpenQuestion={setOpenQuestion}
         openQuestion={openQuestion}
         type="6"

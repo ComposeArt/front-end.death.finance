@@ -156,7 +156,8 @@ export const SeasonTournament = (props: any) => {
       try {
         if (bracket !== 'preseason') {
           const allMatches = await getBracketMatches(bracket);
-          const bracketFights = await getBracketFights(bracket);
+          // const bracketFights = await getBracketFights(bracket);
+          const bracketFights: any = [];
 
           const roundMatches = _.chain(allMatches).groupBy((m: any) => {
             return m.round;

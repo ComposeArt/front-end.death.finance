@@ -7,7 +7,7 @@ import {
 import { Router, globalHistory } from "@reach/router";
 import { useEthers, ChainId } from "@usedapp/core";
 import { QueryParamProvider } from 'use-query-params';
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { useDocument, useCollection } from 'react-firebase-hooks/firestore';
 import "@fontsource/fira-mono";
 import "@fontsource/rock-salt";
 
@@ -35,12 +35,11 @@ import { SeasonMatch } from "./SeasonMatch";
 import {
   PayloadContext,
   RemoteChainPayloadContext,
-  getCollections,
-  getSeason,
-  getUser,
-  streamChain,
+  chainQuery,
   remoteCreateUser,
   userQuery,
+  seasonQuery,
+  collectionsQuery,
 } from "./utils/firebase";
 
 const theme = extendTheme({
@@ -68,9 +67,6 @@ const ScrollToTop = ({ children, location }: any) => {
 };
 
 const Nav = (props: any) => {
-  const [collections, setCollections]: any = useState([]);
-  const [season, setSeason]: any = useState({});
-  const [remoteChain, setRemoteChain]: any = useState({});
   const [userLocal, setUserLocal]: any = useState({});
   const { account, chainId } = useEthers();
   const chain = chainId && ChainId[chainId];
@@ -78,27 +74,14 @@ const Nav = (props: any) => {
   const [userDoc, userLoading, userError] = useDocument(userQuery(account ? account.toLowerCase() : 'missing'));
   const user = userDoc?.data() || {};
 
-  useEffect(() => {
-    let chainListener: any;
+  const [seasonDoc, seasonLoading, seasonError] = useDocument(seasonQuery);
+  const season = seasonDoc?.data() || {};
 
-    (async function getInitialData() {
-      const collectionsData = await getCollections();
-      const seasonData = await getSeason();
+  const [chainDoc, chainLoading, chainError] = useDocument(chainQuery);
+  const remoteChain: any = chainDoc?.data() || {};
 
-      chainListener = streamChain((data: any) => {
-        setRemoteChain(data);
-      });
-
-      setCollections(collectionsData);
-      setSeason(seasonData);
-    })();
-
-    if (chainListener) {
-      return () => {
-        chainListener();
-      };
-    }
-  }, []);
+  const [collectionDocs, collectionsLoading, collectionsError] = useCollection(collectionsQuery);
+  const collections: any = collectionDocs ? collectionDocs?.docs.map((d: any) => d.data()) : [];
 
   useEffect(() => {
     (async function getInitialData() {

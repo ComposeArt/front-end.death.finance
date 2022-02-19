@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import moment from "moment";
 import {
   Heading,
@@ -9,8 +9,11 @@ import {
 } from "@chakra-ui/react";
 
 import { NavLink } from "./NavLink";
+import { PayloadContext } from "./utils/firebase";
 
 export const SeasonHeader = (props: any) => {
+  const { season } = useContext(PayloadContext);
+
   return (
     <Container maxW='container.md' centerContent>
       <Heading size='lg' marginTop={16} textAlign="center">
@@ -20,7 +23,7 @@ export const SeasonHeader = (props: any) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        registration ends {moment().to(moment('2022-02-21', 'YYYY-MM-DD'))}
+        registration ends {moment().to(moment(season.registration_ends, 'YYYY-MM-DD'))}
       </Text>
         <Wrap
           width="100%"

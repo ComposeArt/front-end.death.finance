@@ -378,14 +378,11 @@ export const getMatchFights = async (bracket: any, matchId: any) => {
   return fights;
 };
 
-export const streamChain = (callback: any) => {
-  return onSnapshot(doc(db, "chains", "goerli"), (d) => {
-    callback({
-      id: d.id,
-      ...d.data(),
-    });
-  });
-};
+export const chainQuery = doc(db, 'chains/goerli');
+
+export const seasonQuery = doc(db, 'nft-death-games/season_0');
+
+export const collectionsQuery = query(collection(db, `nft-death-games/season_0/collections`));
 
 export const allFightersQuery = query(collection(db, `nft-death-games/season_0/fighters`), where("is_invalid", "==", false), where("is_doping", "==", false));
 export const ownerFightersQuery = (address: string) => query(collection(db, `nft-death-games/season_0/fighters`), where("owner", "==", address));
