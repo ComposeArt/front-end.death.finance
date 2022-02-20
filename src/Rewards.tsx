@@ -106,7 +106,7 @@ export const Rewards = (props: RouteComponentProps) => {
         <>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             RARE GRIMS
@@ -121,60 +121,57 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
-                      src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-0.png'}
+                      boxSize="200px"
+                      borderRadius="200px"
+                      src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-1.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-2.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-3.png'}
                       opacity={1}
                     />
@@ -185,7 +182,7 @@ export const Rewards = (props: RouteComponentProps) => {
           </VStack>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             EPIC GRIMS
@@ -201,60 +198,57 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-2-1.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-2-2.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-2-3.png'}
                       opacity={1}
                     />
@@ -265,7 +259,7 @@ export const Rewards = (props: RouteComponentProps) => {
           </VStack>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             LEGENDARY GRIMS
@@ -277,60 +271,57 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/1-place-bufficorn.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/2-place-bufficorn.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/3-place-bufficorn.png'}
                       opacity={1}
                     />
@@ -345,7 +336,7 @@ export const Rewards = (props: RouteComponentProps) => {
         <>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             RARE GRIMS
@@ -360,60 +351,57 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
-                      src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-0.png'}
+                      boxSize="200px"
+                      borderRadius="200px"
+                      src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-1.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-2.png'}
                       opacity={1}
                     />
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Image
-                      boxSize="120px"
-                      borderRadius="120px"
+                      boxSize="200px"
+                      borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/tier-1-3.png'}
                       opacity={1}
                     />
@@ -424,7 +412,7 @@ export const Rewards = (props: RouteComponentProps) => {
           </VStack>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             EPIC GRIMS
@@ -440,15 +428,14 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>
@@ -457,15 +444,14 @@ export const Rewards = (props: RouteComponentProps) => {
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>
@@ -474,15 +460,14 @@ export const Rewards = (props: RouteComponentProps) => {
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>
@@ -495,7 +480,7 @@ export const Rewards = (props: RouteComponentProps) => {
           </VStack>
           <Text
             marginBottom={2}
-            marginTop={12}
+            marginTop={16}
             fontWeight='900'
           >
             LEGENDARY GRIMS
@@ -507,15 +492,14 @@ export const Rewards = (props: RouteComponentProps) => {
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>
@@ -524,15 +508,14 @@ export const Rewards = (props: RouteComponentProps) => {
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>
@@ -541,15 +524,14 @@ export const Rewards = (props: RouteComponentProps) => {
                   </Center>
                 </VStack>
               </WrapItem>
-              <WrapItem margin={4}>
+              <WrapItem>
                 <VStack>
                   <Center
-                    width="120px"
-                    height="120px"
+                    width="200px"
+                    height="200px"
                     borderWidth={2}
-                    borderRadius={100}
+                    borderRadius={200}
                     borderColor={lineColor}
-                    marginBottom={4}
                     position="relative"
                   >
                     <Text fontSize={32}>

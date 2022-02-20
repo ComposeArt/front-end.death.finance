@@ -47,8 +47,6 @@ export const SeasonTournamentMatch = (props: any) => {
 
   const { account, season } = useContext(PayloadContext);
 
-  console.log(season);
-
   useEffect(() => {
     document.title = `${bracket} ${matchId} | Tournament | Season 0 | NFT Fight Club`;
   }, [bracket, matchId]);
@@ -123,13 +121,11 @@ export const SeasonTournamentMatch = (props: any) => {
   const fighter1 = {
     ..._.omit(match.fighter1, 'player'),
     ..._.get(match.fighter1, 'player', {}),
-    betting: match.betting1 || '0.0',
   };
 
   const fighter2 = {
     ..._.omit(match.fighter2, 'player'),
     ..._.get(match.fighter2, 'player', {}),
-    betting: match.betting2 || '0.0',
   };
 
   const onMatch = _.find(match.fights, (m, i) => i === activeMatch) || {};
@@ -141,6 +137,9 @@ export const SeasonTournamentMatch = (props: any) => {
       </Heading>
       <Text opacity={0.5} marginTop={4} fontSize={12} textAlign="center">
         best of {match.best_of}
+      </Text>
+      <Text marginTop={4} fontSize={12} textAlign="center">
+        {match.fighter1FightWins || 0} - {match.fighter2FightWins || 0}
       </Text>
       <Wrap
         width="100%"
@@ -164,7 +163,7 @@ export const SeasonTournamentMatch = (props: any) => {
                 }}
               >
                 <Text fontSize={14}>
-                  match {i + 1}
+                  fight {i + 1}
                 </Text>
               </Box>
             </WrapItem>
@@ -193,19 +192,6 @@ export const SeasonTournamentMatch = (props: any) => {
       <HStack marginTop={12} align="flex-start" spacing={8}>
         <VStack>
           <FighterPortrait fighter={fighter1} winner={fighter1Winner} />
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={winnerColor}
-            borderRadius={100}
-          >
-            <Text
-              fontSize={{ base: 10, md: 12 }}
-              opacity={1}
-            >
-              {fighter1.betting} Ξ
-            </Text>
-          </Box>
           <FighterStats fighter={fighter1} />
         </VStack>
         <Box
@@ -219,19 +205,6 @@ export const SeasonTournamentMatch = (props: any) => {
         </Box>
         <VStack>
           <FighterPortrait fighter={fighter2} winner={fighter2Winner} />
-          <Box
-            padding={2}
-            borderWidth={1}
-            borderColor={winnerColor}
-            borderRadius={100}
-          >
-            <Text
-              fontSize={{ base: 10, md: 12 }}
-              opacity={1}
-            >
-              {fighter2.betting} Ξ
-            </Text>
-          </Box>
           <FighterStats fighter={fighter2} />
         </VStack>
       </HStack>

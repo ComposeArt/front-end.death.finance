@@ -34,10 +34,10 @@ import {
 import { navigate } from "@reach/router";
 import { useQueryParam, StringParam } from 'use-query-params';
 import { useCollection } from 'react-firebase-hooks/firestore';
-import { FaDiscord } from "react-icons/fa";
+import { FaDiscord, FaCrown } from "react-icons/fa";
 
 import logoSmall from './images/logo-small.png';
-import { PayloadContext, getBracketMatches, getBracketFights, allFightersQuery, allUsersQuery } from "./utils/firebase";
+import { RemoteChainPayloadContext, getBracketMatches, getBracketFights, allFightersQuery, allUsersQuery } from "./utils/firebase";
 import { SeasonHeader } from "./SeasonHeader";
 import { NavLink } from "./NavLink";
 
@@ -128,7 +128,7 @@ export const SeasonTournament = (props: any) => {
 
   const bracket = props.id || 'preseason';
 
-  const { account } = useContext(PayloadContext);
+  const { blockNumber, randomness } = useContext(RemoteChainPayloadContext);
 
   const [fighterDocs, fightersLoading, fightersError] = useCollection(allFightersQuery);
   const [userDocs, userLoading, userError] = useCollection(allUsersQuery);
@@ -156,12 +156,12 @@ export const SeasonTournament = (props: any) => {
       try {
         if (bracket !== 'preseason') {
           const allMatches = await getBracketMatches(bracket);
-          // const bracketFights = await getBracketFights(bracket);
-          const bracketFights: any = [];
+          const bracketFights = await getBracketFights(bracket);
 
           const roundMatches = _.chain(allMatches).groupBy((m: any) => {
             return m.round;
-          }).map((v: any, k: any) => {
+          })
+          .map((v: any, k: any) => {
             let title = `${v.length * 2} Fighters`;
 
             if (v.length * 2 === 16) {
@@ -185,7 +185,7 @@ export const SeasonTournament = (props: any) => {
                 bracket: title,
                 best_of: v[0].best_of,
               },
-              seeds: v.map((m: any) => {
+              seeds: _.chain(v).map((m: any) => {
                 elRefs.current[m.id] = createRef();
 
                 return {
@@ -193,18 +193,24 @@ export const SeasonTournament = (props: any) => {
                   bracket: m.bracket,
                   fighter1: m.fighter1,
                   fighter2: m.fighter2,
-                  score1: 0,
-                  score2: 0,
-                  rank1: m.rank1 + 1,
-                  rank2: m.rank2 + 1,
+                  fighter1FightWins: m.fighter1FightWins || 0,
+                  fighter2FightWins: m.fighter2FightWins || 0,
+                  rank1: m.fighter1 ? _.get(m.fighter1, 'ranking') + 1 : undefined,
+                  rank2: m.fighter2 ? _.get(m.fighter2, 'ranking') + 1 : undefined,
                   best_of: m.best_of,
                   fights: _.filter(bracketFights, (f: any) => f.match_id === m.id),
                 }
-              }),
+              })
+              .sortBy((m: any) => {
+                const splitId = _.split(m.id, '-');
+                return parseInt(splitId[1], 10);
+              })
+              .value(),
             }
-          }).value();
+          })
+          .value();
 
-          setMatches(roundMatches);
+          // setMatches(roundMatches);
         }
       } catch (error) {
         console.log(error);
@@ -276,6 +282,7 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'zeta'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
+              setMatches([])
               navigate(`/season/0/tournament/zeta`);
               setSlide(0);
             }}
@@ -298,6 +305,7 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'theta'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
+              setMatches([])
               navigate(`/season/0/tournament/theta`);
               setSlide(0);
             }}
@@ -320,6 +328,7 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'sigma'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
+              setMatches([])
               navigate(`/season/0/tournament/sigma`);
               setSlide(0);
             }}
@@ -342,6 +351,7 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'omega'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
+              setMatches([])
               navigate(`/season/0/tournament/omega`);
               setSlide(0);
             }}
@@ -413,15 +423,27 @@ export const SeasonTournament = (props: any) => {
               renderSeedComponent={({seed, breakpoint, roundIndex, seedIndex}: RenderSeedProps) => {
                 const Wrapper = roundIndex === 2 ? SingleLineSeed : Seed;
 
-                const nextMatch = _.find(seed.fights, (m: any) => m.block) || {};
+                const nextUnplayedMatch = _.chain(seed.fights)
+                  .filter((m: any) => !m.log)
+                  .orderBy('block', 'asc')
+                  .find((m: any) => m.block).value();
+
+                const finalMatch = seed.fights.length && seed.fights[seed.fights.length - 1];
+
+                const nextMatch = nextUnplayedMatch || finalMatch || {};
+
+                const completed = seed.fighter1FightWins + seed.fighter2FightWins === seed.best_of;
+                const fighter1Won = completed && seed.fighter1FightWins > seed.fighter2FightWins;
+                const fighter2Won = completed && seed.fighter2FightWins > seed.fighter1FightWins;
+
                 let label: any = '';
 
                 if (!_.isEmpty(seed.fighter1)) {
                   label = (
                     <Text textAlign="center" fontSize={10}>
-                      {`${seed.fighter1.collection} #${_.truncate(seed.fighter1.player.token_id, { length: 7 })}`}
+                      {`${_.get(seed, 'fighter1.collection', '-')} #${_.truncate(_.get(seed, 'fighter1.player.token_id', '-'), { length: 7 })}`}
                       <br/>
-                      {`${seed.fighter2.collection} #${_.truncate(seed.fighter2.player.token_id, { length: 7 })}`}
+                      {`${_.get(seed, 'fighter2.collection', '-')} #${_.truncate(_.get(seed, 'fighter2.player.token_id', '-'), { length: 7 })}`}
                     </Text>
                   );
                 }
@@ -431,8 +453,8 @@ export const SeasonTournament = (props: any) => {
                 return (
                   <Wrapper mobileBreakpoint={breakpoint} ref={elRefs.current[seed.id]}>
                     <VStack>
-                      <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12} color={"white"}>
-                        {seed.rank1 ? `${seed.rank1} vs ${seed.rank2}` : '-'}
+                      <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12}>
+                        {`${_.get(seed, 'rank1', '-')} vs ${_.get(seed, 'rank2', '-')}`}
                       </Text>
                       <Tooltip label={label}>
                         <HStack
@@ -448,7 +470,13 @@ export const SeasonTournament = (props: any) => {
                         >
                           <Box
                             borderRadius="40px"
+                            position="relative"
                           >
+                            {fighter1Won && (
+                              <Box position="absolute" left="11px" top="-20px">
+                                <FaCrown fontSize={18} />
+                              </Box>
+                            )}
                             <Image
                               boxSize="40px"
                               borderRadius="40px"
@@ -457,12 +485,18 @@ export const SeasonTournament = (props: any) => {
                           </Box>
                           <Box padding={2}>
                             <Text opacity={shouldHighlight ? 1 : 0.5}>
-                              {seed.score1} - {seed.score2}
+                              {seed.fighter1FightWins} - {seed.fighter2FightWins}
                             </Text>
                           </Box>
                           <Box
                             borderRadius="40px"
+                            position="relative"
                           >
+                            {fighter2Won && (
+                              <Box position="absolute" left="11px" top="-20px">
+                                <FaCrown fontSize={18} />
+                              </Box>
+                            )}
                             <Image
                               boxSize="40px"
                               borderRadius="40px"
@@ -471,8 +505,8 @@ export const SeasonTournament = (props: any) => {
                           </Box>
                         </HStack>
                       </Tooltip>
-                      <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12} color={seed.log ? "white" : "red.500"}>
-                        {nextMatch.block ? `block ${nextMatch.block}` : '-'}
+                      <Text opacity={shouldHighlight ? 1 : 0.5} fontSize={12} color={nextMatch.log ? winnerColor : "red.500"}>
+                        {nextMatch.block ? `${nextMatch.block}` : '-'}
                       </Text>
                     </VStack>
                   </Wrapper>

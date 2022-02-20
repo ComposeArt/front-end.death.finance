@@ -605,7 +605,7 @@ export const Simulator = (props: RouteComponentProps) => {
           size='md'
           isChecked={runLocally}
           onChange={() => {setUseLocal(!useLocal)}}
-          colorScheme="whiteAlpha"
+          colorScheme="teal"
           isDisabled={!account && chain !== 'Goerli'}
         />
         <Text width="320px" textAlign="center" marginTop={8} fontSize={10} color="red.500">
