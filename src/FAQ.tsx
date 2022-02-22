@@ -75,7 +75,7 @@ export const FAQ = (props: RouteComponentProps) => {
         “let's talk about nft fight club”
       </Text>
       <Text fontSize={12} color="red.500" marginTop={4}>
-        registration ends {moment().to(moment(season.registration_ends, 'YYYY-MM-DD'))}
+        {season.isDev ? `registration is always open` : `registration ends ${moment().to(moment(season.registration_ends, 'YYYY-MM-DD'))}`}
       </Text>
       <Question
         question="Why did you make this?"

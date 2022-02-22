@@ -29,6 +29,8 @@ export const SeasonFighters = (props: any) => {
     keys: ['name', 'collection', 'player.token_id', 'player.name', 'owner', 'player.description'],
   });
 
+  const sortedFighters = _.orderBy(result, ['ranking'], ['asc']);
+
   useEffect(() => {
     (async function getInitialData() {
       setLoading(true);
@@ -94,7 +96,7 @@ export const SeasonFighters = (props: any) => {
         </Text>
       )}
       <Wrap marginTop={12} justify='center' spacing={12}>
-        {result.map((r: any) => {
+        {sortedFighters.map((r: any) => {
           let item = r.item || r;
 
           const formatFighter = {

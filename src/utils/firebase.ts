@@ -13,6 +13,9 @@ import {
   limit,
   where,
   onSnapshot,
+  startAfter,
+  endAt,
+  startAt,
 } from 'firebase/firestore';
 import _ from 'lodash';
 
@@ -391,7 +394,8 @@ export const collectionFightersQuery = (collectionId: string) =>  query(collecti
 export const userQuery = (address: string) => doc(db, 'nft-death-games/season_0/users', address);
 export const allUsersQuery = query(collection(db, `nft-death-games/season_0/users`));
 
-export const allMatchesQuery = query(collection(db, `nft-death-games/season_0/matches`), orderBy("block", "desc"), limit(100));
+export const latestMatchQuery = query(collection(db, `nft-death-games/season_0/matches`), orderBy("block", "desc"), limit(1));
+export const allMatchesQuery = (block: string) => query(collection(db, `nft-death-games/season_0/matches`), orderBy("block", "desc"), startAt(block), limit(100));
 export const collection1MatchesQuery = (collectionId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("collection1", "==", collectionId), orderBy("block", "desc"), limit(50));
 export const collection2MatchesQuery = (collectionId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("collection2", "==", collectionId), orderBy("block", "desc"), limit(50));
 export const fighter1MatchesQuery = (fighterId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("fighter1", "==", fighterId), orderBy("block", "desc"), limit(50));
