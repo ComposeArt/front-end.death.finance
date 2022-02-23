@@ -37,7 +37,15 @@ import { useCollection } from 'react-firebase-hooks/firestore';
 import { FaDiscord, FaCrown } from "react-icons/fa";
 
 import logoSmall from './images/logo-small.png';
-import { RemoteChainPayloadContext, getBracketMatches, getBracketFights, allFightersQuery, allUsersQuery } from "./utils/firebase";
+import {
+  RemoteChainPayloadContext,
+  getBracketMatches,
+  getBracketFights,
+  allFightersQuery,
+  allUsersQuery,
+  bracketMatchesQuery,
+  bracketFightsQuery,
+} from "./utils/firebase";
 import { SeasonHeader } from "./SeasonHeader";
 import { NavLink } from "./NavLink";
 
@@ -124,7 +132,7 @@ export const SeasonTournament = (props: any) => {
   const winnerColor = useColorModeValue('gray.800', 'white');
   const bgColor = useColorModeValue('#1A202C', 'white');
 
-  const [matches, setMatches]: any = useState([]);
+  // const [matches, setMatches]: any = useState([]);
 
   const bracket = props.id || 'preseason';
 
@@ -133,6 +141,64 @@ export const SeasonTournament = (props: any) => {
   const [fighterDocs, fightersLoading, fightersError] = useCollection(allFightersQuery);
   const [userDocs, userLoading, userError] = useCollection(allUsersQuery);
   const users = userDocs?.docs.map((d: any) => d.data()) || [];
+
+  const [matchDocs, matchLoading, matchError] = useCollection(bracketMatchesQuery(bracket));
+  const matches = matchDocs?.docs.map((d: any) => d.data()) || [];
+
+  const [fightDocs, fightLoading, fightError] = useCollection(bracketFightsQuery(bracket));
+  const fights = fightDocs?.docs.map((d: any) => d.data()) || [];
+
+  const roundMatches = _.chain(matches).groupBy((m: any) => {
+    return m.round;
+  })
+  .map((v: any, k: any) => {
+    let title = `${v.length * 2} Fighters`;
+
+    if (v.length * 2 === 16) {
+      title = 'Sweet 16';
+    };
+
+    if (v.length * 2 === 8) {
+      title = 'Elite 8';
+    };
+
+    if (v.length * 2 === 4) {
+      title = 'Final 4';
+    };
+
+    if (v.length * 2 === 2) {
+      title = 'Grand Final';
+    };
+
+    return {
+      title: {
+        bracket: title,
+        best_of: v[0].best_of,
+      },
+      seeds: _.chain(v).map((m: any) => {
+        elRefs.current[m.id] = createRef();
+
+        return {
+          id: m.id,
+          bracket: m.bracket,
+          fighter1: m.fighter1,
+          fighter2: m.fighter2,
+          fighter1FightWins: m.fighter1FightWins || 0,
+          fighter2FightWins: m.fighter2FightWins || 0,
+          rank1: m.fighter1 ? _.get(m.fighter1, 'ranking') + 1 : undefined,
+          rank2: m.fighter2 ? _.get(m.fighter2, 'ranking') + 1 : undefined,
+          best_of: m.best_of,
+          fights: _.filter(fights, (f: any) => f.match_id === m.id),
+        }
+      })
+      .sortBy((m: any) => {
+        const splitId = _.split(m.id, '-');
+        return parseInt(splitId[1], 10);
+      })
+      .value(),
+    }
+  })
+  .value();
 
   const fighters = fighterDocs?.docs.map((d: any) => {
     const data = d.data();
@@ -151,78 +217,8 @@ export const SeasonTournament = (props: any) => {
   }, [bracket]);
 
   useEffect(() => {
-    (async function getInitialData() {
-      setLoading(true);
-      try {
-        if (bracket !== 'preseason') {
-          const allMatches = await getBracketMatches(bracket);
-          const bracketFights = await getBracketFights(bracket);
-
-          const roundMatches = _.chain(allMatches).groupBy((m: any) => {
-            return m.round;
-          })
-          .map((v: any, k: any) => {
-            let title = `${v.length * 2} Fighters`;
-
-            if (v.length * 2 === 16) {
-              title = 'Sweet 16';
-            };
-
-            if (v.length * 2 === 8) {
-              title = 'Elite 8';
-            };
-
-            if (v.length * 2 === 4) {
-              title = 'Final 4';
-            };
-
-            if (v.length * 2 === 2) {
-              title = 'Grand Final';
-            };
-
-            return {
-              title: {
-                bracket: title,
-                best_of: v[0].best_of,
-              },
-              seeds: _.chain(v).map((m: any) => {
-                elRefs.current[m.id] = createRef();
-
-                return {
-                  id: m.id,
-                  bracket: m.bracket,
-                  fighter1: m.fighter1,
-                  fighter2: m.fighter2,
-                  fighter1FightWins: m.fighter1FightWins || 0,
-                  fighter2FightWins: m.fighter2FightWins || 0,
-                  rank1: m.fighter1 ? _.get(m.fighter1, 'ranking') + 1 : undefined,
-                  rank2: m.fighter2 ? _.get(m.fighter2, 'ranking') + 1 : undefined,
-                  best_of: m.best_of,
-                  fights: _.filter(bracketFights, (f: any) => f.match_id === m.id),
-                }
-              })
-              .sortBy((m: any) => {
-                const splitId = _.split(m.id, '-');
-                return parseInt(splitId[1], 10);
-              })
-              .value(),
-            }
-          })
-          .value();
-
-          // setMatches(roundMatches);
-        }
-      } catch (error) {
-        console.log(error);
-        setErrorLoading(true);
-      }
-      setLoading(false);
-    })();
-  }, [bracket]);
-
-  useEffect(() => {
-    if (errorLoading) {
-      setErrorLoading(false);
+    if (fightError || matchError) {
+      console.log(fightError, matchError)
       toast({
         title: 'failed to load bracket',
         status: 'error',
@@ -230,7 +226,7 @@ export const SeasonTournament = (props: any) => {
         duration: 3000,
       });
     }
-  }, [errorLoading, toast]);
+  }, [fightError, matchError, toast]);
 
   useEffect(() => {
     if (!_.isEmpty(matches) && match) {
@@ -282,7 +278,6 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'zeta'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
-              setMatches([])
               navigate(`/season/0/tournament/zeta`);
               setSlide(0);
             }}
@@ -305,7 +300,6 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'theta'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
-              setMatches([])
               navigate(`/season/0/tournament/theta`);
               setSlide(0);
             }}
@@ -328,7 +322,6 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'sigma'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
-              setMatches([])
               navigate(`/season/0/tournament/sigma`);
               setSlide(0);
             }}
@@ -351,7 +344,6 @@ export const SeasonTournament = (props: any) => {
             borderColor={bracket === 'omega'  ? winnerColor : LineColor}
             borderRadius={100}
             onClick={() => {
-              setMatches([])
               navigate(`/season/0/tournament/omega`);
               setSlide(0);
             }}
@@ -403,7 +395,7 @@ export const SeasonTournament = (props: any) => {
           <Box display="flex" justify="center" >
             <Bracket
               bracketClassName="tournament"
-              rounds={matches}
+              rounds={roundMatches}
               roundTitleComponent={(title: any, roundIndex: number) => {
                 return (
                   <Box textAlign="center" marginBottom={4}>

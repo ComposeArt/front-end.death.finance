@@ -403,3 +403,5 @@ export const fighter2MatchesQuery = (fighterId: string) => query(collection(db, 
 export const owner1MatchesQuery = (ownerId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("owner1", "==", ownerId), orderBy("block", "desc"), limit(50));
 export const owner2MatchesQuery = (ownerId: string) => query(collection(db, `nft-death-games/season_0/matches`), where("owner2", "==", ownerId), orderBy("block", "desc"), limit(50));
 
+export const bracketMatchesQuery = (bracket: string) =>  query(collection(db, `nft-death-games/season_0/tournament/${bracket}/matches`));
+export const bracketFightsQuery = (bracket: string) =>  query(collection(db, `nft-death-games/season_0/fights`), where("bracket", "==", bracket));

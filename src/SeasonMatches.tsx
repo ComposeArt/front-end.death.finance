@@ -13,8 +13,7 @@ import { SeasonHeader } from "./SeasonHeader";
 import { allMatchesQuery, latestMatchQuery } from "./utils/firebase";
 import { Matches } from './Matches';
 
-let prevBlock = '';
-let originalBlock = '';
+const prevBlocks: any = [];
 
 export const SeasonMatches = (props: any) => {
   const toast = useToast();
@@ -33,12 +32,10 @@ export const SeasonMatches = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (!_.isEmpty(latestMatch) && !originalBlock) {
-      originalBlock = latestMatch.block;
-      console.log('test')
-      setLatestBlock(originalBlock);
+    if (!_.isEmpty(latestMatch) && latestBlock === '-') {
+      setLatestBlock(latestMatch.block);
     }
-  }, [latestMatch]);
+  }, [latestMatch, latestBlock]);
 
   useEffect(() => {
     if (matchesError) {
@@ -52,8 +49,6 @@ export const SeasonMatches = (props: any) => {
     }
   }, [matchesError, toast]);
 
-  console.log(originalBlock, prevBlock)
-
   return (
     <Container maxW='container.lg' centerContent>
       <SeasonHeader />
@@ -64,7 +59,7 @@ export const SeasonMatches = (props: any) => {
         {latestBlock} - {lastBlock}
       </Text>
       <HStack marginTop={2} align="center" justify="center" spacing={8}>
-        {prevBlock && originalBlock !== prevBlock && (
+        {prevBlocks.length && (
           <Text
             fontSize={12}
             opacity={0.5}
@@ -74,7 +69,8 @@ export const SeasonMatches = (props: any) => {
               opacity: 1,
             }}
             onClick={() => {
-              setLatestBlock(prevBlock);
+              setLatestBlock(prevBlocks[prevBlocks.length - 1]);
+              prevBlocks.pop();
             }}
           >
             next 100
@@ -89,7 +85,7 @@ export const SeasonMatches = (props: any) => {
             opacity: 1,
           }}
           onClick={() => {
-            prevBlock = latestBlock;
+            prevBlocks.push(latestBlock);
             setLatestBlock(lastBlock);
           }}
         >

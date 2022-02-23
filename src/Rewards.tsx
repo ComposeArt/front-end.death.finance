@@ -266,7 +266,7 @@ export const Rewards = (props: RouteComponentProps) => {
           </Text>
           <Box width="80%">
             <Text textAlign="left" fontSize={12} marginTop={2} marginBottom={4}>
-              If one of your fighters places 1st, 2nd, or 3rd, we will airdrop you a legendary grim! You will still be able to mint your rare and epic grims.
+              If one of your fighters places 1st or 2nd, we will airdrop you a legendary grim! You will still be able to mint your rare and epic grims.
             </Text>
           </Box>
           <VStack marginTop={4}>
@@ -304,25 +304,6 @@ export const Rewards = (props: RouteComponentProps) => {
                       boxSize="200px"
                       borderRadius="200px"
                       src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/2-place-bufficorn.png'}
-                      opacity={1}
-                    />
-                  </Center>
-                </VStack>
-              </WrapItem>
-              <WrapItem>
-                <VStack>
-                  <Center
-                    width="200px"
-                    height="200px"
-                    borderWidth={2}
-                    borderRadius={200}
-                    borderColor={lineColor}
-                    position="relative"
-                  >
-                    <Image
-                      boxSize="200px"
-                      borderRadius="200px"
-                      src={'https://storage.googleapis.com/deathfinance.appspot.com/season_0/3-place-bufficorn.png'}
                       opacity={1}
                     />
                   </Center>
@@ -487,27 +468,11 @@ export const Rewards = (props: RouteComponentProps) => {
           </Text>
           <Box width="80%">
             <Text textAlign="left" fontSize={12} marginTop={2} marginBottom={4}>
-              If one of your fighters places 1st, 2nd, or 3rd, we will airdrop you a legendary grim! You will still be able to mint your rare and epic grims.
+              If one of your fighters places 1st or 2nd, we will airdrop you a legendary grim! You will still be able to mint your rare and epic grims.
             </Text>
           </Box>
           <VStack marginTop={4}>
             <Wrap justify='center' spacing={8}>
-              <WrapItem>
-                <VStack>
-                  <Center
-                    width="200px"
-                    height="200px"
-                    borderWidth={2}
-                    borderRadius={200}
-                    borderColor={lineColor}
-                    position="relative"
-                  >
-                    <Text fontSize={32}>
-                      ?
-                    </Text>
-                  </Center>
-                </VStack>
-              </WrapItem>
               <WrapItem>
                 <VStack>
                   <Center
