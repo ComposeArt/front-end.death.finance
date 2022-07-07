@@ -24,8 +24,9 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
   const query = request.query;
   const db = admin.firestore();
 
-  const baseUrl = functions.config().app.id === 'deathfinance' ? 'https://dev.death.finance' : 'https://death.finance';
+  const baseUrl = functions.config().app.id === 'deathfinance' ? 'https://wagdie.app' : 'https://death.finance';
   const storageBaseUrl = `https://storage.googleapis.com/${functions.config().app.id}.appspot.com`;
+  const metaLogo = functions.config().app.id === 'deathfinance' ? `${baseUrl}/meta-logo-dev.png` : `${baseUrl}/meta-logo.png`;
 
   console.log(path);
   console.log(query);
@@ -54,7 +55,7 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
 
           index = setMetas(index, {
             title: `${name1} vs ${name2}`,
-            description: `Who will be victorious? This match was run on block ${simulation.block} with a chaos value of ${simulation.randomness}.`,
+            description: `Who will be victorious? This match was run on block ${simulation.block || '-'} with a chaos value of ${simulation.randomness || '-'}.`,
             image: simulation.image_url,
           });
 
@@ -64,32 +65,32 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
         }
       } else {
         index = setMetas(index, {
-          title: 'Simulate Fights | NFT Fight Club',
-          description: 'Simulate fights between NFTs from your favorite collections.',
-          image: `${baseUrl}/meta-logo.png`,
+          title: 'Simulate Fights | Fight Club',
+          description: 'Simulate fights between NFTs.',
+          image: metaLogo,
         });
 
         response.status(200).send(index);
       }
     } else if (path[1] === 'profile') {
       index = setMetas(index, {
-        title: 'Profile | NFT Fight Club',
-        description: path[2] ? `Checkout ${path[2]}'s fighters. Do they have what it takes to win NFT Madness?` : 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
-        image: path[2] ? `${storageBaseUrl}/profiles/${path[2]}.png` : `${baseUrl}/meta-logo.png`,
+        title: 'Profile | Fight Club',
+        description: path[2] ? `Checkout ${path[2]}'s fighters.` : 'Register your fighter to compete in the Fight Club.',
+        image: path[2] ? `${storageBaseUrl}/profiles/${path[2]}.png` : metaLogo,
       });
 
       response.status(200).send(index);
     } else if (path[1] === 'faq') {
       index = setMetas(index, {
-        title: 'FAQ | NFT Fight Club',
+        title: 'FAQ | Fight Club',
         description: 'Answering all your questions regarding NFT Fight Club.',
-        image: `${baseUrl}/meta-logo.png`,
+        image: metaLogo,
       });
 
       response.status(200).send(index);
     } else if (path[1] === 'rewards') {
       index = setMetas(index, {
-        title: 'Rewards | NFT Fight Club',
+        title: 'Rewards | Fight Club',
         description: 'By participating in death.finance you will earn Grim PFP NFTs!',
         image: `${storageBaseUrl}/season_0/rewards.png`,
       });
@@ -98,17 +99,17 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
     } else if (path[1] === 'season') {
       if (path[3] === 'collections') {
         index = setMetas(index, {
-          title: path[4] ? path[4] : 'Collections | NFT Fight Club',
-          description: path[4] ? `Checkout ${path[4]} collection's stats and fighters on death.finance` : 'Checkout the collections participating in NFT Fight Club',
-          image: path[4] ? `${storageBaseUrl}/collections/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
+          title: path[4] ? path[4] : 'Collections | Fight Club',
+          description: path[4] ? `Checkout ${path[4]} collection's stats and fighters` : 'Checkout the collections participating in NFT Fight Club',
+          image: path[4] ? `${storageBaseUrl}/collections/${path[4]}.png` : metaLogo,
         });
 
         response.status(200).send(index);
       } else if (path[3] === 'fighters') {
         index = setMetas(index, {
-          title: path[4] ? path[4] : 'Fighters | NFT Fight Club',
-          description: path[4] ? `Checkout ${path[4]}'s stats on death.finance` : 'Checkout the fighters participating in NFT Fight Club',
-          image: path[4] ? `${storageBaseUrl}/fighters/${path[4]}.png` : `${baseUrl}/meta-logo.png`,
+          title: path[4] ? path[4] : 'Fighters | Fight Club',
+          description: path[4] ? `Checkout ${path[4]}'s stats` : 'Checkout the fighters participating in NFT Fight Club',
+          image: path[4] ? `${storageBaseUrl}/fighters/${path[4]}.png` : metaLogo,
         });
 
         response.status(200).send(index);
@@ -140,25 +141,25 @@ exports.preRender = firebaseFunction.https.onRequest(async (request, response) =
       } else if (path[3] === 'tournament') {
         index = setMetas(index, {
           title: 'Tournament | NFT Fight Club',
-          description: 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
-          image: `${baseUrl}/meta-logo.png`,
+          description: 'Register your fighter to compete in th Fight Club.',
+          image: metaLogo,
         });
 
         response.status(200).send(index);
       } else {
         index = setMetas(index, {
-          title: 'NFT Fight Club',
-          description: 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
-          image: `${baseUrl}/meta-logo.png`,
+          title: functions.config().app.id === 'deathfinance' ? 'WAGDIE Fight Club' : 'NFT Fight Club',
+          description: 'Register your fighter to compete in the Fight Club.',
+          image: metaLogo,
         });
 
         response.status(200).send(index);
       }
     } else {
       index = setMetas(index, {
-        title: 'NFT Fight Club',
-        description: 'Welcome to death.finance, the official NFT Fight Club. Register your fighter to compete in NFT Madness, today.',
-        image: `${baseUrl}/meta-logo.png`,
+        title: functions.config().app.id === 'deathfinance' ? 'WAGDIE Fight Club' : 'NFT Fight Club',
+        description: 'Register your fighter to compete in the Fight Club.',
+        image: metaLogo,
       });
 
       response.status(200).send(index);

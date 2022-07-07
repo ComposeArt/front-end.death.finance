@@ -13,6 +13,7 @@ import {
   WrapItem,
   Link,
   useToast,
+  VStack,
   IconButton,
 } from "@chakra-ui/react";
 import { RouteComponentProps, navigate } from "@reach/router";
@@ -158,29 +159,27 @@ export const Home = (props: RouteComponentProps) => {
         marginTop={8}
       >
         {season.isDev && mounted && (
-          <>
-            <Text fontWeight={900} color="red">
-              Welcome to the ETHDenver NFT Fight Club!
-            </Text>
-            <Text>
-              <br/>
-              My name is Monsieur Grim, and I welcome all Bufficorn owners to participate in the Metaverse's first NFT battle royale.
-              <br/><br/>
-              What are you waiting for?{' '}
-              <Link
-                fontWeight={900}
-                color='teal.500'
-                href='/profile'
-              >
-                Register
-              </Link>
-              {' '}your Bufficorn, today.
-              <br/><br/>
-            </Text>
-            <Text fontSize={12} color={"green.500"}>
-              P.S. secret drops await those who participate
-            </Text>
-          </>
+          <HStack justify="flex-start" marginBottom={10}>
+            <Image
+              boxSize="100px"
+              borderRadius="100px"
+              src={grim}
+            />
+            <VStack align="flex-start" justify="flex-start">
+              <Text>
+                <br/>
+                𝕳𝖊𝖑𝖑𝖔 𝕿𝖗𝖎𝖇𝖚𝖙𝖊𝖘! 𝕸𝖞 𝖓𝖆𝖒𝖊 𝖎𝖘 𝕸. 𝕲𝖗𝖎𝖒. 𝕴 𝖆𝖒 𝖎𝖓𝖘𝖙𝖗𝖚𝖈𝖙𝖊𝖉 𝖙𝖔 𝖗𝖚𝖓 𝖙𝖍𝖊𝖘𝖊 𝖘𝖆𝖈𝖗𝖎𝖋𝖎𝖈𝖎𝖆𝖑 𝖌𝖆𝖒𝖊𝖘 𝖔𝖓 𝖇𝖊𝖍𝖆𝖑𝖋 𝖔𝖋 𝕳𝖊𝖗. 𝕸𝖔𝖗𝖊 𝖎𝖓𝖋𝖔𝖗𝖒𝖆𝖙𝖎𝖔𝖓 𝖙𝖔 𝖈𝖔𝖒𝖊.
+                <br/><br/>
+                <Link
+                  fontWeight={900}
+                  color='teal.500'
+                  href='/profile'
+                >
+                  𝕽𝖊𝖌𝖎𝖘𝖙𝖊𝖗 𝖞𝖔𝖚𝖗 𝖜𝖆𝖌𝖉𝖎𝖊
+                </Link>
+              </Text>
+            </VStack>
+          </HStack>
         )}
         {!season.isDev && mounted && (
             <>
@@ -202,19 +201,7 @@ export const Home = (props: RouteComponentProps) => {
             </>
         )}
         <HStack justify="flex-end">
-          <Text
-            fontFamily="Rock Salt"
-            fontSize={24}
-            padding={-8}
-          >
-            m grim
-          </Text>
-          <Image
-            padding={-8}
-            boxSize="200px"
-            borderRadius="200px"
-            src={grim}
-          />
+
         </HStack>
       </Box>
       <Heading size='lg' marginTop={12} textAlign="center">

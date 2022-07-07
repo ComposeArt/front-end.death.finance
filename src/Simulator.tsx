@@ -345,24 +345,19 @@ export const Simulator = (props: RouteComponentProps) => {
         />
       )}
       <Heading size='lg' marginTop={12} textAlign="center" lineHeight={1.5}>
-        Let's Dance
+       Simulate Fights
       </Heading>
-      <Text textAlign="center" fontSize={12} margin={4}>
-        simulate fights on ethereum exactly how
-        <br/>
-        they will happen during preseason and the main tournament
+      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
+        Current Block
+      </Text>
+      <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
+        {blockNumber}
       </Text>
       <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
         Current Randomness
       </Text>
       <Text marginTop={2} fontSize={12} textAlign="center">
         {randomness}
-      </Text>
-      <Text opacity={0.5} marginTop={2} fontSize={12} textAlign="center">
-        Current Block
-      </Text>
-      <Text marginTop={2} fontSize={12} textAlign="center" color={_.floor(parseInt(blockNumber, 10) / 10 % 2) === 0 ? 'red' : 'current'}>
-        {blockNumber}
       </Text>
       <Text width="320px" textAlign="center" marginTop={2} fontSize={10} color="red.500">
         Can only run on blocks that have an odd 2nd digit i.e. (10 - 19, 30 - 39, 50 - 59) etc.
